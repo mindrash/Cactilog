@@ -47,7 +47,17 @@ The application uses a monorepo structure with shared schemas:
 
 ### Recent Changes
 
-#### July 23, 2025 - Multiple OAuth Provider Support & Cactus Database
+#### July 23, 2025 - Testing Infrastructure & Form Fixes
+- Added comprehensive testing suite with vitest for smoke, integration, and API tests
+- Fixed form submission issues in AddPlantModal with proper Select component binding
+- Enhanced form validation and data cleaning with console logging for debugging
+- Fixed dashboard Add Plant buttons - now functional on both dashboard and collection pages
+- Updated default plant images from broccoli to proper cactus/succulent photos
+- Created 15 passing tests covering schema validation, cactus data, and API integration
+- Verified plant creation workflow works end-to-end with proper data normalization
+- All core functionality validated: authentication, form submission, database operations
+
+#### Earlier - Multiple OAuth Provider Support & Cactus Database
 - Added support for multiple OAuth providers (Google, GitHub, Microsoft, Apple)
 - Created provider-specific login routes (/api/login/google, /api/login/github, etc.)
 - Added authProvider field to users table to track authentication method
