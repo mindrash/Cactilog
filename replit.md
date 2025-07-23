@@ -47,7 +47,7 @@ The application uses a monorepo structure with shared schemas:
 
 ### Recent Changes
 
-#### July 23, 2025 - Testing Infrastructure & Form Fixes
+#### July 23, 2025 - Data Population & UI Fixes
 - Added comprehensive testing suite with vitest for smoke, integration, and API tests
 - Fixed form submission issues in AddPlantModal with proper Select component binding
 - Enhanced form validation and data cleaning with console logging for debugging
@@ -56,6 +56,10 @@ The application uses a monorepo structure with shared schemas:
 - Created 15 passing tests covering schema validation, cactus data, and API integration
 - Verified plant creation workflow works end-to-end with proper data normalization
 - All core functionality validated: authentication, form submission, database operations
+- Fixed header Add Plant button - now functional from any page
+- Removed all default stock photos, replaced with clean upload placeholders
+- Added comprehensive photo upload infrastructure with proper validation
+- Populated database with 36 authentic specimens from user's tracking PDF
 
 #### Earlier - Multiple OAuth Provider Support & Cactus Database
 - Added support for multiple OAuth providers (Google, GitHub, Microsoft, Apple)
