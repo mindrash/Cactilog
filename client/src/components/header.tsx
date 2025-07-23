@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Sprout, Plus, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,9 +11,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import ProviderBadge from "@/components/provider-badge";
+import AddPlantModal from "@/components/add-plant-modal";
 
 export default function Header() {
   const { user } = useAuth();
+  const [showAddModal, setShowAddModal] = useState(false);
 
   const userInitials = user?.firstName && user?.lastName 
     ? `${user.firstName[0]}${user.lastName[0]}`
@@ -32,7 +35,10 @@ export default function Header() {
           </div>
           
           <div className="flex items-center space-x-4">
-            <Button className="bg-forest hover:bg-forest/90">
+            <Button 
+              onClick={() => setShowAddModal(true)}
+              className="bg-forest hover:bg-forest/90"
+            >
               <Plus className="w-4 h-4 mr-2" />
               Add Plant
             </Button>
@@ -69,6 +75,8 @@ export default function Header() {
           </div>
         </div>
       </div>
+      
+      <AddPlantModal open={showAddModal} onOpenChange={setShowAddModal} />
     </header>
   );
 }
