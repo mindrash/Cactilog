@@ -1,4 +1,4 @@
-import { FaGoogle, FaGithub, FaMicrosoft, FaApple } from "react-icons/fa";
+import { FaGoogle, FaGithub, FaMicrosoft, FaApple, FaFacebook, FaTwitter } from "react-icons/fa";
 import { Badge } from "@/components/ui/badge";
 
 interface ProviderBadgeProps {
@@ -8,14 +8,18 @@ interface ProviderBadgeProps {
 
 const providerIcons: Record<string, React.ReactNode> = {
   google: <FaGoogle className="w-3 h-3" />,
+  facebook: <FaFacebook className="w-3 h-3" />,
   github: <FaGithub className="w-3 h-3" />,
+  twitter: <FaTwitter className="w-3 h-3" />,
   microsoft: <FaMicrosoft className="w-3 h-3" />,
   apple: <FaApple className="w-3 h-3" />,
 };
 
 const providerColors: Record<string, string> = {
   google: "bg-red-50 text-red-700 border-red-200",
+  facebook: "bg-blue-50 text-blue-700 border-blue-200",
   github: "bg-gray-50 text-gray-700 border-gray-200",
+  twitter: "bg-sky-50 text-sky-700 border-sky-200",
   microsoft: "bg-blue-50 text-blue-700 border-blue-200",
   apple: "bg-gray-50 text-gray-900 border-gray-200",
 };

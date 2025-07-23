@@ -20,12 +20,28 @@ const oauthProviders: OAuthProvider[] = [
     endpoint: "/api/login/google"
   },
   {
+    name: "Facebook",
+    icon: <FaFacebook className="w-5 h-5" />,
+    bgColor: "bg-blue-600",
+    textColor: "text-white",
+    hoverColor: "hover:bg-blue-700",
+    endpoint: "/api/login/facebook"
+  },
+  {
     name: "GitHub",
     icon: <FaGithub className="w-5 h-5" />,
     bgColor: "bg-gray-900",
     textColor: "text-white",
     hoverColor: "hover:bg-gray-800",
     endpoint: "/api/login/github"
+  },
+  {
+    name: "Twitter",
+    icon: <FaTwitter className="w-5 h-5" />,
+    bgColor: "bg-blue-400",
+    textColor: "text-white",
+    hoverColor: "hover:bg-blue-500",
+    endpoint: "/api/login/twitter"
   },
   {
     name: "Microsoft",
