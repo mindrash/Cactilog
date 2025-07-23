@@ -39,10 +39,21 @@ The application uses a monorepo structure with shared schemas:
 ## Key Components
 
 ### Authentication System
-- **Provider**: Replit Auth integration with Google OAuth
+- **Provider**: Replit Auth integration with multiple OAuth providers (Google, GitHub, Microsoft, Apple)
 - **Session Storage**: PostgreSQL-backed sessions using connect-pg-simple
 - **Authorization**: Protected routes requiring authentication
 - **User Management**: Automatic user creation and profile management
+- **Provider Tracking**: authProvider field tracks which OAuth method was used
+
+### Recent Changes
+
+#### July 23, 2025 - Multiple OAuth Provider Support
+- Added support for multiple OAuth providers (Google, GitHub, Microsoft, Apple)
+- Created provider-specific login routes (/api/login/google, /api/login/github, etc.)
+- Added authProvider field to users table to track authentication method
+- Created ProviderBadge component to display user's authentication provider
+- Updated landing page with multiple OAuth provider options
+- Enhanced user dropdown in header to show authentication provider
 
 ### Database Schema
 The database includes the following main entities:

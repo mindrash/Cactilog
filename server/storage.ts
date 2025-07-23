@@ -88,10 +88,10 @@ export class DatabaseStorage implements IStorage {
     type?: string;
     genus?: string;
   }): Promise<Plant[]> {
-    let query = db.select().from(plants).where(eq(plants.userId, userId));
+    let whereConditions = [eq(plants.userId, userId)];
     
     if (filters?.search) {
-      query = query.where(
+      whereConditions.push(
         or(
           ilike(plants.commonName, `%${filters.search}%`),
           ilike(plants.genus, `%${filters.search}%`),
@@ -103,14 +103,16 @@ export class DatabaseStorage implements IStorage {
     }
     
     if (filters?.type) {
-      query = query.where(eq(plants.type, filters.type));
+      whereConditions.push(eq(plants.type, filters.type));
     }
     
     if (filters?.genus) {
-      query = query.where(eq(plants.genus, filters.genus));
+      whereConditions.push(eq(plants.genus, filters.genus));
     }
     
-    return await query.orderBy(desc(plants.createdAt));
+    return await db.select().from(plants)
+      .where(and(...whereConditions))
+      .orderBy(desc(plants.createdAt));
   }
 
   async getPlant(id: number, userId: string): Promise<Plant | undefined> {

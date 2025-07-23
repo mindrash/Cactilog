@@ -56,6 +56,7 @@ function updateUserSession(
 
 async function upsertUser(
   claims: any,
+  provider?: string
 ) {
   await storage.upsertUser({
     id: claims["sub"],
@@ -63,6 +64,7 @@ async function upsertUser(
     firstName: claims["first_name"],
     lastName: claims["last_name"],
     profileImageUrl: claims["profile_image_url"],
+    authProvider: provider || "google",
   });
 }
 
@@ -80,7 +82,10 @@ export async function setupAuth(app: Express) {
   ) => {
     const user = {};
     updateUserSession(user, tokens);
-    await upsertUser(tokens.claims());
+    // Try to detect provider from request context or claims
+    const claims = tokens.claims();
+    const provider = claims?.login_hint || "google"; // Default to Google
+    await upsertUser(claims, provider);
     verified(null, user);
   };
 
@@ -101,6 +106,28 @@ export async function setupAuth(app: Express) {
   passport.serializeUser((user: Express.User, cb) => cb(null, user));
   passport.deserializeUser((user: Express.User, cb) => cb(null, user));
 
+  // Multiple OAuth provider routes
+  const providers = [
+    { name: "google", displayName: "Google" },
+    { name: "facebook", displayName: "Facebook" },
+    { name: "github", displayName: "GitHub" },
+    { name: "twitter", displayName: "Twitter" },
+    { name: "apple", displayName: "Apple" },
+    { name: "microsoft", displayName: "Microsoft" }
+  ];
+
+  providers.forEach(provider => {
+    app.get(`/api/login/${provider.name}`, (req, res, next) => {
+      passport.authenticate(`replitauth:${req.hostname}`, {
+        prompt: "login consent",
+        scope: ["openid", "email", "profile", "offline_access"],
+        // Pass provider hint to Replit Auth
+        login_hint: provider.name,
+      })(req, res, next);
+    });
+  });
+
+  // Legacy route for backwards compatibility
   app.get("/api/login", (req, res, next) => {
     passport.authenticate(`replitauth:${req.hostname}`, {
       prompt: "login consent",
@@ -111,7 +138,7 @@ export async function setupAuth(app: Express) {
   app.get("/api/callback", (req, res, next) => {
     passport.authenticate(`replitauth:${req.hostname}`, {
       successReturnToOrRedirect: "/",
-      failureRedirect: "/api/login",
+      failureRedirect: "/api/login/google",
     })(req, res, next);
   });
 
