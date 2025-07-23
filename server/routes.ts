@@ -54,6 +54,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       const plantId = parseInt(req.params.id);
+      
+      if (isNaN(plantId)) {
+        return res.status(400).json({ message: "Invalid plant ID" });
+      }
+      
       const plant = await storage.getPlant(plantId, userId);
       
       if (!plant) {
@@ -86,6 +91,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       const plantId = parseInt(req.params.id);
+      
+      if (isNaN(plantId)) {
+        return res.status(400).json({ message: "Invalid plant ID" });
+      }
+      
       const validatedData = insertPlantSchema.partial().parse(req.body);
       const plant = await storage.updatePlant(plantId, userId, validatedData);
       
@@ -107,6 +117,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       const plantId = parseInt(req.params.id);
+      
+      if (isNaN(plantId)) {
+        return res.status(400).json({ message: "Invalid plant ID" });
+      }
+      
       const deleted = await storage.deletePlant(plantId, userId);
       
       if (!deleted) {
@@ -125,6 +140,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       const plantId = parseInt(req.params.plantId);
+      
+      if (isNaN(plantId)) {
+        return res.status(400).json({ message: "Invalid plant ID" });
+      }
+      
       const records = await storage.getGrowthRecords(plantId, userId);
       res.json(records);
     } catch (error) {
@@ -137,6 +157,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       const plantId = parseInt(req.params.plantId);
+      
+      if (isNaN(plantId)) {
+        return res.status(400).json({ message: "Invalid plant ID" });
+      }
       
       // Verify plant belongs to user
       const plant = await storage.getPlant(plantId, userId);
