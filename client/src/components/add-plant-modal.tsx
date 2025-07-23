@@ -128,6 +128,8 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
   });
 
   const onSubmit = (data: InsertPlant) => {
+    console.log("Form submitted with data:", data);
+    
     // Convert empty strings to null for optional fields
     const cleanedData = {
       ...data,
@@ -141,6 +143,8 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
       notes: data.notes === "" ? null : data.notes,
       customId: data.customId === "" ? null : data.customId,
     };
+    
+    console.log("Cleaned data:", cleanedData);
     createPlantMutation.mutate(cleanedData);
   };
 
@@ -171,7 +175,7 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
                         form.setValue("genus", firstGenus);
                         form.setValue("species", "none");
                         setSelectedGenus(firstGenus);
-                      }} defaultValue={field.value}>
+                      }} value={field.value} onValueChange={field.onChange}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select type" />
