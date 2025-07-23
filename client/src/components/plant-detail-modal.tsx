@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import PhotoUpload from "@/components/photo-upload";
 import { Edit, X, Plus, Trash2 } from "lucide-react";
 
 interface PlantDetailModalProps {
@@ -62,7 +63,7 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
     },
   });
 
-  const defaultImage = "https://images.unsplash.com/photo-1509587584298-0f3b3a3a1797?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400";
+  // No default image - users upload their own photos
 
   const formatDate = (dateString: string | null) => {
     if (!dateString) return "N/A";
@@ -103,11 +104,7 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Photos</h3>
             <div className="space-y-4">
-              <img 
-                src={defaultImage} 
-                alt="Current plant photo" 
-                className="w-full rounded-lg shadow-sm cursor-pointer"
-              />
+              <PhotoUpload plantId={plant.id} className="w-full h-64" />
               <div className="grid grid-cols-3 gap-2">
                 <div className="border-2 border-dashed border-gray-300 rounded-lg h-20 flex items-center justify-center text-gray-400 hover:border-forest transition-colors cursor-pointer">
                   <Plus className="w-6 h-6" />
