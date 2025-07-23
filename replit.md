@@ -1,0 +1,130 @@
+# Replit.md
+
+## Overview
+
+CactiTracker is a full-stack web application for managing plant collections, specifically focused on cacti and succulents. The application allows users to track their plants, monitor growth, and manage their botanical collections with a clean, modern interface.
+
+## User Preferences
+
+Preferred communication style: Simple, everyday language.
+
+## System Architecture
+
+The application follows a modern full-stack architecture with clear separation between frontend and backend components:
+
+### Frontend Architecture
+- **Framework**: React 18 with TypeScript
+- **Build Tool**: Vite for fast development and optimized production builds
+- **Routing**: Wouter for lightweight client-side routing
+- **State Management**: TanStack Query (React Query) for server state management
+- **UI Framework**: Shadcn/ui components built on Radix UI primitives
+- **Styling**: Tailwind CSS with custom botanical theme colors
+- **Forms**: React Hook Form with Zod validation
+
+### Backend Architecture
+- **Runtime**: Node.js with TypeScript
+- **Framework**: Express.js for REST API
+- **Database**: PostgreSQL with Drizzle ORM
+- **Database Provider**: Neon Database (serverless PostgreSQL)
+- **Authentication**: Replit Auth with OpenID Connect (OIDC)
+- **Session Management**: Express sessions stored in PostgreSQL
+
+### Project Structure
+The application uses a monorepo structure with shared schemas:
+- `client/` - React frontend application
+- `server/` - Express backend API
+- `shared/` - Shared TypeScript types and Zod schemas
+- `migrations/` - Database migration files
+
+## Key Components
+
+### Authentication System
+- **Provider**: Replit Auth integration with Google OAuth
+- **Session Storage**: PostgreSQL-backed sessions using connect-pg-simple
+- **Authorization**: Protected routes requiring authentication
+- **User Management**: Automatic user creation and profile management
+
+### Database Schema
+The database includes the following main entities:
+- **Users**: User profiles with email, names, and profile images
+- **Plants**: Plant records with taxonomy, custom IDs, and metadata
+- **Growth Records**: Tracking measurements and observations over time
+- **Plant Photos**: Image attachments for plant records
+- **Seeds**: Seed collection management
+- **Sessions**: Authentication session storage
+
+### Plant Management
+- **Collection View**: Grid-based plant display with filtering and search
+- **Plant Details**: Comprehensive plant information with growth tracking
+- **Custom Taxonomy**: Support for genus, species, cultivar, and mutation tracking
+- **Growth Monitoring**: Time-series data for plant measurements
+
+### UI/UX Design
+- **Design System**: Botanical theme with earth tones (forest, sage, earth colors)
+- **Responsive Design**: Mobile-first approach with adaptive layouts
+- **Component Library**: Comprehensive UI components from Shadcn/ui
+- **Accessibility**: ARIA-compliant components with keyboard navigation
+
+## Data Flow
+
+### Authentication Flow
+1. User visits landing page
+2. Clicks "Continue with Google" → redirects to `/api/login`
+3. Replit Auth handles OAuth flow
+4. User session created and stored in PostgreSQL
+5. Subsequent requests include session cookies for authentication
+
+### Plant Management Flow
+1. Dashboard displays user statistics and recent plants
+2. Collection page shows filterable plant grid
+3. Add Plant modal creates new plant records
+4. Plant detail modals show comprehensive information
+5. Growth tracking allows time-series data entry
+
+### Data Persistence
+- All data stored in PostgreSQL via Drizzle ORM
+- Type-safe database queries with shared Zod schemas
+- Optimistic updates with React Query for smooth UX
+
+## External Dependencies
+
+### Core Dependencies
+- **@neondatabase/serverless**: Serverless PostgreSQL connection
+- **drizzle-orm**: Type-safe database ORM
+- **@tanstack/react-query**: Server state management
+- **express & passport**: Backend framework and authentication
+- **@radix-ui/***: Accessible UI primitive components
+
+### Development Tools
+- **TypeScript**: Type safety across full stack
+- **Vite**: Frontend build tool and development server
+- **ESBuild**: Backend bundling for production
+- **Tailwind CSS**: Utility-first styling
+
+### Authentication
+- **openid-client**: OIDC client for Replit Auth
+- **passport**: Authentication middleware
+- **express-session**: Session management
+
+## Deployment Strategy
+
+### Development Environment
+- **Frontend**: Vite dev server with hot module replacement
+- **Backend**: tsx for TypeScript execution with file watching
+- **Database**: Neon Database with connection pooling
+
+### Production Build
+- **Frontend**: Vite builds to `dist/public/` directory
+- **Backend**: ESBuild bundles server to `dist/index.js`
+- **Static Serving**: Express serves frontend build in production
+
+### Environment Configuration
+- **DATABASE_URL**: PostgreSQL connection string (required)
+- **SESSION_SECRET**: Session encryption key (required)
+- **REPLIT_DOMAINS**: Allowed domains for OIDC (required)
+- **ISSUER_URL**: OIDC issuer URL (defaults to replit.com/oidc)
+
+### Database Management
+- **Migrations**: Drizzle Kit for schema migrations
+- **Schema**: Shared between frontend and backend via `shared/schema.ts`
+- **Connection**: Pooled connections with WebSocket support for serverless
