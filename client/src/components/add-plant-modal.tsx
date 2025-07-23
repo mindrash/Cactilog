@@ -48,15 +48,15 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
     defaultValues: {
       type: "",
       genus: "",
-      species: null,
-      cultivar: null,
-      mutation: null,
-      commonName: null,
-      supplier: null,
-      acquisitionDate: null,
-      groundType: null,
-      notes: null,
-      customId: null,
+      species: "",
+      cultivar: "",
+      mutation: "",
+      commonName: "",
+      supplier: "",
+      acquisitionDate: "",
+      groundType: "",
+      notes: "",
+      customId: "",
     },
   });
 
@@ -115,15 +115,15 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
     // Convert empty strings to null for optional fields
     const cleanedData = {
       ...data,
-      species: data.species === "none" || !data.species ? null : data.species,
-      cultivar: data.cultivar || null,
-      mutation: data.mutation || null,
-      commonName: data.commonName || null,
-      supplier: data.supplier || null,
-      acquisitionDate: data.acquisitionDate || null,
-      groundType: data.groundType || null,
-      notes: data.notes || null,
-      customId: data.customId || null,
+      species: data.species === "none" || data.species === "" ? null : data.species,
+      cultivar: data.cultivar === "" ? null : data.cultivar,
+      mutation: data.mutation === "" ? null : data.mutation,
+      commonName: data.commonName === "" ? null : data.commonName,
+      supplier: data.supplier === "" ? null : data.supplier,
+      acquisitionDate: data.acquisitionDate === "" ? null : data.acquisitionDate,
+      groundType: data.groundType === "" ? null : data.groundType,
+      notes: data.notes === "" ? null : data.notes,
+      customId: data.customId === "" ? null : data.customId,
     };
     createPlantMutation.mutate(cleanedData);
   };
@@ -152,7 +152,7 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
                         setSelectedType(value);
                         // Reset genus and species when type changes
                         form.setValue("genus", "");
-                        form.setValue("species", null);
+                        form.setValue("species", "");
                         setSelectedGenus("");
                       }} defaultValue={field.value}>
                         <FormControl>
@@ -214,7 +214,7 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
                             field.onChange(value);
                             setSelectedGenus(value);
                             // Reset species when genus changes
-                            form.setValue("species", null);
+                            form.setValue("species", "");
                           }} value={field.value}>
                             <FormControl>
                               <SelectTrigger>
