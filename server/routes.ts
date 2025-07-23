@@ -234,6 +234,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post('/api/plants/:plantId/photos', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const plantId = parseInt(req.params.plantId);
+      
+      // For now, return a success response - actual file upload would need multer or similar
+      // This is a placeholder for the photo upload functionality
+      const photoData = {
+        plantId,
+        filename: `plant_${plantId}_${Date.now()}.jpg`,
+        originalName: 'uploaded_photo.jpg',
+        mimeType: 'image/jpeg',
+        size: 1024000, // 1MB placeholder
+      };
+      
+      const photo = await storage.createPlantPhoto(photoData);
+      res.status(201).json(photo);
+    } catch (error) {
+      console.error("Error uploading plant photo:", error);
+      res.status(500).json({ message: "Failed to upload plant photo" });
+    }
+  });
+
   // Seed routes
   app.get('/api/seeds', isAuthenticated, async (req: any, res) => {
     try {
