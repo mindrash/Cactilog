@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertPlantSchema, type InsertPlant } from "@shared/schema";
+import { cactusGenera, succulentGenera, getSpeciesForGenus } from "@shared/cactus-data";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
@@ -39,6 +40,8 @@ interface AddPlantModalProps {
 export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [selectedType, setSelectedType] = useState<string>("");
+  const [selectedGenus, setSelectedGenus] = useState<string>("");
 
   const form = useForm<InsertPlant>({
     resolver: zodResolver(insertPlantSchema),
@@ -56,6 +59,23 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
       customId: null,
     },
   });
+
+  // Get available genera based on selected type
+  const availableGenera = useMemo(() => {
+    if (!selectedType) return [];
+    const genera = selectedType === "cactus" ? cactusGenera : succulentGenera;
+    return genera.map(g => ({
+      name: g.name,
+      commonName: g.commonName,
+      displayName: g.commonName ? `${g.name} (${g.commonName})` : g.name
+    })).sort((a, b) => a.name.localeCompare(b.name));
+  }, [selectedType]);
+
+  // Get available species based on selected genus
+  const availableSpecies = useMemo(() => {
+    if (!selectedGenus) return [];
+    return getSpeciesForGenus(selectedGenus, selectedType === "succulent").sort();
+  }, [selectedGenus, selectedType]);
 
   const createPlantMutation = useMutation({
     mutationFn: async (data: InsertPlant) => {
@@ -127,7 +147,14 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Type *</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={(value) => {
+                        field.onChange(value);
+                        setSelectedType(value);
+                        // Reset genus and species when type changes
+                        form.setValue("genus", "");
+                        form.setValue("species", null);
+                        setSelectedGenus("");
+                      }} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select type" />
@@ -181,9 +208,40 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Genus *</FormLabel>
-                      <FormControl>
-                        <Input placeholder="e.g., Trichocereus" {...field} />
-                      </FormControl>
+                      {selectedType ? (
+                        <div className="space-y-2">
+                          <Select onValueChange={(value) => {
+                            field.onChange(value);
+                            setSelectedGenus(value);
+                            // Reset species when genus changes
+                            form.setValue("species", null);
+                          }} value={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select genus" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent className="max-h-64 overflow-y-auto">
+                              {availableGenera.map((genus) => (
+                                <SelectItem key={genus.name} value={genus.name}>
+                                  {genus.displayName}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <p className="text-xs text-muted-foreground">
+                            {availableGenera.length} genera available for {selectedType}s
+                          </p>
+                        </div>
+                      ) : (
+                        <FormControl>
+                          <Input 
+                            placeholder="Select type first" 
+                            disabled 
+                            {...field} 
+                          />
+                        </FormControl>
+                      )}
                       <FormMessage />
                     </FormItem>
                   )}
@@ -194,9 +252,37 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Species</FormLabel>
-                      <FormControl>
-                        <Input placeholder="e.g., pachanoi" {...field} />
-                      </FormControl>
+                      {selectedGenus ? (
+                        <div className="space-y-2">
+                          <Select onValueChange={field.onChange} value={field.value || ""}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select species (optional)" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent className="max-h-64 overflow-y-auto">
+                              <SelectItem value="">None specified</SelectItem>
+                              {availableSpecies.map((species) => (
+                                <SelectItem key={species} value={species}>
+                                  {species}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <p className="text-xs text-muted-foreground">
+                            {availableSpecies.length} species available for {selectedGenus}
+                          </p>
+                        </div>
+                      ) : (
+                        <FormControl>
+                          <Input 
+                            placeholder="Select genus first" 
+                            disabled 
+                            value={field.value || ""}
+                            onChange={field.onChange}
+                          />
+                        </FormControl>
+                      )}
                       <FormMessage />
                     </FormItem>
                   )}

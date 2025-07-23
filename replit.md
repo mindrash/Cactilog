@@ -47,13 +47,16 @@ The application uses a monorepo structure with shared schemas:
 
 ### Recent Changes
 
-#### July 23, 2025 - Multiple OAuth Provider Support
+#### July 23, 2025 - Multiple OAuth Provider Support & Cactus Database
 - Added support for multiple OAuth providers (Google, GitHub, Microsoft, Apple)
 - Created provider-specific login routes (/api/login/google, /api/login/github, etc.)
 - Added authProvider field to users table to track authentication method
 - Created ProviderBadge component to display user's authentication provider
 - Updated landing page with multiple OAuth provider options
 - Enhanced user dropdown in header to show authentication provider
+- Implemented comprehensive cactus and succulent genera/species database
+- Added cascading dropdowns for normalized plant taxonomy selection
+- Created shared/cactus-data.ts with 20+ genera and 600+ species for proper inventory normalization
 
 ### Database Schema
 The database includes the following main entities:
