@@ -37,7 +37,7 @@ export default function Collection() {
   }, [isAuthenticated, isLoading, toast]);
 
   const { data: plants = [] } = useQuery<Plant[]>({
-    queryKey: ["/api/plants", { search: searchTerm, type: typeFilter, genus: genusFilter }],
+    queryKey: ["/api/plants"],
     enabled: isAuthenticated,
   });
 
@@ -80,23 +80,23 @@ export default function Collection() {
                 </div>
                 
                 <div className="flex space-x-3">
-                  <Select value={typeFilter} onValueChange={setTypeFilter}>
+                  <Select value={typeFilter || "all"} onValueChange={(value) => setTypeFilter(value === "all" ? "" : value)}>
                     <SelectTrigger className="w-[120px]">
                       <SelectValue placeholder="All Types" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All Types</SelectItem>
+                      <SelectItem value="all">All Types</SelectItem>
                       <SelectItem value="cactus">Cactus</SelectItem>
                       <SelectItem value="succulent">Succulent</SelectItem>
                     </SelectContent>
                   </Select>
                   
-                  <Select value={genusFilter} onValueChange={setGenusFilter}>
+                  <Select value={genusFilter || "all"} onValueChange={(value) => setGenusFilter(value === "all" ? "" : value)}>
                     <SelectTrigger className="w-[140px]">
                       <SelectValue placeholder="All Genera" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All Genera</SelectItem>
+                      <SelectItem value="all">All Genera</SelectItem>
                       {uniqueGenera.map((genus) => (
                         <SelectItem key={genus} value={genus}>{genus}</SelectItem>
                       ))}
