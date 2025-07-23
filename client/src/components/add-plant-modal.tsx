@@ -40,21 +40,21 @@ interface AddPlantModalProps {
 export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [selectedType, setSelectedType] = useState<string>("");
-  const [selectedGenus, setSelectedGenus] = useState<string>("");
+  const [selectedType, setSelectedType] = useState<string>("cactus");
+  const [selectedGenus, setSelectedGenus] = useState<string>("Trichocereus");
 
   const form = useForm<InsertPlant>({
     resolver: zodResolver(insertPlantSchema),
     defaultValues: {
-      type: "",
-      genus: "",
-      species: "",
+      type: "cactus",
+      genus: "Trichocereus",
+      species: "none",
       cultivar: "",
       mutation: "",
       commonName: "",
       supplier: "",
       acquisitionDate: "",
-      groundType: "",
+      groundType: "none",
       notes: "",
       customId: "",
     },
@@ -74,7 +74,9 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
   // Get available species based on selected genus
   const availableSpecies = useMemo(() => {
     if (!selectedGenus) return [];
-    return getSpeciesForGenus(selectedGenus, selectedType === "succulent").sort();
+    return getSpeciesForGenus(selectedGenus, selectedType === "succulent")
+      .filter(species => species && species.trim() !== "")
+      .sort();
   }, [selectedGenus, selectedType]);
 
   const createPlantMutation = useMutation({
@@ -88,7 +90,21 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
         title: "Plant Added",
         description: "Your plant has been successfully added to your collection.",
       });
-      form.reset();
+      form.reset({
+        type: "cactus",
+        genus: "Trichocereus",
+        species: "none",
+        cultivar: "",
+        mutation: "",
+        commonName: "",
+        supplier: "",
+        acquisitionDate: "",
+        groundType: "none",
+        notes: "",
+        customId: "",
+      });
+      setSelectedType("cactus");
+      setSelectedGenus("Trichocereus");
       onOpenChange(false);
     },
     onError: (error) => {
@@ -121,7 +137,7 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
       commonName: data.commonName === "" ? null : data.commonName,
       supplier: data.supplier === "" ? null : data.supplier,
       acquisitionDate: data.acquisitionDate === "" ? null : data.acquisitionDate,
-      groundType: data.groundType === "" ? null : data.groundType,
+      groundType: data.groundType === "" || data.groundType === "none" ? null : data.groundType,
       notes: data.notes === "" ? null : data.notes,
       customId: data.customId === "" ? null : data.customId,
     };
@@ -151,9 +167,10 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
                         field.onChange(value);
                         setSelectedType(value);
                         // Reset genus and species when type changes
-                        form.setValue("genus", "");
-                        form.setValue("species", "");
-                        setSelectedGenus("");
+                        const firstGenus = value === "cactus" ? "Trichocereus" : "Echeveria";
+                        form.setValue("genus", firstGenus);
+                        form.setValue("species", "none");
+                        setSelectedGenus(firstGenus);
                       }} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger>
@@ -214,7 +231,7 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
                             field.onChange(value);
                             setSelectedGenus(value);
                             // Reset species when genus changes
-                            form.setValue("species", "");
+                            form.setValue("species", "none");
                           }} value={field.value}>
                             <FormControl>
                               <SelectTrigger>
@@ -262,11 +279,13 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
                             </FormControl>
                             <SelectContent className="max-h-64 overflow-y-auto">
                               <SelectItem value="none">None specified</SelectItem>
-                              {availableSpecies.map((species) => (
-                                <SelectItem key={species} value={species}>
-                                  {species}
-                                </SelectItem>
-                              ))}
+                              {availableSpecies
+                                .filter(species => species && species.trim() !== "")
+                                .map((species) => (
+                                  <SelectItem key={species} value={species}>
+                                    {species}
+                                  </SelectItem>
+                                ))}
                             </SelectContent>
                           </Select>
                           <p className="text-xs text-muted-foreground">
@@ -352,13 +371,14 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Ground Type</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value || ""}>
+                      <Select onValueChange={field.onChange} value={field.value || "none"}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select ground type" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
+                          <SelectItem value="none">None specified</SelectItem>
                           <SelectItem value="pup">Pup</SelectItem>
                           <SelectItem value="root">Root</SelectItem>
                           <SelectItem value="graft">Graft</SelectItem>

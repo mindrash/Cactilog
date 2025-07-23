@@ -496,7 +496,7 @@ export const succulentGenera: CactusGenus[] = [
 export function getSpeciesForGenus(genusName: string, isSucculent: boolean = false): string[] {
   const genera = isSucculent ? succulentGenera : cactusGenera;
   const genus = genera.find(g => g.name.toLowerCase() === genusName.toLowerCase());
-  return genus?.species || [];
+  return genus?.species.filter(species => species && species.trim() !== "") || [];
 }
 
 // Helper function to get all genus names
