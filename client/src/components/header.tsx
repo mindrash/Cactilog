@@ -5,9 +5,11 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import ProviderBadge from "@/components/provider-badge";
 
 export default function Header() {
   const { user } = useAuth();
@@ -50,7 +52,15 @@ export default function Header() {
                   <ChevronDown className="w-4 h-4 text-gray-400" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuContent align="end" className="w-56">
+                <div className="px-3 py-2 text-sm">
+                  <p className="font-medium">{user?.firstName || user?.email || "User"}</p>
+                  <p className="text-xs text-muted-foreground">{user?.email}</p>
+                  <div className="mt-2">
+                    <ProviderBadge provider={user?.authProvider} />
+                  </div>
+                </div>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => window.location.href = '/api/logout'}>
                   Logout
                 </DropdownMenuItem>

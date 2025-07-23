@@ -45,15 +45,15 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
     defaultValues: {
       type: "",
       genus: "",
-      species: "",
-      cultivar: "",
-      mutation: "",
-      commonName: "",
-      supplier: "",
-      acquisitionDate: "",
-      groundType: "",
-      notes: "",
-      customId: "",
+      species: null,
+      cultivar: null,
+      mutation: null,
+      commonName: null,
+      supplier: null,
+      acquisitionDate: null,
+      groundType: null,
+      notes: null,
+      customId: null,
     },
   });
 
@@ -266,7 +266,7 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Ground Type</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} defaultValue={field.value || ""}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select ground type" />

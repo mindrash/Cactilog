@@ -32,6 +32,7 @@ export const users = pgTable("users", {
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
   profileImageUrl: varchar("profile_image_url"),
+  authProvider: varchar("auth_provider"), // Track which OAuth provider was used
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -139,6 +140,18 @@ export const insertPlantSchema = createInsertSchema(plants).omit({
   userId: true,
   createdAt: true,
   updatedAt: true,
+}).extend({
+  type: z.string().min(1, "Type is required"),
+  genus: z.string().min(1, "Genus is required"),
+  species: z.string().optional().nullable(),
+  cultivar: z.string().optional().nullable(),
+  mutation: z.string().optional().nullable(),
+  commonName: z.string().optional().nullable(),
+  supplier: z.string().optional().nullable(),
+  acquisitionDate: z.string().optional().nullable(),
+  groundType: z.string().optional().nullable(),
+  notes: z.string().optional().nullable(),
+  customId: z.string().optional().nullable(),
 });
 
 export const insertGrowthRecordSchema = createInsertSchema(growthRecords).omit({
