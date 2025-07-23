@@ -115,7 +115,7 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
     // Convert empty strings to null for optional fields
     const cleanedData = {
       ...data,
-      species: data.species || null,
+      species: data.species === "none" || !data.species ? null : data.species,
       cultivar: data.cultivar || null,
       mutation: data.mutation || null,
       commonName: data.commonName || null,
@@ -254,14 +254,14 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
                       <FormLabel>Species</FormLabel>
                       {selectedGenus ? (
                         <div className="space-y-2">
-                          <Select onValueChange={field.onChange} value={field.value || ""}>
+                          <Select onValueChange={field.onChange} value={field.value || "none"}>
                             <FormControl>
                               <SelectTrigger>
                                 <SelectValue placeholder="Select species (optional)" />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent className="max-h-64 overflow-y-auto">
-                              <SelectItem value="">None specified</SelectItem>
+                              <SelectItem value="none">None specified</SelectItem>
                               {availableSpecies.map((species) => (
                                 <SelectItem key={species} value={species}>
                                   {species}
