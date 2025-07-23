@@ -175,7 +175,7 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
                         form.setValue("genus", firstGenus);
                         form.setValue("species", "none");
                         setSelectedGenus(firstGenus);
-                      }} value={field.value} onValueChange={field.onChange}>
+                      }} value={field.value}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select type" />

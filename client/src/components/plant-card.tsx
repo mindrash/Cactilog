@@ -11,7 +11,7 @@ interface PlantCardProps {
 export default function PlantCard({ plant }: PlantCardProps) {
   const [showDetailModal, setShowDetailModal] = useState(false);
 
-  const defaultImage = "https://images.unsplash.com/photo-1459411621453-7b03977f4bfc?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250";
+  const defaultImage = "https://images.unsplash.com/photo-1509587584298-0f3b3a3a1797?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250";
 
   const formatDate = (dateString: string | null) => {
     if (!dateString) return "";

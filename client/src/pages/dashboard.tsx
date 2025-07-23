@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -7,12 +8,15 @@ import Header from "@/components/header";
 import Sidebar from "@/components/sidebar";
 import StatsCard from "@/components/stats-card";
 import PlantCard from "@/components/plant-card";
+import AddPlantModal from "@/components/add-plant-modal";
 import { Plant } from "@shared/schema";
 import { Sprout, Table, Plus, TrendingUp } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function Dashboard() {
   const { toast } = useToast();
   const { isAuthenticated, isLoading } = useAuth();
+  const [showAddModal, setShowAddModal] = useState(false);
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -29,7 +33,12 @@ export default function Dashboard() {
     }
   }, [isAuthenticated, isLoading, toast]);
 
-  const { data: stats } = useQuery({
+  const { data: stats } = useQuery<{
+    totalPlants: number;
+    uniqueGenera: number;
+    recentAdditions: number;
+    growthRecords: number;
+  }>({
     queryKey: ["/api/dashboard/stats"],
     enabled: isAuthenticated,
   });
@@ -52,8 +61,16 @@ export default function Dashboard() {
         <Sidebar />
         <main className="flex-1 p-6">
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Dashboard</h2>
-            <p className="text-gray-600">Track and manage your plant collection</p>
+            <div className="flex justify-between items-center mb-2">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">Dashboard</h2>
+                <p className="text-gray-600">Track and manage your plant collection</p>
+              </div>
+              <Button onClick={() => setShowAddModal(true)} className="bg-forest hover:bg-forest/90">
+                <Plus className="w-4 h-4 mr-2" />
+                Add Plant
+              </Button>
+            </div>
           </div>
 
           {/* Stats Cards */}
@@ -102,15 +119,17 @@ export default function Dashboard() {
                 <Sprout className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">No plants yet</h3>
                 <p className="text-gray-600 mb-4">Start building your collection by adding your first plant.</p>
-                <button className="bg-forest text-white px-4 py-2 rounded-lg hover:bg-forest/90 transition-colors">
-                  <Plus className="w-4 h-4 mr-2 inline" />
+                <Button onClick={() => setShowAddModal(true)} className="bg-forest hover:bg-forest/90">
+                  <Plus className="w-4 h-4 mr-2" />
                   Add Your First Plant
-                </button>
+                </Button>
               </div>
             )}
           </div>
         </main>
       </div>
+
+      <AddPlantModal open={showAddModal} onOpenChange={setShowAddModal} />
     </div>
   );
 }

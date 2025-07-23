@@ -62,7 +62,7 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
     },
   });
 
-  const defaultImage = "https://images.unsplash.com/photo-1459411621453-7b03977f4bfc?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400";
+  const defaultImage = "https://images.unsplash.com/photo-1509587584298-0f3b3a3a1797?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400";
 
   const formatDate = (dateString: string | null) => {
     if (!dateString) return "N/A";
