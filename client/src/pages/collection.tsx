@@ -7,8 +7,9 @@ import Header from "@/components/header";
 import Sidebar from "@/components/sidebar";
 import PlantCard from "@/components/plant-card";
 import AddPlantModal from "@/components/add-plant-modal";
+import PlantDetailModal from "@/components/plant-detail-modal";
 import { Plant } from "@shared/schema";
-import { Search, Filter, Plus, Grid, List, Eye } from "lucide-react";
+import { Search, Filter, Plus, Grid, List } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -30,6 +31,7 @@ export default function Collection() {
   const [genusFilter, setGenusFilter] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [selectedPlant, setSelectedPlant] = useState<Plant | null>(null);
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -176,12 +178,15 @@ export default function Collection() {
                       <TableHead>Custom ID</TableHead>
                       <TableHead>Supplier</TableHead>
                       <TableHead>Acquired</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {filteredPlants.map((plant) => (
-                      <TableRow key={plant.id} className="hover:bg-gray-50">
+                      <TableRow 
+                        key={plant.id} 
+                        className="hover:bg-gray-50 cursor-pointer"
+                        onClick={() => setSelectedPlant(plant)}
+                      >
                         <TableCell className="font-medium">
                           <div className="flex items-center space-x-3">
                             <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
@@ -223,11 +228,6 @@ export default function Collection() {
                         <TableCell className="text-sm text-gray-600">
                           {plant.acquisitionDate ? new Date(plant.acquisitionDate).toLocaleDateString() : "—"}
                         </TableCell>
-                        <TableCell className="text-right">
-                          <Button variant="ghost" size="sm">
-                            <Eye className="w-4 h-4" />
-                          </Button>
-                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -254,6 +254,14 @@ export default function Collection() {
         open={showAddModal} 
         onOpenChange={setShowAddModal}
       />
+      
+      {selectedPlant && (
+        <PlantDetailModal
+          plant={selectedPlant}
+          open={!!selectedPlant}
+          onOpenChange={(open) => !open && setSelectedPlant(null)}
+        />
+      )}
     </div>
   );
 }
