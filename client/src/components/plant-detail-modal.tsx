@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import PhotoUpload from "@/components/photo-upload";
+import AddGrowthModal from "@/components/add-growth-modal";
 import { Edit, X, Plus, Trash2 } from "lucide-react";
 
 interface PlantDetailModalProps {
@@ -24,6 +25,7 @@ interface PlantDetailModalProps {
 export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDetailModalProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [showAddGrowthModal, setShowAddGrowthModal] = useState(false);
 
   const { data: growthRecords = [] } = useQuery<GrowthRecord[]>({
     queryKey: ["/api/plants", plant.id, "growth"],
@@ -158,20 +160,13 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
         <div className="mt-8">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg font-semibold text-gray-900">Growth Tracking</h3>
-            <Button className="bg-forest hover:bg-forest/90">
+            <Button 
+              className="bg-forest hover:bg-forest/90"
+              onClick={() => setShowAddGrowthModal(true)}
+            >
               <Plus className="w-4 h-4 mr-2" />
               Add Measurement
             </Button>
-          </div>
-
-          {/* Growth Chart Placeholder */}
-          <div className="bg-gray-50 rounded-lg p-6 mb-6 h-64 flex items-center justify-center">
-            <div className="text-center text-gray-500">
-              <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-2">
-                <Plus className="w-6 h-6" />
-              </div>
-              <p>Growth chart will be displayed here</p>
-            </div>
           </div>
 
           {/* Growth Records Table */}
@@ -225,6 +220,12 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
             </div>
           )}
         </div>
+
+        <AddGrowthModal
+          plantId={plant.id}
+          open={showAddGrowthModal}
+          onOpenChange={setShowAddGrowthModal}
+        />
       </DialogContent>
     </Dialog>
   );
