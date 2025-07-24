@@ -31,6 +31,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Plus, Camera } from "lucide-react";
 
 interface AddPlantModalProps {
   open: boolean;
@@ -42,6 +43,7 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
   const queryClient = useQueryClient();
   const [selectedType, setSelectedType] = useState<string>("cactus");
   const [selectedGenus, setSelectedGenus] = useState<string>("Trichocereus");
+  const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
 
   const form = useForm<InsertPlant>({
     resolver: zodResolver(insertPlantSchema),
@@ -81,9 +83,35 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
 
   const createPlantMutation = useMutation({
     mutationFn: async (data: InsertPlant) => {
-      await apiRequest("POST", "/api/plants", data);
+      const response = await apiRequest("POST", "/api/plants", data);
+      return response.json();
     },
-    onSuccess: () => {
+    onSuccess: async (newPlant) => {
+      console.log("Plant created successfully:", newPlant);
+      
+      // Upload photo if one was selected
+      if (selectedPhoto) {
+        try {
+          const photoData = {
+            filename: selectedPhoto.name,
+            originalName: selectedPhoto.name,
+            mimeType: selectedPhoto.type,
+            size: selectedPhoto.size,
+          };
+          
+          await apiRequest('POST', `/api/plants/${newPlant.id}/photos`, photoData);
+          console.log("Photo uploaded successfully");
+        } catch (photoError) {
+          console.error("Photo upload error:", photoError);
+          // Don't fail the whole process if photo upload fails
+          toast({
+            title: "Photo Upload Failed",
+            description: "Plant was created but photo upload failed. You can add photos later.",
+            variant: "destructive",
+          });
+        }
+      }
+      
       queryClient.invalidateQueries({ queryKey: ["/api/plants"] });
       queryClient.invalidateQueries({ queryKey: ["/api/dashboard/stats"] });
       toast({
@@ -105,6 +133,7 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
       });
       setSelectedType("cactus");
       setSelectedGenus("Trichocereus");
+      setSelectedPhoto(null);
       onOpenChange(false);
     },
     onError: (error) => {
@@ -394,6 +423,59 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
                     </FormItem>
                   )}
                 />
+              </div>
+            </div>
+
+            {/* Photo Upload */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Photo (Optional)</h3>
+              <div className="relative">
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      // Check file type
+                      if (!file.type.startsWith('image/')) {
+                        toast({
+                          title: "Invalid File",
+                          description: "Please select an image file.",
+                          variant: "destructive",
+                        });
+                        return;
+                      }
+                      // Check file size (5MB limit)
+                      if (file.size > 5 * 1024 * 1024) {
+                        toast({
+                          title: "File Too Large",
+                          description: "Please select an image smaller than 5MB.",
+                          variant: "destructive",
+                        });
+                        return;
+                      }
+                      setSelectedPhoto(file);
+                    }
+                  }}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                />
+                <div className="w-full h-32 bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-forest transition-colors">
+                  <div className="text-center text-gray-500">
+                    {selectedPhoto ? (
+                      <>
+                        <Camera className="w-6 h-6 mx-auto mb-2" />
+                        <p className="text-sm font-medium">{selectedPhoto.name}</p>
+                        <p className="text-xs">Click to change photo</p>
+                      </>
+                    ) : (
+                      <>
+                        <Plus className="w-6 h-6 mx-auto mb-2" />
+                        <p className="text-sm">Add Photo</p>
+                        <p className="text-xs">Click to upload</p>
+                      </>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
 
