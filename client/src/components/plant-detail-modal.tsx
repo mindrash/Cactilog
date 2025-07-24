@@ -178,7 +178,6 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                     <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Date</th>
                     <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Height</th>
                     <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Width</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Weight</th>
                     <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Notes</th>
                     <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Actions</th>
                   </tr>
@@ -194,9 +193,6 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-900">
                         {record.widthInches ? `${record.widthInches}"` : "N/A"}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-gray-900">
-                        {record.weightOz ? `${record.weightOz} oz` : "N/A"}
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-600">
                         {record.observations || "N/A"}
