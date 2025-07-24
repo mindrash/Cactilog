@@ -105,11 +105,6 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Photos</h3>
             <div className="space-y-4">
               <PhotoUpload plantId={plant.id} className="w-full h-64" />
-              <div className="grid grid-cols-3 gap-2">
-                <div className="border-2 border-dashed border-gray-300 rounded-lg h-20 flex items-center justify-center text-gray-400 hover:border-forest transition-colors cursor-pointer">
-                  <Plus className="w-6 h-6" />
-                </div>
-              </div>
             </div>
           </div>
 
