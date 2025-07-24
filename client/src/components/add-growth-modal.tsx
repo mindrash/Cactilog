@@ -50,7 +50,6 @@ export default function AddGrowthModal({ plantId, open, onOpenChange }: AddGrowt
       date: new Date().toISOString().split('T')[0],
       heightInches: undefined,
       widthInches: undefined,
-      weightOz: undefined,
       observations: "",
     },
   });
@@ -70,7 +69,6 @@ export default function AddGrowthModal({ plantId, open, onOpenChange }: AddGrowt
         date: new Date().toISOString().split('T')[0],
         heightInches: undefined,
         widthInches: undefined,
-        weightOz: undefined,
         observations: "",
       });
       onOpenChange(false);
@@ -101,7 +99,6 @@ export default function AddGrowthModal({ plantId, open, onOpenChange }: AddGrowt
       ...data,
       heightInches: data.heightInches || null,
       widthInches: data.widthInches || null,
-      weightOz: data.weightOz || null,
       observations: data.observations || null,
     };
     createGrowthMutation.mutate(cleanedData);
@@ -171,26 +168,6 @@ export default function AddGrowthModal({ plantId, open, onOpenChange }: AddGrowt
                 )}
               />
             </div>
-
-            <FormField
-              control={form.control}
-              name="weightOz"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Weight (oz)</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      step="0.1"
-                      placeholder="0.0"
-                      {...field}
-                      onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
 
             <FormField
               control={form.control}
