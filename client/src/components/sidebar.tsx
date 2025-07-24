@@ -1,4 +1,4 @@
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import { LayoutDashboard, Sprout, TrendingUp, Camera, Upload, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -20,7 +20,7 @@ export default function Sidebar() {
         {navigation.map((item) => {
           const isActive = location === item.href;
           return (
-            <a
+            <Link
               key={item.name}
               href={item.href}
               className={cn(
@@ -32,7 +32,7 @@ export default function Sidebar() {
             >
               <item.icon size={20} />
               <span>{item.name}</span>
-            </a>
+            </Link>
           );
         })}
       </nav>

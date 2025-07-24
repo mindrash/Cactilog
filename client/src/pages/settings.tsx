@@ -1,0 +1,33 @@
+import { useAuth } from "@/hooks/useAuth";
+import Header from "@/components/header";
+import Sidebar from "@/components/sidebar";
+import { Settings as SettingsIcon } from "lucide-react";
+
+export default function Settings() {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading || !isAuthenticated) {
+    return null;
+  }
+
+  return (
+    <div className="min-h-screen bg-stone-50">
+      <Header />
+      <div className="flex">
+        <Sidebar />
+        <main className="flex-1 p-6">
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Settings</h2>
+            <p className="text-gray-600">Manage your account and application preferences</p>
+          </div>
+          
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
+            <SettingsIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">Settings Coming Soon</h3>
+            <p className="text-gray-600 mb-4">This feature will allow you to customize your preferences.</p>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
