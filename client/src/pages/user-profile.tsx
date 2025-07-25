@@ -102,6 +102,16 @@ export default function UserProfile() {
   }
 
   const getInitials = (user: UserWithStats) => {
+    // If user has custom display name, use first 2 characters of that
+    if (user.displayName && user.displayName.trim()) {
+      const cleanName = user.displayName.trim();
+      if (cleanName.length >= 2) {
+        return cleanName.substring(0, 2).toUpperCase();
+      } else {
+        return cleanName[0].toUpperCase();
+      }
+    }
+    
     const firstName = user.firstName || "";
     const lastName = user.lastName || "";
     const email = user.email || "";
