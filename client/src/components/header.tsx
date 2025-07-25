@@ -60,7 +60,7 @@ export default function Header() {
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Link href="/" className="flex items-center space-x-3 mr-8">
+            <Link href="/" className="flex items-center space-x-3 mr-4 lg:mr-8">
               <div className="w-8 h-8 bg-cactus-green rounded-full flex items-center justify-center">
                 <CactusIcon className="text-white" size={20} />
               </div>
@@ -70,7 +70,7 @@ export default function Header() {
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center space-x-2">
+            <nav className="hidden lg:flex items-center space-x-1">
               {/* Home */}
               {navigationGroups.main.map((item) => (
                 <Link key={item.href} href={item.href}>
@@ -164,7 +164,7 @@ export default function Header() {
             </nav>
 
             {/* Desktop Actions */}
-            <div className="hidden md:flex items-center space-x-3">
+            <div className="hidden lg:flex items-center space-x-3">
               <Button
                 onClick={() => setShowAddPlant(true)}
                 className="bg-cactus-green hover:bg-cactus-green/90"
@@ -216,7 +216,7 @@ export default function Header() {
             </div>
 
             {/* Mobile Menu */}
-            <div className="md:hidden flex items-center space-x-2">
+            <div className="lg:hidden flex items-center space-x-2">
               <Button
                 size="sm"
                 onClick={() => setShowAddPlant(true)}
