@@ -4,14 +4,14 @@
 
 /* Subtle cactus spine pattern background */
 .cactus-pattern-bg {
-  background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23065f46' fill-opacity='0.08'%3E%3Ccircle cx='20' cy='20' r='1'/%3E%3Cpath d='M20 16l2 2-2 2-2-2z' fill-opacity='0.06'/%3E%3Cpath d='M20 8l1 1-1 1-1-1z' fill-opacity='0.04'/%3E%3Cpath d='M20 30l1 1-1 1-1-1z' fill-opacity='0.04'/%3E%3Cpath d='M8 20l1 1-1 1-1-1z' fill-opacity='0.04'/%3E%3Cpath d='M32 20l1 1-1 1-1-1z' fill-opacity='0.04'/%3E%3Cpath d='M14 14l0.5 0.5-0.5 0.5-0.5-0.5z' fill-opacity='0.03'/%3E%3Cpath d='M26 14l0.5 0.5-0.5 0.5-0.5-0.5z' fill-opacity='0.03'/%3E%3Cpath d='M14 26l0.5 0.5-0.5 0.5-0.5-0.5z' fill-opacity='0.03'/%3E%3Cpath d='M26 26l0.5 0.5-0.5 0.5-0.5-0.5z' fill-opacity='0.03'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  background-size: 40px 40px;
+  background-image: url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23065f46' fill-opacity='0.15'%3E%3Ccircle cx='15' cy='15' r='1.2'/%3E%3Cpath d='M15 11l2 2-2 2-2-2z' fill-opacity='0.12'/%3E%3Cpath d='M15 5l1.2 1.2-1.2 1.2-1.2-1.2z' fill-opacity='0.08'/%3E%3Cpath d='M15 22l1.2 1.2-1.2 1.2-1.2-1.2z' fill-opacity='0.08'/%3E%3Cpath d='M5 15l1.2 1.2-1.2 1.2-1.2-1.2z' fill-opacity='0.08'/%3E%3Cpath d='M25 15l1.2 1.2-1.2 1.2-1.2-1.2z' fill-opacity='0.08'/%3E%3Cpath d='M10 10l0.8 0.8-0.8 0.8-0.8-0.8z' fill-opacity='0.06'/%3E%3Cpath d='M20 10l0.8 0.8-0.8 0.8-0.8-0.8z' fill-opacity='0.06'/%3E%3Cpath d='M10 20l0.8 0.8-0.8 0.8-0.8-0.8z' fill-opacity='0.06'/%3E%3Cpath d='M20 20l0.8 0.8-0.8 0.8-0.8-0.8z' fill-opacity='0.06'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  background-size: 30px 30px;
   background-repeat: repeat;
 }
 
 .cactus-pattern-bg-light {
-  background-image: url("data:image/svg+xml,%3Csvg width='50' height='50' viewBox='0 0 50 50' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23059669' fill-opacity='0.05'%3E%3Ccircle cx='25' cy='25' r='0.8'/%3E%3Cpath d='M25 21l1.5 1.5-1.5 1.5-1.5-1.5z' fill-opacity='0.04'/%3E%3Cpath d='M25 12l0.8 0.8-0.8 0.8-0.8-0.8z' fill-opacity='0.03'/%3E%3Cpath d='M25 37l0.8 0.8-0.8 0.8-0.8-0.8z' fill-opacity='0.03'/%3E%3Cpath d='M12 25l0.8 0.8-0.8 0.8-0.8-0.8z' fill-opacity='0.03'/%3E%3Cpath d='M38 25l0.8 0.8-0.8 0.8-0.8-0.8z' fill-opacity='0.03'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  background-size: 50px 50px;
+  background-image: url("data:image/svg+xml,%3Csvg width='35' height='35' viewBox='0 0 35 35' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23059669' fill-opacity='0.1'%3E%3Ccircle cx='17.5' cy='17.5' r='1'/%3E%3Cpath d='M17.5 13.5l1.8 1.8-1.8 1.8-1.8-1.8z' fill-opacity='0.08'/%3E%3Cpath d='M17.5 7l1 1-1 1-1-1z' fill-opacity='0.06'/%3E%3Cpath d='M17.5 28l1 1-1 1-1-1z' fill-opacity='0.06'/%3E%3Cpath d='M7 17.5l1 1-1 1-1-1z' fill-opacity='0.06'/%3E%3Cpath d='M28 17.5l1 1-1 1-1-1z' fill-opacity='0.06'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  background-size: 35px 35px;
   background-repeat: repeat;
 }
 
