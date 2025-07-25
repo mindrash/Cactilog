@@ -47,6 +47,13 @@ The application uses a monorepo structure with shared schemas:
 
 ### Recent Changes
 
+#### July 25, 2025 - Cactus Theme & Logo Updates
+- Updated entire application with subtle cactus-inspired green and yellow-green color palette
+- Replaced generic sprout icons with custom barrel cactus SVG icon throughout the app
+- Applied new colors to background (soft cream with green tint), buttons, badges, and components
+- Updated header logo, landing page, dashboard stats, and empty states with cactus branding
+- Maintained accessibility while creating distinctive botanical theme that's not too bold
+
 #### July 23, 2025 - Data Population & UI Fixes
 - Added comprehensive testing suite with vitest for smoke, integration, and API tests
 - Fixed form submission issues in AddPlantModal with proper Select component binding
