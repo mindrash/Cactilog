@@ -16,6 +16,7 @@ import AddPlantModal from "@/components/add-plant-modal";
 
 const navigationItems = [
   { href: "/", label: "Home" },
+  { href: "/dashboard", label: "Dashboard" },
   { href: "/collection", label: "Collection" },
   { href: "/growth-tracking", label: "Growth" },
   { href: "/photos", label: "Photos" },
