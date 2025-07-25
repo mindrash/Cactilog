@@ -365,7 +365,7 @@ export default function Settings() {
             <CardContent>
               <div className="text-center py-8">
                 <SettingsIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Additional Features</h3>
+                <h3 className="subsection-title mb-2">Additional Features</h3>
                 <p className="text-gray-600 mb-4">
                   More customization options will be available in future updates including:
                 </p>

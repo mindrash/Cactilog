@@ -234,7 +234,7 @@ export default function KnowledgeSearch() {
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-12">
                 <Search className="h-12 w-12 text-gray-400 mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                <h3 className="subsection-title mb-2">
                   No species found
                 </h3>
                 <p className="text-gray-600 text-center mb-4">

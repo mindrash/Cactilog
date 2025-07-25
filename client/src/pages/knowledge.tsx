@@ -65,7 +65,7 @@ export default function Knowledge() {
                     <Search className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900">Species Search</h3>
+                    <h3 className="subsection-title">Species Search</h3>
                     <p className="text-gray-600">Search detailed information about specific species</p>
                   </div>
                   <ChevronRight className="w-5 h-5 text-gray-400" />
@@ -82,7 +82,7 @@ export default function Knowledge() {
                     <Leaf className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900">Care Guides</h3>
+                    <h3 className="subsection-title">Care Guides</h3>
                     <p className="text-gray-600">Detailed cultivation guides for specific species</p>
                   </div>
                   <ChevronRight className="w-5 h-5 text-gray-400" />
@@ -109,7 +109,7 @@ export default function Knowledge() {
         {/* Genera Grid */}
         <div className="space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-gray-900">Browse by Genus</h2>
+            <h2 className="section-title">Browse by Genus</h2>
             <Badge variant="outline" className="text-sm">
               {filteredGenera.length} genera available
             </Badge>
@@ -164,7 +164,7 @@ export default function Knowledge() {
             <Card>
               <CardContent className="flex flex-col items-center justify-center py-12">
                 <Search className="h-12 w-12 text-gray-400 mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                <h3 className="subsection-title mb-2">
                   No genera found
                 </h3>
                 <p className="text-gray-600 text-center">
