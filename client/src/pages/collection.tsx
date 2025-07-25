@@ -28,7 +28,7 @@ export default function Collection() {
   const { toast } = useToast();
   const { isAuthenticated, isLoading } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
-  const [typeFilter, setTypeFilter] = useState("");
+  const [familyFilter, setFamilyFilter] = useState("");
   const [genusFilter, setGenusFilter] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
@@ -70,10 +70,10 @@ export default function Collection() {
       plant.supplier?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       plant.customId?.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesType = !typeFilter || plant.type === typeFilter;
+    const matchesFamily = !familyFilter || plant.family === familyFilter;
     const matchesGenus = !genusFilter || plant.genus === genusFilter;
     
-    return matchesSearch && matchesType && matchesGenus;
+    return matchesSearch && matchesFamily && matchesGenus;
   });
 
   return (
@@ -109,14 +109,26 @@ export default function Collection() {
                 </div>
                 
                 <div className="flex space-x-3">
-                  <Select value={typeFilter || "all"} onValueChange={(value) => setTypeFilter(value === "all" ? "" : value)}>
-                    <SelectTrigger className="w-[120px]">
-                      <SelectValue placeholder="All Types" />
+                  <Select value={familyFilter || "all"} onValueChange={(value) => setFamilyFilter(value === "all" ? "" : value)}>
+                    <SelectTrigger className="w-[160px]">
+                      <SelectValue placeholder="All Families" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All Types</SelectItem>
-                      <SelectItem value="cactus">Cactus</SelectItem>
-                      <SelectItem value="succulent">Succulent</SelectItem>
+                      <SelectItem value="all">All Families</SelectItem>
+                      <SelectItem value="Cactaceae">Cactaceae</SelectItem>
+                      <SelectItem value="Aizoaceae">Aizoaceae</SelectItem>
+                      <SelectItem value="Crassulaceae">Crassulaceae</SelectItem>
+                      <SelectItem value="Apocynaceae">Apocynaceae</SelectItem>
+                      <SelectItem value="Asphodelaceae">Asphodelaceae</SelectItem>
+                      <SelectItem value="Euphorbiaceae">Euphorbiaceae</SelectItem>
+                      <SelectItem value="Agavoideae">Agavoideae</SelectItem>
+                      <SelectItem value="Didiereaceae">Didiereaceae</SelectItem>
+                      <SelectItem value="Burseraceae">Burseraceae</SelectItem>
+                      <SelectItem value="Portulacaceae">Portulacaceae</SelectItem>
+                      <SelectItem value="Talinaceae">Talinaceae</SelectItem>
+                      <SelectItem value="Cucurbitaceae">Cucurbitaceae</SelectItem>
+                      <SelectItem value="Moraceae">Moraceae</SelectItem>
+                      <SelectItem value="Passifloraceae">Passifloraceae</SelectItem>
                     </SelectContent>
                   </Select>
                   
@@ -185,7 +197,7 @@ export default function Collection() {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Plant</TableHead>
-                      <TableHead>Type</TableHead>
+                      <TableHead>Family</TableHead>
                       <TableHead>Taxonomy</TableHead>
                       <TableHead>Custom ID</TableHead>
                       <TableHead>Supplier</TableHead>
@@ -217,8 +229,8 @@ export default function Collection() {
                           </div>
                         </TableCell>
                         <TableCell>
-                          <Badge variant={plant.type === "cactus" ? "default" : "secondary"}>
-                            {plant.type}
+                          <Badge variant={plant.family === "Cactaceae" ? "default" : "secondary"}>
+                            {plant.family}
                           </Badge>
                         </TableCell>
                         <TableCell>
@@ -253,7 +265,7 @@ export default function Collection() {
               </div>
               <h3 className="subsection-title mb-2">No plants found</h3>
               <p className="text-gray-600">
-                {searchTerm || typeFilter || genusFilter ? 
+                {searchTerm || familyFilter || genusFilter ? 
                   "Try adjusting your search or filters to find plants." :
                   "Add a new plant to your collection to get started."}
               </p>

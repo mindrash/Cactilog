@@ -55,10 +55,10 @@ export default function PlantCard({ plant }: PlantCardProps) {
             <div className="flex items-center gap-2">
               <PrivacyBadge isPublic={plant.isPublic || "public"} />
               <Badge 
-                variant={plant.type === 'cactus' ? 'default' : 'secondary'}
-                className={plant.type === 'cactus' ? 'bg-cactus-green/10 text-cactus-green' : 'bg-desert-sage/10 text-desert-sage'}
+                variant={plant.family === 'Cactaceae' ? 'default' : 'secondary'}
+                className={plant.family === 'Cactaceae' ? 'bg-cactus-green/10 text-cactus-green' : 'bg-desert-sage/10 text-desert-sage'}
               >
-                {plant.type}
+                {plant.family}
               </Badge>
             </div>
           </div>
