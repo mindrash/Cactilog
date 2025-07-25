@@ -79,6 +79,7 @@ export interface IStorage {
   createSpeciesImage(image: InsertSpeciesImage): Promise<SpeciesImage>;
   updateSpeciesImage(id: string, updates: Partial<InsertSpeciesImage>): Promise<SpeciesImage | undefined>;
   deleteSpeciesImage(id: string, userId: string): Promise<boolean>;
+  getUserContributedPhotos(genus: string, species: string): Promise<PlantPhoto[]>;
   
   // Photo report operations
   createPhotoReport(report: InsertPhotoReport): Promise<PhotoReport>;
@@ -90,6 +91,10 @@ export interface IStorage {
   getAdminUserByEmail(email: string): Promise<AdminUser | undefined>;
   createAdminUser(admin: InsertAdminUser): Promise<AdminUser>;
   isUserAdmin(userId: string): Promise<boolean>;
+  
+  // User settings operations
+  updateUserCollectionVisibility(userId: string, visibility: 'public' | 'private'): Promise<User | undefined>;
+  updateKnowledgeBaseContribution(userId: string, contribute: boolean): Promise<User | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -420,6 +425,15 @@ export class DatabaseStorage implements IStorage {
     return updatedUser;
   }
 
+  async updateKnowledgeBaseContribution(userId: string, contribute: boolean): Promise<User | undefined> {
+    const [updatedUser] = await db
+      .update(users)
+      .set({ contributePhotosToKnowledgeBase: contribute, updatedAt: new Date() })
+      .where(eq(users.id, userId))
+      .returning();
+    return updatedUser;
+  }
+
   // Species image operations
   async getSpeciesImages(genus: string, species: string): Promise<SpeciesImage[]> {
     return await db
@@ -452,6 +466,34 @@ export class DatabaseStorage implements IStorage {
     
     const result = await db.delete(speciesImages).where(eq(speciesImages.id, id));
     return result.rowCount! > 0;
+  }
+
+  async getUserContributedPhotos(genus: string, species: string): Promise<PlantPhoto[]> {
+    // Get photos from users who have enabled Knowledge Base contribution
+    // for plants matching the specified genus and species
+    return await db
+      .select({
+        id: plantPhotos.id,
+        plantId: plantPhotos.plantId,
+        imageUrl: plantPhotos.imageUrl,
+        caption: plantPhotos.caption,
+        createdAt: plantPhotos.createdAt,
+        userId: plants.userId,
+        userFirstName: users.firstName,
+        userLastName: users.lastName,
+      })
+      .from(plantPhotos)
+      .innerJoin(plants, eq(plantPhotos.plantId, plants.id))
+      .innerJoin(users, eq(plants.userId, users.id))
+      .where(
+        and(
+          eq(plants.genus, genus),
+          eq(plants.species, species),
+          eq(users.contributePhotosToKnowledgeBase, true),
+          eq(plants.isPublic, 'public')
+        )
+      )
+      .orderBy(desc(plantPhotos.createdAt));
   }
 
   // Photo report operations
@@ -499,6 +541,8 @@ export class DatabaseStorage implements IStorage {
     const admin = await this.getAdminUser(userId);
     return !!admin;
   }
+
+
 }
 
 export const storage = new DatabaseStorage();
