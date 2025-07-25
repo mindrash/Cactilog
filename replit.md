@@ -52,6 +52,7 @@ The application uses a monorepo structure with shared schemas:
 - **Systematically applied to all pages** including home, knowledge, photos, users, settings, growth tracking, and knowledge sub-pages
 - Used proper CSS architecture with semantic class names for easy maintenance
 - **Fixed title size consistency** across dashboard and collection pages using centralized typography system
+- **Improved collection card layout** - moved Custom ID to its own line to reduce cramped appearance and improve readability
 
 #### July 25, 2025 - Google Fonts Integration & Centralized Typography System
 - **Added Google Fonts integration** with Bagel Fat One decorative font for distinctive brand identity

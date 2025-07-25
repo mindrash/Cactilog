@@ -43,10 +43,15 @@ export default function PlantCard({ plant }: PlantCardProps) {
           </div>
         </div>
         <CardContent className="p-4">
-          <div className="flex items-center justify-between mb-2">
+          {/* Custom ID on its own line */}
+          <div className="mb-3">
             <span className="text-xs font-mono text-gray-500 bg-gray-100 px-2 py-1 rounded">
               {plant.customId || `#${plant.id}`}
             </span>
+          </div>
+          
+          {/* Badges row */}
+          <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
               <PrivacyBadge isPublic={plant.isPublic || "public"} />
               <Badge 
@@ -57,6 +62,7 @@ export default function PlantCard({ plant }: PlantCardProps) {
               </Badge>
             </div>
           </div>
+          
           <h4 className="font-semibold text-gray-900 mb-1">
             {plant.commonName || `${plant.genus} ${plant.species || ""}`}
           </h4>
