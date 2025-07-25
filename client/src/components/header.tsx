@@ -92,12 +92,12 @@ export default function Header() {
                     className={isGroupActive(navigationGroups.myCollection) ? "bg-cactus-green hover:bg-cactus-green/90" : ""}
                   >
                     <Sprout className="w-4 h-4 mr-2" />
-                    My Collection
+                    My Cacti
                     <ChevronDown className="w-4 h-4 ml-2" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start" className="w-56">
-                  <DropdownMenuLabel>My Collection</DropdownMenuLabel>
+                  <DropdownMenuLabel>My Cacti</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   {navigationGroups.myCollection.map((item) => (
                     <Link key={item.href} href={item.href}>
@@ -261,7 +261,7 @@ export default function Header() {
                     {/* My Collection Section */}
                     <div className="pt-4">
                       <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                        My Collection
+                        My Cacti
                       </div>
                       {navigationGroups.myCollection.map((item) => (
                         <Link key={item.href} href={item.href}>
