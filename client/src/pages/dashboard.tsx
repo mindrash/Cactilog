@@ -13,6 +13,7 @@ import { Plant } from "@shared/schema";
 import { Sprout, Table, Plus, TrendingUp } from "lucide-react";
 import CactusIcon from "@/components/cactus-icon";
 import { Button } from "@/components/ui/button";
+import logoImage from "@/assets/cactilog-logo.png";
 
 export default function Dashboard() {
   const { toast } = useToast();
@@ -80,7 +81,7 @@ export default function Dashboard() {
               title="Total Plants"
               value={stats?.totalPlants || 0}
               icon={<img 
-                src="/attached_assets/cactilog-logo-large_1753468813072.png" 
+                src={logoImage} 
                 alt="Plants"
                 className="w-5 h-5 object-contain"
               />}
@@ -122,7 +123,7 @@ export default function Dashboard() {
             ) : (
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
                 <img 
-                  src="/attached_assets/cactilog-logo-large_1753468813072.png" 
+                  src={logoImage} 
                   alt="No plants"
                   className="w-12 h-12 object-contain mx-auto mb-4 opacity-40"
                 />
