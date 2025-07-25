@@ -68,9 +68,10 @@ export default function KnowledgeGenus() {
   }
 
   // Filter species based on search term
-  const filteredSpecies = genus.species.filter(species =>
-    species.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredSpecies = genus.species.filter(species => {
+    const speciesName = typeof species === 'string' ? species : species.name;
+    return speciesName.toLowerCase().includes(searchTerm.toLowerCase());
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-lime-wash/20 to-pine-mist/30">
@@ -153,18 +154,21 @@ export default function KnowledgeGenus() {
                 {/* Species Grid */}
                 {filteredSpecies.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {filteredSpecies.map((species, index) => (
-                      <Link key={index} href={`/knowledge/species/${genusName}/${species}`}>
-                        <div className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 hover:border-cactus-green transition-colors cursor-pointer">
-                          <div className="font-medium text-gray-900 italic mb-1">
-                            {genus.name} {species}
+                    {filteredSpecies.map((species, index) => {
+                      const speciesName = typeof species === 'string' ? species : species.name;
+                      return (
+                        <Link key={speciesName} href={`/knowledge/species/${genusName}/${speciesName}`}>
+                          <div className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 hover:border-cactus-green transition-colors cursor-pointer">
+                            <div className="font-medium text-gray-900 italic mb-1">
+                              {genus.name} {speciesName}
+                            </div>
+                            <div className="text-sm text-gray-600">
+                              Click for detailed information
+                            </div>
                           </div>
-                          <div className="text-sm text-gray-600">
-                            Click for detailed information
-                          </div>
-                        </div>
-                      </Link>
-                    ))}
+                        </Link>
+                      );
+                    })}
                   </div>
                 ) : (
                   <div className="text-center py-8">
@@ -220,15 +224,18 @@ export default function KnowledgeGenus() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  {genus.species.slice(0, 5).map((species, index) => (
-                    <Link key={index} href={`/knowledge/species/${genusName}/${species}`}>
-                      <div className="text-sm hover:bg-gray-50 p-2 rounded-lg cursor-pointer transition-colors">
-                        <span className="font-medium italic text-cactus-green">
-                          {genus.name} {species}
-                        </span>
-                      </div>
-                    </Link>
-                  ))}
+                  {genus.species.slice(0, 5).map((species, index) => {
+                    const speciesName = typeof species === 'string' ? species : species.name;
+                    return (
+                      <Link key={speciesName} href={`/knowledge/species/${genusName}/${speciesName}`}>
+                        <div className="text-sm hover:bg-gray-50 p-2 rounded-lg cursor-pointer transition-colors">
+                          <span className="font-medium italic text-cactus-green">
+                            {genus.name} {speciesName}
+                          </span>
+                        </div>
+                      </Link>
+                    );
+                  })}
                   {genus.species.length > 5 && (
                     <div className="text-sm text-gray-500 pt-2">
                       +{genus.species.length - 5} more species

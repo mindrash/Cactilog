@@ -136,11 +136,14 @@ export default function Knowledge() {
                         <span className="font-medium">Common species:</span>
                       </div>
                       <div className="flex flex-wrap gap-1">
-                        {genus.species.slice(0, 3).map((species) => (
-                          <Badge key={species} variant="outline" className="text-xs">
-                            {species}
-                          </Badge>
-                        ))}
+                        {genus.species.slice(0, 3).map((species) => {
+                          const speciesName = typeof species === 'string' ? species : species.name;
+                          return (
+                            <Badge key={speciesName} variant="outline" className="text-xs">
+                              {speciesName}
+                            </Badge>
+                          );
+                        })}
                         {genus.species.length > 3 && (
                           <Badge variant="outline" className="text-xs">
                             +{genus.species.length - 3} more
