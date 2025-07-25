@@ -183,7 +183,7 @@ export default function AdminDashboard() {
       <div className="flex items-center gap-3">
         <Shield className="h-8 w-8 text-forest-600" />
         <div>
-          <h1 className="text-3xl font-bold font-freckle-face title-cactus-green">Admin Dashboard</h1>
+          <h1 className="page-title-xl">Admin Dashboard</h1>
           <p className="text-sage-600">Manage photo reports and maintain image quality</p>
         </div>
       </div>

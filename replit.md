@@ -55,9 +55,10 @@ The application uses a monorepo structure with shared schemas:
 - Applied distinctive typography to all brand titles across main header, mobile menu, and landing page
 - **Enhanced botanical theme** with color-coded brand elements using cactus green and succulent green shades
 - **Created centralized semantic CSS classes** for consistent typography management:
-  - `.page-title-xl`, `.page-title-md`, `.section-title`, `.subsection-title` classes
-  - Single source of truth approach replacing individual font/color declarations
-  - Easy maintenance and consistent styling across all pages
+  - `.page-title-xl`, `.page-title-lg`, `.page-title-md`, `.section-title`, `.subsection-title` classes
+  - Single source of truth approach replacing individual font/color declarations across all pages
+  - Easy maintenance and consistent styling with hierarchical font sizing control
+  - All individual `font-freckle-face title-cactus-green` declarations replaced with semantic classes
 - **Applied Freckle Face font with cactus green color** to all major page titles throughout the application
 - **Established consistent visual hierarchy** with larger font sizes and botanical color theming
 - Updated HTML head with optimized Google Fonts loading for better web performance

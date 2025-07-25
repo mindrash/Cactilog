@@ -181,7 +181,7 @@ export default function Settings() {
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Header Section */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold font-freckle-face title-cactus-green mb-2">Settings</h1>
+          <h1 className="page-title-xl mb-2">Settings</h1>
           <p className="text-gray-600">
             Manage your account preferences and privacy settings.
           </p>

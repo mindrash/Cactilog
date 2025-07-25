@@ -93,7 +93,7 @@ export default function Users() {
         <div className="mb-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
             <div>
-              <h1 className="text-3xl font-bold font-freckle-face title-cactus-green mb-2">Community Collections</h1>
+              <h1 className="page-title-xl mb-2">Community Collections</h1>
               <p className="text-gray-600">
                 Discover fellow cactus and succulent enthusiasts and browse their public collections.
               </p>

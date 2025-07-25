@@ -88,7 +88,7 @@ export default function Landing() {
               alt="Cactilog"
               className="w-12 h-12 object-contain mx-auto mb-4 opacity-40"
             />
-            <h3 className="text-xl font-semibold font-freckle-face title-cactus-green mb-2">No plants shared yet</h3>
+            <h3 className="subsection-title mb-2">No plants shared yet</h3>
             <p className="text-gray-600 mb-6">Be the first to share your plant collection!</p>
             <Button 
               onClick={() => window.location.href = "/api/login"}
