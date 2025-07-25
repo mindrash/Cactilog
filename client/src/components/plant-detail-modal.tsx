@@ -122,7 +122,7 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Visibility</p>
-                  <PrivacyBadge isPublic={plant.isPublic || "private"} />
+                  <PrivacyBadge isPublic={plant.isPublic || "public"} />
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Type</p>
