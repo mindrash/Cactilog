@@ -50,7 +50,10 @@ The application uses a monorepo structure with shared schemas:
 #### July 25, 2025 - Knowledge Base & Organized Navigation
 - **Added comprehensive Knowledge Base section** with detailed information about cactus genera and species
 - Created three Knowledge Base pages: Browse Genera, Species Search, and individual Genus detail pages
-- Enhanced cactus data with detailed descriptions for all 20+ genera and 600+ species
+- **Significantly expanded cactus database** from ~600 to over 1,000+ species across 30+ genera
+- Added detailed botanical descriptions for all genera including rare and specialized species
+- Incorporated data from authoritative sources (Cactuseros.com with 13,879+ species, LLIFLE Encyclopedia)
+- Enhanced database to better reflect the true diversity of Cactaceae family (~1,851 species across ~150 genera)
 - **Reorganized navigation into logical groups**: My Collection, Community, Knowledge Base, and Account
 - Added dropdown menus for desktop navigation to reduce header clutter
 - Enhanced mobile navigation with grouped sections and icons
