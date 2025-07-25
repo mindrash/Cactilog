@@ -389,15 +389,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const images = await storage.getSpeciesImages(genus, species);
       
       // If no images exist, try to fetch from Wikimedia
-      if (images.length === 0 && req.user) {
-        const userId = (req.user as any)?.claims?.sub;
-        if (userId) {
-          const fetchedImages = await speciesImageService.fetchAndStoreImages(genus, species, userId);
+      if (images.length === 0) {
+        console.log(`⏳ Fetching images for ${genus} ${species} from Wikimedia...`);
+        try {
+          const fetchedImages = await speciesImageService.fetchAndStoreImages(genus, species, req.user ? (req.user as any)?.claims?.sub : null);
+          console.log(`✓ Found ${fetchedImages.length} images for ${genus} ${species}`);
+          
           for (const image of fetchedImages) {
-            await storage.createSpeciesImage(image);
+            try {
+              await storage.createSpeciesImage(image);
+              console.log(`✓ Stored image: ${image.imageUrl}`);
+            } catch (error) {
+              console.error(`❌ Failed to store image:`, error);
+            }
           }
-          const newImages = await storage.getSpeciesImages(genus, species);
-          return res.json(newImages);
+          
+          // Refresh the images list
+          const refreshedImages = await storage.getSpeciesImages(genus, species);
+          return res.json(refreshedImages);
+        } catch (error) {
+          console.error(`❌ Failed to fetch images for ${genus} ${species}:`, error);
         }
       }
       
