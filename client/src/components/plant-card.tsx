@@ -39,7 +39,7 @@ export default function PlantCard({ plant }: PlantCardProps) {
             </span>
             <Badge 
               variant={plant.type === 'cactus' ? 'default' : 'secondary'}
-              className={plant.type === 'cactus' ? 'bg-forest/10 text-forest' : 'bg-sage/10 text-sage'}
+              className={plant.type === 'cactus' ? 'bg-cactus-green/10 text-cactus-green' : 'bg-desert-sage/10 text-desert-sage'}
             >
               {plant.type}
             </Badge>

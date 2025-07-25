@@ -3,36 +3,38 @@
 @tailwind utilities;
 
 :root {
-  --background: hsl(0, 0%, 100%);
-  --foreground: hsl(20, 14.3%, 4.1%);
-  --muted: hsl(60, 4.8%, 95.9%);
-  --muted-foreground: hsl(25, 5.3%, 44.7%);
-  --popover: hsl(0, 0%, 100%);
-  --popover-foreground: hsl(20, 14.3%, 4.1%);
+  --background: hsl(55, 35%, 97%); /* Soft cream with subtle yellow-green */
+  --foreground: hsl(125, 15%, 25%); /* Deep muted green */
+  --muted: hsl(85, 25%, 94%); /* Very light yellow-green */
+  --muted-foreground: hsl(110, 8%, 45%); /* Muted sage */
+  --popover: hsl(55, 35%, 97%);
+  --popover-foreground: hsl(125, 15%, 25%);
   --card: hsl(0, 0%, 100%);
-  --card-foreground: hsl(20, 14.3%, 4.1%);
-  --border: hsl(20, 5.9%, 90%);
-  --input: hsl(20, 5.9%, 90%);
-  --primary: hsl(140, 20%, 30%); /* forest */
+  --card-foreground: hsl(125, 15%, 25%);
+  --border: hsl(95, 15%, 88%); /* Soft green-gray border */
+  --input: hsl(95, 15%, 88%);
+  --primary: hsl(125, 25%, 35%); /* Cactus green - not too bold */
   --primary-foreground: hsl(0, 0%, 100%);
-  --secondary: hsl(143, 18%, 45%); /* sage */
+  --secondary: hsl(85, 20%, 50%); /* Yellow-green */
   --secondary-foreground: hsl(0, 0%, 100%);
-  --accent: hsl(60, 4.8%, 95.9%);
-  --accent-foreground: hsl(24, 9.8%, 10%);
+  --accent: hsl(85, 25%, 94%);
+  --accent-foreground: hsl(125, 15%, 25%);
   --destructive: hsl(0, 84.2%, 60.2%);
   --destructive-foreground: hsl(60, 9.1%, 97.8%);
-  --ring: hsl(20, 14.3%, 4.1%);
+  --ring: hsl(125, 25%, 35%);
   --radius: 0.5rem;
   
-  /* Custom botanical theme colors */
-  --forest: hsl(140, 20%, 30%);
-  --sage: hsl(143, 18%, 45%);
-  --earth: hsl(21, 72%, 31%);
-  --growth: hsl(142, 71%, 45%);
-  --soil: hsl(37, 92%, 50%);
-  --stone-50: hsl(60, 9%, 98%);
-  --stone-100: hsl(24, 6%, 96%);
-  --stone-500: hsl(25, 5%, 53%);
+  /* Custom cactus theme colors - subtle greens and yellow-greens */
+  --cactus-green: hsl(125, 25%, 35%); /* Main cactus color */
+  --succulent: hsl(140, 20%, 45%); /* Lighter succulent green */
+  --desert-sage: hsl(85, 18%, 55%); /* Yellow-green sage */
+  --jade: hsl(155, 15%, 50%); /* Soft jade green */
+  --lime-wash: hsl(75, 30%, 75%); /* Very soft lime */
+  --moss: hsl(100, 20%, 40%); /* Subtle moss green */
+  --pine-mist: hsl(145, 12%, 65%); /* Soft pine color */
+  --stone-50: hsl(85, 20%, 98%); /* Updated stone with green tint */
+  --stone-100: hsl(85, 15%, 95%);
+  --stone-500: hsl(100, 8%, 50%);
 }
 
 .dark {
@@ -46,9 +48,9 @@
   --card-foreground: hsl(0, 0%, 98%);
   --border: hsl(240, 3.7%, 15.9%);
   --input: hsl(240, 3.7%, 15.9%);
-  --primary: hsl(140, 20%, 40%);
+  --primary: hsl(125, 25%, 45%);
   --primary-foreground: hsl(0, 0%, 98%);
-  --secondary: hsl(143, 18%, 55%);
+  --secondary: hsl(85, 20%, 60%);
   --secondary-foreground: hsl(0, 0%, 98%);
   --accent: hsl(240, 3.7%, 15.9%);
   --accent-foreground: hsl(0, 0%, 98%);
@@ -64,48 +66,82 @@
   }
 
   body {
-    @apply font-sans antialiased bg-stone-50 text-foreground;
+    @apply font-sans antialiased text-foreground;
+    background-color: var(--background);
   }
 }
 
 @layer components {
+  .cactus-green {
+    color: var(--cactus-green);
+  }
+  
+  .bg-cactus-green {
+    background-color: var(--cactus-green);
+  }
+  
+  .succulent {
+    color: var(--succulent);
+  }
+  
+  .bg-succulent {
+    background-color: var(--succulent);
+  }
+  
+  .desert-sage {
+    color: var(--desert-sage);
+  }
+  
+  .bg-desert-sage {
+    background-color: var(--desert-sage);
+  }
+  
+  .jade {
+    color: var(--jade);
+  }
+  
+  .bg-jade {
+    background-color: var(--jade);
+  }
+  
+  .lime-wash {
+    color: var(--lime-wash);
+  }
+  
+  .bg-lime-wash {
+    background-color: var(--lime-wash);
+  }
+  
+  .moss {
+    color: var(--moss);
+  }
+  
+  .bg-moss {
+    background-color: var(--moss);
+  }
+  
+  .pine-mist {
+    color: var(--pine-mist);
+  }
+  
+  .bg-pine-mist {
+    background-color: var(--pine-mist);
+  }
+  
+  /* Legacy color support - map to new colors */
   .forest {
-    color: var(--forest);
+    color: var(--cactus-green);
   }
   
   .bg-forest {
-    background-color: var(--forest);
+    background-color: var(--cactus-green);
   }
   
   .sage {
-    color: var(--sage);
+    color: var(--desert-sage);
   }
   
   .bg-sage {
-    background-color: var(--sage);
-  }
-  
-  .earth {
-    color: var(--earth);
-  }
-  
-  .bg-earth {
-    background-color: var(--earth);
-  }
-  
-  .growth {
-    color: var(--growth);
-  }
-  
-  .bg-growth {
-    background-color: var(--growth);
-  }
-  
-  .soil {
-    color: var(--soil);
-  }
-  
-  .bg-soil {
-    background-color: var(--soil);
+    background-color: var(--desert-sage);
   }
 }
