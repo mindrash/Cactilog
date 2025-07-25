@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { Header } from "@/components/header";
+import Header from "@/components/header";
 import { SEO, seoConfigs } from "@/components/seo";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -40,13 +40,13 @@ export default function Vendors() {
     queryKey: ["/api/vendors"],
   });
 
-  const { data: adminStatus } = useQuery({
+  const { data: adminStatus } = useQuery<{ isAdmin: boolean }>({
     queryKey: ["/api/admin/status"],
     enabled: !!user,
   });
 
   const seedVendorsMutation = useMutation({
-    mutationFn: () => apiRequest("/api/vendors/seed", { method: "POST" }),
+    mutationFn: () => apiRequest("/api/vendors/seed", "POST"),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/vendors"] });
       toast({
