@@ -8,6 +8,7 @@ import {
   photoReports,
   adminUsers,
   plantLikes,
+  vendors,
   type User,
   type UpsertUser,
   type Plant,
@@ -24,6 +25,8 @@ import {
   type InsertPhotoReport,
   type PlantLike,
   type InsertPlantLike,
+  type Vendor,
+  type InsertVendor,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, ilike, or, count, sql } from "drizzle-orm";
@@ -105,6 +108,11 @@ export interface IStorage {
   getPlantLikeCount(plantId: number): Promise<number>;
   getUserPlantLike(plantId: number, userId: string): Promise<PlantLike | undefined>;
   getPlantWithLikes(plantId: number, userId?: string): Promise<Plant & { likeCount: number; isLiked?: boolean }>;
+
+  // Vendor operations
+  getAllVendors(): Promise<Vendor[]>;
+  getVendorsBySpecialty(specialty: string): Promise<Vendor[]>;
+  seedVendors(vendorData: any[]): Promise<number>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -699,6 +707,41 @@ export class DatabaseStorage implements IStorage {
   }
 
 
+  // Vendor operations
+  async getAllVendors(): Promise<Vendor[]> {
+    const vendorsList = await db
+      .select()
+      .from(vendors)
+      .where(eq(vendors.isActive, true))
+      .orderBy(vendors.reputation, vendors.name);
+    return vendorsList;
+  }
+
+  async getVendorsBySpecialty(specialty: string): Promise<Vendor[]> {
+    const vendorsList = await db
+      .select()
+      .from(vendors)
+      .where(
+        and(
+          eq(vendors.isActive, true),
+          sql`${specialty} = ANY(${vendors.specialties})`
+        )
+      )
+      .orderBy(vendors.reputation, vendors.name);
+    return vendorsList;
+  }
+
+  async seedVendors(vendorData: any[]): Promise<number> {
+    // Check if vendors already exist
+    const existingVendors = await db.select().from(vendors);
+    if (existingVendors.length > 0) {
+      return existingVendors.length; // Return existing count, don't re-seed
+    }
+
+    // Insert all vendor data
+    const insertedVendors = await db.insert(vendors).values(vendorData).returning();
+    return insertedVendors.length;
+  }
 }
 
 export const storage = new DatabaseStorage();

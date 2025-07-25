@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
+import { vendorData } from "@shared/vendor-data";
 import { SpeciesImageService } from "./wikimedia";
 import { createInsertSchema } from "drizzle-zod";
 import { speciesImages, photoReports } from "@shared/schema";
@@ -673,6 +674,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error initializing admin:", error);
       res.status(500).json({ message: "Failed to initialize admin" });
+    }
+  });
+
+  // Vendor routes
+  app.get('/api/vendors', async (req, res) => {
+    try {
+      const vendors = await storage.getAllVendors();
+      res.json(vendors);
+    } catch (error) {
+      console.error("Error fetching vendors:", error);
+      res.status(500).json({ message: "Failed to fetch vendors" });
+    }
+  });
+
+  app.get('/api/vendors/seed', isAuthenticated, async (req, res) => {
+    try {
+      const seededCount = await storage.seedVendors(vendorData);
+      res.json({ message: `Successfully seeded ${seededCount} vendors` });
+    } catch (error) {
+      console.error("Error seeding vendors:", error);
+      res.status(500).json({ message: "Failed to seed vendors" });
+    }
+  });
+
+  app.get('/api/vendors/by-specialty/:specialty', async (req, res) => {
+    try {
+      const { specialty } = req.params;
+      const vendors = await storage.getVendorsBySpecialty(specialty);
+      res.json(vendors);
+    } catch (error) {
+      console.error("Error fetching vendors by specialty:", error);
+      res.status(500).json({ message: "Failed to fetch vendors" });
     }
   });
 

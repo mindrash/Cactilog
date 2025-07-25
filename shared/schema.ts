@@ -42,6 +42,24 @@ export const users = pgTable("users", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Vendors table
+export const vendors = pgTable("vendors", {
+  id: serial("id").primaryKey(),
+  name: varchar("name").notNull(),
+  description: text("description"),
+  website: varchar("website"),
+  location: varchar("location"),
+  specialties: text("specialties").array(), // ["seeds", "plants", "pots", "supplies", "tools", "soil"]
+  categories: text("categories").array(), // ["cacti", "succulents", "equipment"]
+  reputation: varchar("reputation", { enum: ["premium", "reliable", "budget", "specialty"] }).default("reliable"),
+  shippingInfo: text("shipping_info"),
+  priceRange: varchar("price_range", { enum: ["budget", "moderate", "premium", "luxury"] }).default("moderate"),
+  isActive: boolean("is_active").default(true),
+  verifiedDate: timestamp("verified_date").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Plants table
 export const plants = pgTable("plants", {
   id: serial("id").primaryKey(),
@@ -201,9 +219,17 @@ export const insertSeedSchema = createInsertSchema(seeds).omit({
   updatedAt: true,
 });
 
+export const insertVendorSchema = createInsertSchema(vendors).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 // Types
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
+export type Vendor = typeof vendors.$inferSelect;
+export type InsertVendor = typeof insertVendorSchema._type;
 
 // Species images table for curated botanical photography
 export const speciesImages = pgTable("species_images", {

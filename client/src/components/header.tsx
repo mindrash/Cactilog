@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { useState } from "react";
-import { Plus, Menu, User, LogOut, ChevronDown, Home, BarChart3, FolderOpen, TrendingUp, Camera, Users, Settings, Sprout, BookOpen, Search, Shield, Leaf } from "lucide-react";
+import { Plus, Menu, User, LogOut, ChevronDown, Home, BarChart3, FolderOpen, TrendingUp, Camera, Users, Settings, Sprout, BookOpen, Search, Shield, Leaf, Store } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -35,13 +35,16 @@ const navigationGroups = {
     { href: "/knowledge/search", label: "Species Search", icon: Search },
     { href: "/knowledge/care-guides", icon: Leaf, label: "Care Guides" },
   ],
+  vendors: [
+    { href: "/vendors", label: "Trusted Vendors", icon: Store },
+  ],
   account: [
     { href: "/settings", label: "Settings", icon: Settings },
     { href: "/admin", label: "Admin Dashboard", icon: Shield, adminOnly: true },
   ],
 };
 
-export default function Header() {
+export function Header() {
   const { user } = useAuth();
   const [location] = useLocation();
   const [showAddPlant, setShowAddPlant] = useState(false);
@@ -168,6 +171,32 @@ export default function Header() {
                   <DropdownMenuLabel>Knowledge Base</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   {navigationGroups.knowledge.map((item) => (
+                    <Link key={item.href} href={item.href}>
+                      <DropdownMenuItem className="cursor-pointer">
+                        <item.icon className="w-4 h-4 mr-2" />
+                        {item.label}
+                      </DropdownMenuItem>
+                    </Link>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Vendors Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant={isGroupActive(navigationGroups.vendors) ? "default" : "ghost"}
+                    className={isGroupActive(navigationGroups.vendors) ? "bg-cactus-green hover:bg-cactus-green/90" : ""}
+                  >
+                    <Store className="w-4 h-4 mr-2" />
+                    Vendors
+                    <ChevronDown className="w-4 h-4 ml-2" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-56">
+                  <DropdownMenuLabel>Trusted Vendors</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {navigationGroups.vendors.map((item) => (
                     <Link key={item.href} href={item.href}>
                       <DropdownMenuItem className="cursor-pointer">
                         <item.icon className="w-4 h-4 mr-2" />
@@ -343,6 +372,27 @@ export default function Header() {
                       ))}
                     </div>
 
+                    {/* Vendors Section */}
+                    <div className="pt-4">
+                      <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        Vendors
+                      </div>
+                      {navigationGroups.vendors.map((item) => (
+                        <Link key={item.href} href={item.href}>
+                          <Button
+                            variant={isActive(item.href) ? "default" : "ghost"}
+                            className={`w-full justify-start ${
+                              isActive(item.href) ? "bg-cactus-green hover:bg-cactus-green/90" : ""
+                            }`}
+                            onClick={() => setShowMobileMenu(false)}
+                          >
+                            <item.icon className="w-4 h-4 mr-2" />
+                            {item.label}
+                          </Button>
+                        </Link>
+                      ))}
+                    </div>
+
                     {/* Account Section */}
                     <div className="pt-4">
                       <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
@@ -405,3 +455,5 @@ export default function Header() {
     </>
   );
 }
+
+export default Header;
