@@ -86,7 +86,7 @@ export default function UserProfile() {
         <div className="max-w-6xl mx-auto px-4 py-8">
           <Card>
             <CardContent className="flex flex-col items-center justify-center py-12">
-              <h3 className="text-lg font-medium text-gray-900 mb-2">User not found</h3>
+              <h3 className="text-lg font-medium font-freckle-face title-cactus-green mb-2">User not found</h3>
               <p className="text-gray-600 mb-4">This user profile could not be found.</p>
               <Link href="/users">
                 <Button variant="outline">

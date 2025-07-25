@@ -540,7 +540,7 @@ export default function KnowledgeCareGuides() {
               </Button>
             </Link>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center">
+          <h1 className="text-3xl font-bold font-freckle-face title-cactus-green mb-2 flex items-center">
             <Leaf className="w-8 h-8 mr-3 text-cactus-green" />
             Cactus & Succulent Care Guides
           </h1>
@@ -611,7 +611,7 @@ export default function KnowledgeCareGuides() {
         <div className="space-y-6">
           {filteredGuides.length > 0 ? (
             <>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Species-Specific Care Guides</h2>
+              <h2 className="text-2xl font-bold font-freckle-face title-cactus-green mb-4">Species-Specific Care Guides</h2>
               {filteredGuides.map((guide, idx) => (
                 <CareGuideCard key={idx} guide={guide} />
               ))}
@@ -620,7 +620,7 @@ export default function KnowledgeCareGuides() {
             <Card>
               <CardContent className="p-8 text-center">
                 <Search className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                <h3 className="text-lg font-medium font-freckle-face title-cactus-green mb-2">
                   No species-specific guides found for "{searchTerm}"
                 </h3>
                 <p className="text-gray-600 mb-4">
@@ -632,7 +632,7 @@ export default function KnowledgeCareGuides() {
 
           {/* General Care Guide */}
           <div className="border-t border-gray-200 pt-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">General Cactus Care Guide</h2>
+            <h2 className="text-2xl font-bold font-freckle-face title-cactus-green mb-4">General Cactus Care Guide</h2>
             <CareGuideCard guide={generalCactusGuide} isGeneral={true} />
           </div>
         </div>

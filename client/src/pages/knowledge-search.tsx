@@ -88,7 +88,7 @@ export default function KnowledgeSearch() {
             </Link>
           </div>
           
-          <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center">
+          <h1 className="text-3xl font-bold font-freckle-face title-cactus-green mb-2 flex items-center">
             <Search className="w-8 h-8 mr-3 text-cactus-green" />
             Species Search
           </h1>
