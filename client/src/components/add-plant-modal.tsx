@@ -57,6 +57,7 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
       supplier: "",
       acquisitionDate: "",
       groundType: "none",
+      isPublic: "private",
       notes: "",
       customId: "",
     },
@@ -226,7 +227,7 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
                     <FormItem>
                       <FormLabel>Common Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., San Pedro" {...field} />
+                        <Input placeholder="e.g., San Pedro" {...field} value={field.value || ""} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -239,7 +240,7 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
                     <FormItem>
                       <FormLabel>Custom ID</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., TRI-PACH-PC-1" {...field} />
+                        <Input placeholder="e.g., TRI-PACH-PC-1" {...field} value={field.value || ""} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -346,7 +347,7 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
                     <FormItem>
                       <FormLabel>Cultivar</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., PC" {...field} />
+                        <Input placeholder="e.g., PC" {...field} value={field.value || ""} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -359,7 +360,7 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
                     <FormItem>
                       <FormLabel>Mutation</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., Montrose" {...field} />
+                        <Input placeholder="e.g., Montrose" {...field} value={field.value || ""} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -379,7 +380,7 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
                     <FormItem>
                       <FormLabel>Supplier</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., 3koSerious.com" {...field} />
+                        <Input placeholder="e.g., 3koSerious.com" {...field} value={field.value || ""} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -392,7 +393,7 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
                     <FormItem>
                       <FormLabel>Acquisition Date</FormLabel>
                       <FormControl>
-                        <Input type="date" {...field} />
+                        <Input type="date" {...field} value={field.value || ""} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -479,6 +480,32 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
               </div>
             </div>
 
+            {/* Privacy Setting */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Privacy Settings</h3>
+              <FormField
+                control={form.control}
+                name="isPublic"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Visibility</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select visibility" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="private">Private - Only you can see this plant</SelectItem>
+                        <SelectItem value="public">Public - Visible in the community feed</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
             {/* Notes */}
             <FormField
               control={form.control}
@@ -491,6 +518,7 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
                       rows={4} 
                       placeholder="Add any notes about this plant..."
                       {...field}
+                      value={field.value || ""}
                     />
                   </FormControl>
                   <FormMessage />

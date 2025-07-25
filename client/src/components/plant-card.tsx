@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { Camera } from "lucide-react";
 import PlantDetailModal from "./plant-detail-modal";
+import PrivacyBadge from "./privacy-badge";
 
 interface PlantCardProps {
   plant: Plant;
@@ -37,12 +38,15 @@ export default function PlantCard({ plant }: PlantCardProps) {
             <span className="text-xs font-mono text-gray-500 bg-gray-100 px-2 py-1 rounded">
               {plant.customId || `#${plant.id}`}
             </span>
-            <Badge 
-              variant={plant.type === 'cactus' ? 'default' : 'secondary'}
-              className={plant.type === 'cactus' ? 'bg-cactus-green/10 text-cactus-green' : 'bg-desert-sage/10 text-desert-sage'}
-            >
-              {plant.type}
-            </Badge>
+            <div className="flex items-center gap-2">
+              <PrivacyBadge isPublic={plant.isPublic || "private"} />
+              <Badge 
+                variant={plant.type === 'cactus' ? 'default' : 'secondary'}
+                className={plant.type === 'cactus' ? 'bg-cactus-green/10 text-cactus-green' : 'bg-desert-sage/10 text-desert-sage'}
+              >
+                {plant.type}
+              </Badge>
+            </div>
           </div>
           <h4 className="font-semibold text-gray-900 mb-1">
             {plant.commonName || `${plant.genus} ${plant.species || ""}`}
