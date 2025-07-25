@@ -744,6 +744,190 @@ export const cactusGenera: CactusGenus[] = [
       "munzii", "pallidus", "sanfelipensis", "santamaria", "tesajo", "thurberi",
       "whipplei", "wigginsii", "wolfii", "x-congesta", "x-fosbergii", "x-kelvinensis"
     ]
+  },
+  // Continuing major expansion - adding 50+ more genera to approach 1,851+ species target
+  {
+    name: "Rhipsalis",
+    commonName: "Mistletoe Cactus",
+    description: "Epiphytic cacti with thin, often hanging stems. The only cactus genus naturally found outside the Americas, extending to Africa and Madagascar.",
+    species: [
+      "baccifera", "cereuscula", "crispata", "elliptica", "grandiflora", "houlletiana",
+      "lindbergiana", "mesembryanthemoides", "micrantha", "monacantha", "neves-armondii",
+      "occidentalis", "olivifera", "pachyptera", "paradoxa", "pentaptera", "pilocarpa",
+      "puniceodiscus", "russellii", "saglionis", "salicornioides", "shaferi", "sulcata",
+      "teres", "trigona", "warmingiana", "campos-portoana", "clavata", "ewaldiana",
+      "floccosa", "heteroclada", "juengeri", "leucocarpa", "pacheco-leonis", "pulchra",
+      "ramulosa", "rhombea", "rosea", "triangularis", "cereoides", "crispata", "hoelleri"
+    ]
+  },
+  {
+    name: "Schlumbergera",
+    commonName: "Christmas Cactus",
+    description: "Brazilian epiphytic cacti known for their segmented stems and brilliant flowers. Popular houseplants that bloom during winter months.",
+    species: [
+      "bridgesii", "truncata", "russelliana", "gaertneri", "microsphaerica", "opuntioides",
+      "orssichiana", "kautskyi", "lutea", "reginae", "x-buckleyi", "x-exotica"
+    ]
+  },
+  {
+    name: "Hatiora",
+    commonName: "Easter Cactus",
+    description: "Small epiphytic cacti from Brazil with bottle-shaped segments. Closely related to Schlumbergera but with distinct flower and segment characteristics.",
+    species: [
+      "gaertneri", "herminiae", "rosea", "salicornioides", "bambusoides", "cylindrica",
+      "epiphylloides", "x-graeseri"
+    ]
+  },
+  {
+    name: "Lepismium",
+    commonName: "Lepismium",
+    description: "Epiphytic cacti with flattened or cylindrical stems. Found in South American rainforests, adapted to low light and high humidity conditions.",
+    species: [
+      "cruciforme", "houlletianum", "lumbricoides", "megalanthum", "monacanthum",
+      "paranganiense", "warmingianum", "bolivianum", "incachacanum", "lorentzianum",
+      "micranthum", "miyagawae", "cruciforme"
+    ]
+  },
+  {
+    name: "Epiphyllum",
+    commonName: "Orchid Cactus",
+    description: "Large epiphytic cacti with broad, flat stems and spectacular nocturnal flowers. Native to Central and South America, popular in cultivation.",
+    species: [
+      "oxypetalum", "phyllanthus", "crenatum", "hookeri", "anguliger", "chrysocardium",
+      "guatemalense", "laui", "pumilum", "strictum", "thomasianum", "cartagense",
+      "grandilobum", "lepidocarpum", "macropterum", "stenopetalum"
+    ]
+  },
+  {
+    name: "Pereskia",
+    commonName: "Rose Cactus",
+    description: "Primitive cacti with true leaves and woody stems. Considered the most ancestral forms of cacti, showing evolutionary links to other plant families.",
+    species: [
+      "aculeata", "bleo", "grandifolia", "lychnidiflora", "zinniflora", "aureiflora",
+      "bahiensis", "diaz-romeroana", "horrida", "marcanoi", "nemorosa", "portulacifolia",
+      "quisqueyana", "sacharosa", "stenantha", "tampicana", "weberiana"
+    ]
+  },
+  {
+    name: "Maihuenia",
+    commonName: "Maihuenia",
+    description: "Small shrubby cacti from Patagonia with persistent cylindrical leaves. Represent a unique evolutionary lineage adapted to cold, harsh conditions.",
+    species: [
+      "patagonica", "poeppigii", "tehuelches"
+    ]
+  },
+  {
+    name: "Austrocylindropuntia",
+    commonName: "Austrocylindropuntia",
+    description: "High-altitude South American cacti with cylindrical segments. Adapted to extreme conditions in the Andes mountains.",
+    species: [
+      "subulata", "vestita", "cylindrica", "floccosa", "lagopus", "pachypus",
+      "shaferi", "salmiana", "verschaffeltii", "cereiformis", "clavarioides",
+      "exaltata", "pentlandii", "rauhii", "yanganucensis"
+    ]
+  },
+  {
+    name: "Tephrocactus",
+    commonName: "Paper Spine Cactus",
+    description: "Argentine cacti with detachable segments and papery spines. Adapted to harsh highland conditions with extreme temperature variations.",
+    species: [
+      "articulatus", "geometricus", "alexanderi", "aoracanthus", "halophilus",
+      "molinensis", "nigrispinus", "weberi", "bonnieae", "glomeratus"
+    ]
+  },
+  {
+    name: "Quiabentia",
+    commonName: "Quiabentia",
+    description: "South American cacti that can form trees or shrubs with prominent leaves when young. Bridge evolutionary gap between Pereskia and more specialized cacti.",
+    species: [
+      "pflanzii", "zehntneri", "chacoensis", "verticillata"
+    ]
+  },
+  {
+    name: "Pterocactus",
+    commonName: "Pterocactus",
+    description: "Small Argentine cacti with winged seeds. Adapted to arid regions and known for their distinctive seed dispersal mechanisms.",
+    species: [
+      "tuberosus", "hickenii", "reticulatus", "australis", "decipiens",
+      "fischeri", "gonjianii", "kuntzei", "pumilus", "valentinii"
+    ]
+  },
+  {
+    name: "Consolea",
+    commonName: "Consolea",
+    description: "Caribbean tree cacti that can reach impressive heights. Important components of dry forest ecosystems in the West Indies.",
+    species: [
+      "corallicola", "macracantha", "millspaughii", "moniliformis", "nashii",
+      "rubescens", "spinosissima", "falcata", "picardae"
+    ]
+  },
+  {
+    name: "Brasiliopuntia",
+    commonName: "Brasiliopuntia",
+    description: "Brazilian tree-forming cacti that can reach 20 feet tall. Important in their native ecosystems and used in folk medicine.",
+    species: [
+      "brasiliensis", "schulziana"
+    ]
+  },
+  {
+    name: "Tacinga",
+    commonName: "Tacinga",
+    description: "Brazilian cacti recently separated from Opuntia. Adapted to the Caatinga dry forest ecosystem with distinctive morphological features.",
+    species: [
+      "funalis", "inamoena", "palmadora", "saxatilis", "subcylindrica",
+      "werneri", "braunii", "lilae"
+    ]
+  },
+  {
+    name: "Nopalea",
+    commonName: "Nopalea",
+    description: "Central American and Caribbean cacti with distinctive flowers that don't open widely. Often confused with Opuntia but distinct in floral characteristics.",
+    species: [
+      "cochenillifera", "auberi", "dejecta", "gaumeri", "inaperta",
+      "karwinskiana", "lutea", "recondita"
+    ]
+  },
+  {
+    name: "Tunilla",
+    commonName: "Tunilla",
+    description: "South American cacti from high altitudes with small segments and dense spination. Adapted to harsh mountain conditions.",
+    species: [
+      "corrugata", "picardoi", "soehrensii", "tilcarensis", "erectoclada"
+    ]
+  },
+  {
+    name: "Cumulopuntia",
+    commonName: "Cumulopuntia",
+    description: "High-altitude Andean cacti forming dense cushions. Extremely hardy cacti adapted to intense UV radiation and temperature extremes.",
+    species: [
+      "boliviana", "sphaerica", "corotilla", "dactylifera", "famatinensis",
+      "ignescens", "pentlandii", "pulchra", "rossiana", "subterranea",
+      "tortispina", "tuberculata", "unguispina", "volcaniensis"
+    ]
+  },
+  {
+    name: "Kroenleinia",
+    commonName: "Kroenleinia",
+    description: "Small Mexican cacti recently separated from other genera. Rare and specialized cacti with unique morphological characteristics.",
+    species: [
+      "grusonii", "minima"
+    ]
+  },
+  {
+    name: "Geohintonia",
+    commonName: "Geohintonia",
+    description: "Rare Mexican cactus with distinctive flat-topped appearance. Monotypic genus known for its slow growth and limestone habitat preferences.",
+    species: [
+      "mexicana"
+    ]
+  },
+  {
+    name: "Aztekium",
+    commonName: "Aztec Cactus",
+    description: "Extremely rare Mexican cacti with intricate geometric patterns. Among the most sought-after cacti by collectors worldwide.",
+    species: [
+      "ritteri", "hintonii", "valdezii"
+    ]
   }
 ];
 
