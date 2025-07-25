@@ -187,13 +187,13 @@ export default function Header() {
                       <User className="w-4 h-4" />
                     )}
                     <span className="text-sm">
-                      {user?.firstName || user?.email?.split("@")[0] || "User"}
+                      Account
                     </span>
                     <ChevronDown className="w-3 h-3" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuLabel>Account</DropdownMenuLabel>
+                  <DropdownMenuLabel>{user?.firstName || user?.email?.split("@")[0] || "User"}</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   {navigationGroups.account.map((item) => (
                     <Link key={item.href} href={item.href}>
