@@ -47,17 +47,18 @@ The application uses a monorepo structure with shared schemas:
 
 ### Recent Changes
 
-#### July 25, 2025 - Google Fonts Integration & Comprehensive Typography System
+#### July 25, 2025 - Google Fonts Integration & Centralized Typography System
 - **Added Google Fonts integration** with Bagel Fat One decorative font for distinctive brand identity
 - Implemented proper font loading optimization with preconnect and display=swap for performance
 - **Created comprehensive typography system** with Bagel Fat One for main branding and Freckle Face for page titles
 - **Implemented two-tone green branding** splitting "Cactilog" into "Cacti" (dark green) and "log" (light green)
 - Applied distinctive typography to all brand titles across main header, mobile menu, and landing page
 - **Enhanced botanical theme** with color-coded brand elements using cactus green and succulent green shades
-- **Applied Freckle Face font with cactus green color** to all major page titles throughout the application:
-  - Landing page, dashboard, collection, knowledge base, settings, growth tracking
-  - Community collections, photo gallery, care guides, species search, import pages
-  - Knowledge base genus pages and error states
+- **Created centralized semantic CSS classes** for consistent typography management:
+  - `.page-title-xl`, `.page-title-md`, `.section-title`, `.subsection-title` classes
+  - Single source of truth approach replacing individual font/color declarations
+  - Easy maintenance and consistent styling across all pages
+- **Applied Freckle Face font with cactus green color** to all major page titles throughout the application
 - **Established consistent visual hierarchy** with larger font sizes and botanical color theming
 - Updated HTML head with optimized Google Fonts loading for better web performance
 

@@ -46,7 +46,7 @@ export default function Knowledge() {
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Header Section */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold font-freckle-face title-cactus-green mb-2 flex items-center">
+          <h1 className="page-title-xl mb-2 flex items-center">
             <BookOpen className="w-8 h-8 mr-3 text-cactus-green" />
             Cactus & Succulent Knowledge Base
           </h1>
