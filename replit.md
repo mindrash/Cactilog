@@ -53,11 +53,14 @@ The application uses a monorepo structure with shared schemas:
 - Created public feed API endpoint with pagination (20 items per page)
 - Transformed landing page to display latest public plant collections for unauthenticated users
 - Added comprehensive Header navigation component with desktop and mobile support
-- Created new Home page for authenticated users with dashboard stats and quick actions
-- Updated routing to separate landing page (public feed) from home page (authenticated dashboard)
+- **Restructured page architecture**:
+  - **Home page (/)**: Shows community feed with ALL public plants from CactiTracker for authenticated users
+  - **Dashboard page (/dashboard)**: Shows user's personal collection stats and recent plants
+  - **Landing page**: Public feed for unauthenticated visitors
+- Updated routing and navigation to include both Home and Dashboard
 - Enhanced navigation with user dropdown menu and sign-out functionality
 - All authenticated pages now include proper header navigation and sidebar
-- Community feed allows browsing public plant collections without authentication
+- Community feed allows browsing public plant collections with pagination
 
 #### Earlier - Privacy Settings & Trichocereus Logo
 - Added privacy settings to plant records (public/private visibility)

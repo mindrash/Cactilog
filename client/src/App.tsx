@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/useAuth";
 import Landing from "@/pages/landing";
 import Home from "@/pages/home";
+import Dashboard from "@/pages/dashboard";
 import Collection from "@/pages/collection";
 import GrowthTracking from "@/pages/growth-tracking";
 import Photos from "@/pages/photos";
@@ -38,6 +39,7 @@ function Router() {
       ) : (
         <>
           <Route path="/" component={Home} />
+          <Route path="/dashboard" component={Dashboard} />
           <Route path="/collection" component={Collection} />
           <Route path="/growth" component={GrowthTracking} />
           <Route path="/photos" component={Photos} />
