@@ -16,6 +16,7 @@ import PhotoUpload from "@/components/photo-upload";
 import AddGrowthModal from "@/components/add-growth-modal";
 import { Edit, X, Plus, Trash2 } from "lucide-react";
 import PrivacyBadge from "./privacy-badge";
+import { PlantLikeButton } from "./plant-like-button";
 import EditPlantModal from "./edit-plant-modal";
 
 interface PlantDetailModalProps {
@@ -130,6 +131,13 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                 <div>
                   <p className="text-sm text-gray-600">Visibility</p>
                   <PrivacyBadge isPublic={plant.isPublic || "public"} />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">Community Likes</p>
+                  <PlantLikeButton 
+                    plantId={plant.id} 
+                    className="p-0 h-auto text-sm"
+                  />
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Type</p>

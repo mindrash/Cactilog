@@ -7,6 +7,7 @@ import {
   speciesImages,
   photoReports,
   adminUsers,
+  plantLikes,
   type User,
   type UpsertUser,
   type Plant,
@@ -23,6 +24,8 @@ import {
   type InsertPhotoReport,
   type AdminUser,
   type InsertAdminUser,
+  type PlantLike,
+  type InsertPlantLike,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, ilike, or, count } from "drizzle-orm";
@@ -95,6 +98,13 @@ export interface IStorage {
   // User settings operations
   updateUserCollectionVisibility(userId: string, visibility: 'public' | 'private'): Promise<User | undefined>;
   updateKnowledgeBaseContribution(userId: string, contribute: boolean): Promise<User | undefined>;
+  
+  // Plant likes operations
+  likePlant(plantId: number, userId: string): Promise<PlantLike>;
+  unlikePlant(plantId: number, userId: string): Promise<boolean>;
+  getPlantLikeCount(plantId: number): Promise<number>;
+  getUserPlantLike(plantId: number, userId: string): Promise<PlantLike | undefined>;
+  getPlantWithLikes(plantId: number, userId?: string): Promise<Plant & { likeCount: number; isLiked?: boolean }>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -434,6 +444,49 @@ export class DatabaseStorage implements IStorage {
     return updatedUser;
   }
 
+  // Plant likes operations
+  async likePlant(plantId: number, userId: string): Promise<PlantLike> {
+    const [like] = await db
+      .insert(plantLikes)
+      .values({ plantId, userId })
+      .onConflictDoNothing()
+      .returning();
+    return like;
+  }
+
+  async unlikePlant(plantId: number, userId: string): Promise<boolean> {
+    const result = await db
+      .delete(plantLikes)
+      .where(and(eq(plantLikes.plantId, plantId), eq(plantLikes.userId, userId)));
+    return result.rowCount! > 0;
+  }
+
+  async getPlantLikeCount(plantId: number): Promise<number> {
+    const [result] = await db
+      .select({ count: count() })
+      .from(plantLikes)
+      .where(eq(plantLikes.plantId, plantId));
+    return result.count;
+  }
+
+  async getUserPlantLike(plantId: number, userId: string): Promise<PlantLike | undefined> {
+    const [like] = await db
+      .select()
+      .from(plantLikes)
+      .where(and(eq(plantLikes.plantId, plantId), eq(plantLikes.userId, userId)));
+    return like;
+  }
+
+  async getPlantWithLikes(plantId: number, userId?: string): Promise<Plant & { likeCount: number; isLiked?: boolean }> {
+    const [plant] = await db.select().from(plants).where(eq(plants.id, plantId));
+    if (!plant) throw new Error('Plant not found');
+    
+    const likeCount = await this.getPlantLikeCount(plantId);
+    const isLiked = userId ? !!(await this.getUserPlantLike(plantId, userId)) : false;
+    
+    return { ...plant, likeCount, isLiked };
+  }
+
   // Species image operations
   async getSpeciesImages(genus: string, species: string): Promise<SpeciesImage[]> {
     return await db
@@ -468,32 +521,28 @@ export class DatabaseStorage implements IStorage {
     return result.rowCount! > 0;
   }
 
-  async getUserContributedPhotos(genus: string, species: string): Promise<PlantPhoto[]> {
+  async getUserContributedPhotos(genus: string, species: string): Promise<any[]> {
     // Get photos from users who have enabled Knowledge Base contribution
     // for plants matching the specified genus and species
-    return await db
-      .select({
-        id: plantPhotos.id,
-        plantId: plantPhotos.plantId,
-        imageUrl: plantPhotos.imageUrl,
-        caption: plantPhotos.caption,
-        createdAt: plantPhotos.createdAt,
-        userId: plants.userId,
-        userFirstName: users.firstName,
-        userLastName: users.lastName,
-      })
-      .from(plantPhotos)
-      .innerJoin(plants, eq(plantPhotos.plantId, plants.id))
-      .innerJoin(users, eq(plants.userId, users.id))
-      .where(
-        and(
-          eq(plants.genus, genus),
-          eq(plants.species, species),
-          eq(users.contributePhotosToKnowledgeBase, true),
-          eq(plants.isPublic, 'public')
+    try {
+      return await db
+        .select()
+        .from(plantPhotos)
+        .innerJoin(plants, eq(plantPhotos.plantId, plants.id))
+        .innerJoin(users, eq(plants.userId, users.id))
+        .where(
+          and(
+            eq(plants.genus, genus),
+            eq(plants.species, species || ''),
+            eq(users.contributePhotosToKnowledgeBase, true),
+            eq(plants.isPublic, 'public')
+          )
         )
-      )
-      .orderBy(desc(plantPhotos.createdAt));
+        .orderBy(desc(plantPhotos.createdAt));
+    } catch (error) {
+      console.error('Error fetching user contributed photos:', error);
+      return [];
+    }
   }
 
   // Photo report operations

@@ -396,6 +396,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Plant likes routes
+  app.post('/api/plants/:plantId/like', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user?.claims?.sub;
+      const plantId = parseInt(req.params.plantId);
+      
+      if (isNaN(plantId)) {
+        return res.status(400).json({ message: "Invalid plant ID" });
+      }
+      
+      const like = await storage.likePlant(plantId, userId);
+      const likeCount = await storage.getPlantLikeCount(plantId);
+      res.json({ like, likeCount });
+    } catch (error) {
+      console.error("Error liking plant:", error);
+      res.status(500).json({ message: "Failed to like plant" });
+    }
+  });
+
+  app.delete('/api/plants/:plantId/like', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user?.claims?.sub;
+      const plantId = parseInt(req.params.plantId);
+      
+      if (isNaN(plantId)) {
+        return res.status(400).json({ message: "Invalid plant ID" });
+      }
+      
+      const success = await storage.unlikePlant(plantId, userId);
+      const likeCount = await storage.getPlantLikeCount(plantId);
+      res.json({ success, likeCount });
+    } catch (error) {
+      console.error("Error unliking plant:", error);
+      res.status(500).json({ message: "Failed to unlike plant" });
+    }
+  });
+
+  app.get('/api/plants/:plantId/likes', async (req, res) => {
+    try {
+      const plantId = parseInt(req.params.plantId);
+      const userId = (req as any).user?.claims?.sub;
+      
+      if (isNaN(plantId)) {
+        return res.status(400).json({ message: "Invalid plant ID" });
+      }
+      
+      const likeCount = await storage.getPlantLikeCount(plantId);
+      const isLiked = userId ? !!(await storage.getUserPlantLike(plantId, userId)) : false;
+      
+      res.json({ likeCount, isLiked });
+    } catch (error) {
+      console.error("Error fetching plant likes:", error);
+      res.status(500).json({ message: "Failed to fetch plant likes" });
+    }
+  });
+
   // Species image routes
   const speciesImageService = new SpeciesImageService();
 
