@@ -271,6 +271,42 @@ export class DatabaseStorage implements IStorage {
     return result.rowCount! > 0;
   }
 
+  async getPlantsWithGrowthSummary(userId: string): Promise<any[]> {
+    // First get all plants for the user
+    const userPlants = await db
+      .select()
+      .from(plants)
+      .where(eq(plants.userId, userId))
+      .orderBy(desc(plants.createdAt));
+
+    // Then for each plant, get growth summary
+    const plantsWithGrowth = await Promise.all(
+      userPlants.map(async (plant) => {
+        // Get growth count
+        const [countResult] = await db
+          .select({ count: count() })
+          .from(growthRecords)
+          .where(eq(growthRecords.plantId, plant.id));
+
+        // Get latest growth record
+        const [latestGrowth] = await db
+          .select()
+          .from(growthRecords)
+          .where(eq(growthRecords.plantId, plant.id))
+          .orderBy(desc(growthRecords.date))
+          .limit(1);
+
+        return {
+          ...plant,
+          growthCount: countResult.count,
+          latestGrowth: latestGrowth || null
+        };
+      })
+    );
+
+    return plantsWithGrowth;
+  }
+
   // Photo operations
   async getPlantPhotos(plantId: number, userId: string): Promise<PlantPhoto[]> {
     // Verify plant belongs to user first

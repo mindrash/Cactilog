@@ -184,6 +184,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Growth overview route for growth tracking page
+  app.get('/api/plants/growth-overview', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const plantsWithGrowth = await storage.getPlantsWithGrowthSummary(userId);
+      res.json(plantsWithGrowth);
+    } catch (error) {
+      console.error("Error fetching growth overview:", error);
+      res.status(500).json({ message: "Failed to fetch growth overview" });
+    }
+  });
+
   // Growth record routes
   app.get('/api/plants/:plantId/growth', isAuthenticated, async (req: any, res) => {
     try {
