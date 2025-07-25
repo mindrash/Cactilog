@@ -79,7 +79,9 @@ export default function Header() {
                 />
               </div>
               <div>
-                <h1 className="text-lg font-bold text-gray-900 font-bagel-fat-one">Cactilog</h1>
+                <h1 className="cactilog-title font-bold">
+                  <span className="cacti-green">Cacti</span><span className="log-green">log</span>
+                </h1>
               </div>
             </Link>
 
@@ -255,7 +257,9 @@ export default function Header() {
                           className="w-6 h-6 object-contain"
                         />
                       </div>
-                      <span className="font-bagel-fat-one">Cactilog</span>
+                      <span className="cactilog-title">
+                        <span className="cacti-green">Cacti</span><span className="log-green">log</span>
+                      </span>
                     </SheetTitle>
                   </SheetHeader>
                   
