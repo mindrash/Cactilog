@@ -282,6 +282,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Public photos gallery route
+  app.get('/api/photos/public', async (req: any, res) => {
+    try {
+      const photos = await storage.getPublicPhotos();
+      res.json(photos);
+    } catch (error) {
+      console.error("Error fetching public photos:", error);
+      res.status(500).json({ message: "Failed to fetch public photos" });
+    }
+  });
+
   // Photo routes
   app.get('/api/plants/:plantId/photos', isAuthenticated, async (req: any, res) => {
     try {

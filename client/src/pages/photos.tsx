@@ -1,32 +1,223 @@
 import { useAuth } from "@/hooks/useAuth";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import Header from "@/components/header";
-import Sidebar from "@/components/sidebar";
-import { Camera } from "lucide-react";
+import { Camera, Heart, User, Calendar, Search, Image } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
+interface PublicPhoto {
+  photo: {
+    id: number;
+    filename: string;
+    originalName: string;
+    uploadedAt: string;
+  };
+  plant: {
+    id: number;
+    customId: string;
+    genus: string;
+    species: string;
+    commonName: string;
+    updatedAt: string;
+  };
+  user: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    displayName: string;
+    profileImageUrl: string;
+  };
+}
 
 export default function Photos() {
   const { isAuthenticated, isLoading } = useAuth();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("recent");
+
+  const { data: photos, isLoading: photosLoading } = useQuery<PublicPhoto[]>({
+    queryKey: ["/api/photos/public"],
+    enabled: !!isAuthenticated,
+  });
 
   if (isLoading || !isAuthenticated) {
     return null;
   }
 
+  const filteredPhotos = photos?.filter(item => 
+    item.plant.customId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item.plant.genus.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item.plant.species.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item.plant.commonName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    item.user.displayName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    `${item.user.firstName} ${item.user.lastName}`.toLowerCase().includes(searchTerm.toLowerCase())
+  ) || [];
+
+  const sortedPhotos = [...filteredPhotos].sort((a, b) => {
+    switch (sortBy) {
+      case "recent":
+        return new Date(b.plant.updatedAt).getTime() - new Date(a.plant.updatedAt).getTime();
+      case "oldest":
+        return new Date(a.plant.updatedAt).getTime() - new Date(b.plant.updatedAt).getTime();
+      case "genus":
+        return a.plant.genus.localeCompare(b.plant.genus);
+      default:
+        return 0;
+    }
+  });
+
+  const getUserDisplayName = (user: PublicPhoto['user']) => {
+    return user.displayName || `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Anonymous';
+  };
+
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen bg-gradient-to-br from-lime-wash/20 to-pine-mist/30">
       <Header />
-      <div className="flex">
-        <Sidebar />
-        <main className="flex-1 p-6">
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Photo Gallery</h2>
-            <p className="text-gray-600">View and manage photos of your plants</p>
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Community Photo Gallery</h1>
+          <p className="text-gray-600">Explore photos shared by the Cactilog community</p>
+        </div>
+
+        {/* Stats */}
+        <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2">
+              <Image className="h-5 w-5 text-cactus-green" />
+              <span className="text-lg font-semibold">{photos?.length || 0}</span>
+              <span className="text-gray-600">photos shared</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <User className="h-5 w-5 text-forest" />
+              <span className="text-lg font-semibold">
+                {new Set(photos?.map(p => p.user.id) || []).size}
+              </span>
+              <span className="text-gray-600">contributors</span>
+            </div>
           </div>
-          
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
-            <Camera className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Photo Gallery Coming Soon</h3>
-            <p className="text-gray-600 mb-4">This feature will display all your plant photos in one place.</p>
+        </div>
+
+        {/* Filters */}
+        <div className="bg-white rounded-lg border border-gray-200 p-4 mb-6">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <Input
+                  placeholder="Search plants or users..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+            <Select value={sortBy} onValueChange={setSortBy}>
+              <SelectTrigger className="w-48">
+                <SelectValue placeholder="Sort by..." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="recent">Most Recent Activity</SelectItem>
+                <SelectItem value="oldest">Oldest First</SelectItem>
+                <SelectItem value="genus">By Genus</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-        </main>
+        </div>
+
+        {/* Photo Grid */}
+        {photosLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {[...Array(8)].map((_, i) => (
+              <Card key={i} className="animate-pulse">
+                <div className="aspect-square bg-gray-200"></div>
+                <CardContent className="p-4">
+                  <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                  <div className="h-3 bg-gray-200 rounded mb-2"></div>
+                  <div className="h-3 bg-gray-200 rounded"></div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : sortedPhotos.length === 0 ? (
+          <Card>
+            <CardContent className="p-12 text-center">
+              <Camera className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                {searchTerm ? "No matching photos found" : "No photos shared yet"}
+              </h3>
+              <p className="text-gray-600">
+                {searchTerm 
+                  ? "Try adjusting your search terms" 
+                  : "Be the first to share photos of your plants with the community!"
+                }
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {sortedPhotos.map((item) => (
+              <Card key={`${item.photo.id}-${item.plant.id}`} className="overflow-hidden hover:shadow-lg transition-shadow">
+                {/* Photo placeholder - since we don't have actual file serving yet */}
+                <div className="aspect-square bg-gradient-to-br from-cactus-green/10 to-forest/10 flex items-center justify-center">
+                  <div className="text-center">
+                    <Camera className="h-12 w-12 text-gray-400 mx-auto mb-2" />
+                    <p className="text-sm text-gray-500">
+                      {item.photo.originalName || 'Plant Photo'}
+                    </p>
+                  </div>
+                </div>
+                
+                <CardContent className="p-4">
+                  {/* Plant Info */}
+                  <div className="mb-3">
+                    <h3 className="font-semibold text-gray-900 text-sm mb-1">
+                      {item.plant.customId}
+                    </h3>
+                    <p className="text-xs text-gray-600 italic">
+                      <span className="capitalize">{item.plant.genus}</span>{" "}
+                      {item.plant.species && <span>{item.plant.species}</span>}
+                    </p>
+                    {item.plant.commonName && (
+                      <p className="text-xs text-gray-500 mt-1">
+                        {item.plant.commonName}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* User Info */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Avatar className="h-6 w-6">
+                        <AvatarImage src={item.user.profileImageUrl} />
+                        <AvatarFallback className="text-xs">
+                          {getUserDisplayName(item.user).charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="text-xs text-gray-600 truncate">
+                        {getUserDisplayName(item.user)}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1 text-xs text-gray-500">
+                      <Calendar className="h-3 w-3" />
+                      {new Date(item.plant.updatedAt).toLocaleDateString()}
+                    </div>
+                  </div>
+
+                  {/* Badge for genus */}
+                  <div className="mt-3">
+                    <Badge variant="secondary" className="text-xs">
+                      {item.plant.genus}
+                    </Badge>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
