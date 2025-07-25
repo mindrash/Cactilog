@@ -15,6 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import PhotoUpload from "@/components/photo-upload";
 import AddGrowthModal from "@/components/add-growth-modal";
 import { Edit, X, Plus, Trash2 } from "lucide-react";
+import PrivacyBadge from "./privacy-badge";
 
 interface PlantDetailModalProps {
   plant: Plant;
@@ -118,6 +119,10 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                 <div>
                   <p className="text-sm text-gray-600">Plant ID</p>
                   <p className="font-mono text-sm">{plant.customId || `#${plant.id}`}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">Visibility</p>
+                  <PrivacyBadge isPublic={plant.isPublic || "private"} />
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Type</p>
