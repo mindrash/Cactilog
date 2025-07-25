@@ -60,7 +60,7 @@ export default function Header() {
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Link href="/" className="flex items-center space-x-3">
+            <Link href="/" className="flex items-center space-x-3 mr-8">
               <div className="w-8 h-8 bg-cactus-green rounded-full flex items-center justify-center">
                 <CactusIcon className="text-white" size={20} />
               </div>
@@ -70,7 +70,7 @@ export default function Header() {
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center space-x-1">
+            <nav className="hidden md:flex items-center space-x-2">
               {/* Home */}
               {navigationGroups.main.map((item) => (
                 <Link key={item.href} href={item.href}>
