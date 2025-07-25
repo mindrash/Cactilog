@@ -40,7 +40,7 @@ export default function KnowledgeSearch() {
       genus.species.map(species => ({
         genus: genus.name,
         species: species,
-        fullName: `${genus.name} ${species}`,
+        fullName: `${genus.name} ${typeof species === 'string' ? species : species.name}`,
         description: genus.description,
         type: "cactus" // Since our data is primarily cacti
       }))
@@ -53,7 +53,7 @@ export default function KnowledgeSearch() {
       const matchesSearch = searchTerm === "" || 
         item.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.genus.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.species.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (typeof item.species === 'string' ? item.species : item.species.name).toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.description.toLowerCase().includes(searchTerm.toLowerCase());
 
       const matchesGenus = selectedGenus === "all" || item.genus === selectedGenus;
@@ -200,7 +200,9 @@ export default function KnowledgeSearch() {
                       
                       <div>
                         <div className="text-sm font-medium text-gray-700 mb-1">Species</div>
-                        <div className="text-sm text-gray-600">{item.species}</div>
+                        <div className="text-sm text-gray-600">
+                          {typeof item.species === 'string' ? item.species : item.species.name}
+                        </div>
                       </div>
 
                       <div>

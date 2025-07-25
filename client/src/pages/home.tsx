@@ -104,7 +104,7 @@ export default function Home() {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">Community Feed</h2>
+              <h2 className="section-title">Community Feed</h2>
               <p className="text-gray-600">Latest plants shared by our community</p>
             </div>
             <div className="flex items-center space-x-2">
