@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
+import { SEO, seoConfigs } from "@/components/seo";
 import { Eye, EyeOff, Settings as SettingsIcon, Camera, User, Save } from "lucide-react";
 import Header from "@/components/header";
 import { isUnauthorizedError } from "@/lib/authUtils";
@@ -177,6 +178,7 @@ export default function Settings() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-lime-wash/20 to-pine-mist/30 cactus-pattern-bg">
+      <SEO {...seoConfigs.settings} />
       <Header />
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Header Section */}

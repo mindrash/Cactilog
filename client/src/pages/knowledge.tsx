@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { BookOpen, Search, ChevronRight, Leaf } from "lucide-react";
 import Header from "@/components/header";
+import { SEO, seoConfigs } from "@/components/seo";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { cactusGenera } from "@shared/cactus-data";
 
@@ -42,6 +43,7 @@ export default function Knowledge() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-lime-wash/20 to-pine-mist/30 cactus-pattern-bg">
+      <SEO {...seoConfigs.knowledge} />
       <Header />
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Header Section */}

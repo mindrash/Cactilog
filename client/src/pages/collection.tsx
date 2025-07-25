@@ -9,6 +9,7 @@ import PlantCard from "@/components/plant-card";
 import AddPlantModal from "@/components/add-plant-modal";
 import PlantDetailModal from "@/components/plant-detail-modal";
 import ExportCollectionModal from "@/components/export-collection-modal";
+import { SEO, seoConfigs } from "@/components/seo";
 import { Plant } from "@shared/schema";
 import { Search, Filter, Plus, Grid, List, Download } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -78,6 +79,7 @@ export default function Collection() {
 
   return (
     <div className="min-h-screen cactus-pattern-bg-light">
+      <SEO {...seoConfigs.collection} />
       <Header />
       <div className="flex">
         <Sidebar />

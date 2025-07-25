@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { Header } from "@/components/header";
+import { SEO, seoConfigs } from "@/components/seo";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -120,6 +121,7 @@ export default function Vendors() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background-light to-background-alt">
+      <SEO {...seoConfigs.vendors} />
       <Header />
       
       <div className="container mx-auto px-4 py-8">

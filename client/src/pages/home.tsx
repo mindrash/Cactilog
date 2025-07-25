@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import PlantCard from "@/components/plant-card";
 import Header from "@/components/header";
+import { SEO, seoConfigs } from "@/components/seo";
 import type { Plant } from "@shared/schema";
 
 interface PublicFeedResponse {
@@ -37,6 +38,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-lime-wash/20 to-pine-mist/30 cactus-pattern-bg">
+      <SEO {...seoConfigs.home} />
       <Header />
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Welcome Section */}

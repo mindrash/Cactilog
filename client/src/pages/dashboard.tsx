@@ -9,6 +9,7 @@ import Sidebar from "@/components/sidebar";
 import StatsCard from "@/components/stats-card";
 import PlantCard from "@/components/plant-card";
 import AddPlantModal from "@/components/add-plant-modal";
+import { SEO, seoConfigs } from "@/components/seo";
 import { Plant } from "@shared/schema";
 import { Sprout, Table, Plus, TrendingUp } from "lucide-react";
 import CactusIcon from "@/components/cactus-icon";
@@ -58,6 +59,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen cactus-pattern-bg-light">
+      <SEO {...seoConfigs.dashboard} />
       <Header />
       <div className="flex">
         <Sidebar />
