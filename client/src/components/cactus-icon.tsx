@@ -12,84 +12,66 @@ export default function CactusIcon({ className = "", size = 24 }: CactusIconProp
       fill="none"
       className={className}
     >
-      {/* Main barrel cactus body - barrel shaped with flat top */}
-      <path
-        d="M8 20 Q8 9 12 9 Q16 9 16 20 L8 20 Z"
-        fill="currentColor"
-        className="opacity-90"
-      />
-      
-      {/* Flatten the top */}
-      <ellipse
+      {/* Main circular barrel cactus body - top-down view */}
+      <circle
         cx="12"
-        cy="9"
-        rx="4"
-        ry="1"
+        cy="12"
+        r="9"
         fill="currentColor"
         className="opacity-90"
       />
       
-      {/* Vertical ribs - characteristic of barrel cacti */}
-      <path
-        d="M10 9 Q10 14.5 10 20"
-        stroke="currentColor"
-        strokeWidth="0.8"
-        fill="none"
-        className="opacity-40"
-      />
-      <path
-        d="M12 9 Q12 14.5 12 20"
-        stroke="currentColor"
-        strokeWidth="0.8"
-        fill="none"
-        className="opacity-40"
-      />
-      <path
-        d="M14 9 Q14 14.5 14 20"
-        stroke="currentColor"
-        strokeWidth="0.8"
-        fill="none"
-        className="opacity-40"
-      />
+      {/* Radiating ridges from center - like the reference image */}
+      <g className="opacity-40">
+        {/* Vertical and horizontal main ridges */}
+        <line x1="12" y1="3" x2="12" y2="21" stroke="currentColor" strokeWidth="0.8" />
+        <line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" strokeWidth="0.8" />
+        
+        {/* Diagonal ridges */}
+        <line x1="5.5" y1="5.5" x2="18.5" y2="18.5" stroke="currentColor" strokeWidth="0.8" />
+        <line x1="18.5" y1="5.5" x2="5.5" y2="18.5" stroke="currentColor" strokeWidth="0.8" />
+        
+        {/* Additional ridges for more detailed look */}
+        <line x1="7" y1="3.5" x2="17" y2="20.5" stroke="currentColor" strokeWidth="0.6" />
+        <line x1="17" y1="3.5" x2="7" y2="20.5" stroke="currentColor" strokeWidth="0.6" />
+        <line x1="3.5" y1="7" x2="20.5" y2="17" stroke="currentColor" strokeWidth="0.6" />
+        <line x1="3.5" y1="17" x2="20.5" y2="7" stroke="currentColor" strokeWidth="0.6" />
+      </g>
       
-      {/* Prominent spines along the ribs */}
-      {/* Left rib spines */}
-      <line x1="9.5" y1="11" x2="10.5" y2="11" stroke="currentColor" strokeWidth="0.5" className="opacity-80" />
-      <line x1="9.5" y1="13" x2="10.5" y2="13" stroke="currentColor" strokeWidth="0.5" className="opacity-80" />
-      <line x1="9.5" y1="15" x2="10.5" y2="15" stroke="currentColor" strokeWidth="0.5" className="opacity-80" />
-      <line x1="9.5" y1="17" x2="10.5" y2="17" stroke="currentColor" strokeWidth="0.5" className="opacity-80" />
+      {/* Spines along the ridges - radiating outward */}
+      <g className="opacity-70">
+        {/* Top spines */}
+        <line x1="11.5" y1="4" x2="12.5" y2="5" stroke="currentColor" strokeWidth="0.6" />
+        <line x1="12" y1="3.5" x2="12" y2="4.5" stroke="currentColor" strokeWidth="0.6" />
+        
+        {/* Right spines */}
+        <line x1="19" y1="11.5" x2="20" y2="12.5" stroke="currentColor" strokeWidth="0.6" />
+        <line x1="19.5" y1="12" x2="20.5" y2="12" stroke="currentColor" strokeWidth="0.6" />
+        
+        {/* Bottom spines */}
+        <line x1="11.5" y1="19" x2="12.5" y2="20" stroke="currentColor" strokeWidth="0.6" />
+        <line x1="12" y1="19.5" x2="12" y2="20.5" stroke="currentColor" strokeWidth="0.6" />
+        
+        {/* Left spines */}
+        <line x1="4" y1="11.5" x2="5" y2="12.5" stroke="currentColor" strokeWidth="0.6" />
+        <line x1="3.5" y1="12" x2="4.5" y2="12" stroke="currentColor" strokeWidth="0.6" />
+        
+        {/* Diagonal spines */}
+        <line x1="6.5" y1="6.5" x2="7.5" y2="7.5" stroke="currentColor" strokeWidth="0.5" />
+        <line x1="17.5" y1="6.5" x2="16.5" y2="7.5" stroke="currentColor" strokeWidth="0.5" />
+        <line x1="17.5" y1="17.5" x2="16.5" y2="16.5" stroke="currentColor" strokeWidth="0.5" />
+        <line x1="6.5" y1="17.5" x2="7.5" y2="16.5" stroke="currentColor" strokeWidth="0.5" />
+      </g>
       
-      {/* Center rib spines */}
-      <line x1="11.5" y1="10" x2="12.5" y2="10" stroke="currentColor" strokeWidth="0.5" className="opacity-80" />
-      <line x1="11.5" y1="12" x2="12.5" y2="12" stroke="currentColor" strokeWidth="0.5" className="opacity-80" />
-      <line x1="11.5" y1="14" x2="12.5" y2="14" stroke="currentColor" strokeWidth="0.5" className="opacity-80" />
-      <line x1="11.5" y1="16" x2="12.5" y2="16" stroke="currentColor" strokeWidth="0.5" className="opacity-80" />
-      <line x1="11.5" y1="18" x2="12.5" y2="18" stroke="currentColor" strokeWidth="0.5" className="opacity-80" />
+      {/* Central flower cluster - like in the reference */}
+      <circle cx="12" cy="12" r="1.5" fill="#ff6b9d" className="opacity-80" />
+      <circle cx="12" cy="12" r="0.8" fill="#ffeb3b" className="opacity-90" />
       
-      {/* Right rib spines */}
-      <line x1="13.5" y1="11" x2="14.5" y2="11" stroke="currentColor" strokeWidth="0.5" className="opacity-80" />
-      <line x1="13.5" y1="13" x2="14.5" y2="13" stroke="currentColor" strokeWidth="0.5" className="opacity-80" />
-      <line x1="13.5" y1="15" x2="14.5" y2="15" stroke="currentColor" strokeWidth="0.5" className="opacity-80" />
-      <line x1="13.5" y1="17" x2="14.5" y2="17" stroke="currentColor" strokeWidth="0.5" className="opacity-80" />
-      
-      {/* Flower crown on top - typical of barrel cacti */}
-      <circle cx="11" cy="8" r="0.8" fill="#ff6b9d" className="opacity-80" />
-      <circle cx="12" cy="7.5" r="0.8" fill="#ff6b9d" className="opacity-80" />
-      <circle cx="13" cy="8" r="0.8" fill="#ff6b9d" className="opacity-80" />
-      <circle cx="11" cy="8" r="0.4" fill="#ffeb3b" className="opacity-90" />
-      <circle cx="12" cy="7.5" r="0.4" fill="#ffeb3b" className="opacity-90" />
-      <circle cx="13" cy="8" r="0.4" fill="#ffeb3b" className="opacity-90" />
-      
-      {/* Ground/pot indication */}
-      <rect
-        x="6"
-        y="20"
-        width="12"
-        height="2"
-        rx="1"
-        fill="currentColor"
-        className="opacity-30"
-      />
+      {/* Small flower buds around center */}
+      <circle cx="10.5" cy="10.5" r="0.4" fill="#ff6b9d" className="opacity-60" />
+      <circle cx="13.5" cy="10.5" r="0.4" fill="#ff6b9d" className="opacity-60" />
+      <circle cx="13.5" cy="13.5" r="0.4" fill="#ff6b9d" className="opacity-60" />
+      <circle cx="10.5" cy="13.5" r="0.4" fill="#ff6b9d" className="opacity-60" />
     </svg>
   );
 }
