@@ -245,7 +245,7 @@ export default function Header() {
                       <div className="w-6 h-6 bg-cactus-green rounded-full flex items-center justify-center">
                         <CactusIcon className="text-white" size={16} />
                       </div>
-                      <span>CactiTracker</span>
+                      <span>Cactilog</span>
                     </SheetTitle>
                   </SheetHeader>
                   

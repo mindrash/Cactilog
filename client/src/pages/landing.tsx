@@ -65,7 +65,7 @@ export default function Landing() {
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
             Explore the amazing plant collections shared by our community. 
-            Join CactiTracker to share your own plants and track their growth.
+            Join Cactilog to share your own plants and track their growth.
           </p>
         </div>
 

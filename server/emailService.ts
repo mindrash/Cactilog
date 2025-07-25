@@ -91,13 +91,13 @@ export class EmailService {
     }
 
     try {
-      const emailSubject = `CactiTracker: Your photo report has been resolved`;
+      const emailSubject = `Cactilog: Your photo report has been resolved`;
       
       const emailHtml = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #2d5016;">Photo Report Update</h2>
           
-          <p>Thank you for helping improve CactiTracker by reporting an image issue.</p>
+          <p>Thank you for helping improve Cactilog by reporting an image issue.</p>
 
           <div style="background: #f8fdf5; padding: 20px; border-radius: 8px; margin: 20px 0;">
             <h3 style="color: #2d5016; margin-top: 0;">Report Resolution</h3>
@@ -111,7 +111,7 @@ export class EmailService {
           <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 30px 0;" />
           
           <p style="color: #666; font-size: 14px;">
-            This is an automated notification from CactiTracker.
+            This is an automated notification from Cactilog.
           </p>
         </div>
       `;
