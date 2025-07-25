@@ -10,6 +10,8 @@ import Dashboard from "@/pages/dashboard";
 import Collection from "@/pages/collection";
 import GrowthTracking from "@/pages/growth-tracking";
 import Photos from "@/pages/photos";
+import Users from "@/pages/users";
+import UserProfile from "@/pages/user-profile";
 import Import from "@/pages/import";
 import Settings from "@/pages/settings";
 import NotFound from "@/pages/not-found";
@@ -43,6 +45,8 @@ function Router() {
           <Route path="/collection" component={Collection} />
           <Route path="/growth" component={GrowthTracking} />
           <Route path="/photos" component={Photos} />
+          <Route path="/users" component={Users} />
+          <Route path="/users/:userId" component={UserProfile} />
           <Route path="/import" component={Import} />
           <Route path="/settings" component={Settings} />
         </>

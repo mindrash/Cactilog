@@ -20,6 +20,7 @@ const navigationItems = [
   { href: "/collection", label: "Collection" },
   { href: "/growth-tracking", label: "Growth" },
   { href: "/photos", label: "Photos" },
+  { href: "/users", label: "Users" },
   { href: "/settings", label: "Settings" },
 ];
 
