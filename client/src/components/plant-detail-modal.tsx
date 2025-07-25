@@ -123,7 +123,7 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                   <p className="text-sm text-gray-600">Type</p>
                   <Badge 
                     variant={plant.type === 'cactus' ? 'default' : 'secondary'}
-                    className={plant.type === 'cactus' ? 'bg-forest/10 text-forest' : 'bg-sage/10 text-sage'}
+                    className={plant.type === 'cactus' ? 'bg-cactus-green/10 text-cactus-green' : 'bg-desert-sage/10 text-desert-sage'}
                   >
                     {plant.type}
                   </Badge>
@@ -161,7 +161,7 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg font-semibold text-gray-900">Growth Tracking</h3>
             <Button 
-              className="bg-forest hover:bg-forest/90"
+              className="bg-cactus-green hover:bg-succulent"
               onClick={() => setShowAddGrowthModal(true)}
             >
               <Plus className="w-4 h-4 mr-2" />
@@ -198,7 +198,7 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                         {record.observations || "N/A"}
                       </td>
                       <td className="px-4 py-3 text-sm">
-                        <Button variant="ghost" size="sm" className="text-forest hover:text-sage mr-2">
+                        <Button variant="ghost" size="sm" className="text-cactus-green hover:text-succulent mr-2">
                           <Edit className="w-4 h-4" />
                         </Button>
                         <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700">

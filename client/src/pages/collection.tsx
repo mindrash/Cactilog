@@ -75,7 +75,7 @@ export default function Collection() {
   });
 
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen">
       <Header />
       <div className="flex">
         <Sidebar />
@@ -86,7 +86,7 @@ export default function Collection() {
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">My Collection</h2>
                 <p className="text-gray-600">Browse and manage your plants</p>
               </div>
-              <Button onClick={() => setShowAddModal(true)} className="bg-forest hover:bg-forest/90">
+              <Button onClick={() => setShowAddModal(true)} className="bg-cactus-green hover:bg-succulent">
                 <Plus className="w-4 h-4 mr-2" />
                 Add Plant
               </Button>
@@ -141,7 +141,7 @@ export default function Collection() {
                       variant={viewMode === "grid" ? "default" : "ghost"}
                       size="sm"
                       onClick={() => setViewMode("grid")}
-                      className={`rounded-none px-3 ${viewMode === "grid" ? "bg-forest hover:bg-forest/90" : ""}`}
+                      className={`rounded-none px-3 ${viewMode === "grid" ? "bg-cactus-green hover:bg-succulent" : ""}`}
                     >
                       <Grid className="w-4 h-4" />
                     </Button>
@@ -149,7 +149,7 @@ export default function Collection() {
                       variant={viewMode === "list" ? "default" : "ghost"}
                       size="sm"
                       onClick={() => setViewMode("list")}
-                      className={`rounded-none px-3 ${viewMode === "list" ? "bg-forest hover:bg-forest/90" : ""}`}
+                      className={`rounded-none px-3 ${viewMode === "list" ? "bg-cactus-green hover:bg-succulent" : ""}`}
                     >
                       <List className="w-4 h-4" />
                     </Button>

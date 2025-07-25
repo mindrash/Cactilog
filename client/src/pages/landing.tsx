@@ -63,11 +63,11 @@ const oauthProviders: OAuthProvider[] = [
 
 export default function Landing() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 to-sage/10 flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-lime-wash/20 to-pine-mist/30 flex items-center justify-center">
       <div className="max-w-md w-full mx-4">
         <div className="bg-white rounded-xl shadow-2xl p-8">
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-forest rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 bg-cactus-green rounded-full flex items-center justify-center mx-auto mb-4">
               <Sprout className="text-white text-2xl" size={32} />
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome to CactiTracker</h2>

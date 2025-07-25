@@ -24,14 +24,17 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { z } from "zod";
 
 const insertGrowthRecordSchema = createInsertSchema(growthRecords).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
+}).extend({
+  weightOz: z.number().optional().nullable(),
 });
 
-type InsertGrowthRecord = typeof insertGrowthRecordSchema._type;
+type InsertGrowthRecord = z.infer<typeof insertGrowthRecordSchema>;
 
 interface AddGrowthModalProps {
   plantId: number;
@@ -198,7 +201,7 @@ export default function AddGrowthModal({ plantId, open, onOpenChange }: AddGrowt
               <Button
                 type="submit"
                 disabled={createGrowthMutation.isPending}
-                className="bg-forest hover:bg-forest/90"
+                className="bg-cactus-green hover:bg-succulent"
               >
                 {createGrowthMutation.isPending ? "Adding..." : "Add Measurement"}
               </Button>

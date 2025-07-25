@@ -51,6 +51,14 @@ export default {
           "4": "var(--chart-4)",
           "5": "var(--chart-5)",
         },
+        // Cactus theme colors
+        'cactus-green': 'var(--cactus-green)',
+        'succulent': 'var(--succulent)',
+        'desert-sage': 'var(--desert-sage)',
+        'jade': 'var(--jade)',
+        'lime-wash': 'var(--lime-wash)',
+        'moss': 'var(--moss)',
+        'pine-mist': 'var(--pine-mist)',
         sidebar: {
           DEFAULT: "var(--sidebar-background)",
           foreground: "var(--sidebar-foreground)",

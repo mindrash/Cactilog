@@ -55,7 +55,7 @@ export default function Dashboard() {
   const recentPlants = plants.slice(0, 4);
 
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen">
       <Header />
       <div className="flex">
         <Sidebar />
@@ -66,7 +66,7 @@ export default function Dashboard() {
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">Dashboard</h2>
                 <p className="text-gray-600">Track and manage your plant collection</p>
               </div>
-              <Button onClick={() => setShowAddModal(true)} className="bg-forest hover:bg-forest/90">
+              <Button onClick={() => setShowAddModal(true)} className="bg-cactus-green hover:bg-succulent">
                 <Plus className="w-4 h-4 mr-2" />
                 Add Plant
               </Button>
@@ -78,26 +78,26 @@ export default function Dashboard() {
             <StatsCard
               title="Total Plants"
               value={stats?.totalPlants || 0}
-              icon={<Sprout className="text-forest" />}
-              bgColor="bg-forest/10"
+              icon={<Sprout className="text-cactus-green" />}
+              bgColor="bg-cactus-green/10"
             />
             <StatsCard
               title="Unique Genera"
               value={stats?.uniqueGenera || 0}
-              icon={<Table className="text-sage" />}
-              bgColor="bg-sage/10"
+              icon={<Table className="text-succulent" />}
+              bgColor="bg-succulent/10"
             />
             <StatsCard
               title="Recent Additions"
               value={stats?.recentAdditions || 0}
-              icon={<Plus className="text-growth" />}
-              bgColor="bg-growth/10"
+              icon={<Plus className="text-desert-sage" />}
+              bgColor="bg-desert-sage/10"
             />
             <StatsCard
               title="Growth Records"
               value={stats?.growthRecords || 0}
-              icon={<TrendingUp className="text-soil" />}
-              bgColor="bg-soil/10"
+              icon={<TrendingUp className="text-jade" />}
+              bgColor="bg-jade/10"
             />
           </div>
 
@@ -105,7 +105,7 @@ export default function Dashboard() {
           <div className="mb-8">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-semibold text-gray-900">Recent Plants</h3>
-              <a href="/collection" className="text-forest hover:text-sage font-medium">View all →</a>
+              <a href="/collection" className="text-cactus-green hover:text-succulent font-medium">View all →</a>
             </div>
 
             {recentPlants.length > 0 ? (
@@ -119,7 +119,7 @@ export default function Dashboard() {
                 <Sprout className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">No plants yet</h3>
                 <p className="text-gray-600 mb-4">Start building your collection by adding your first plant.</p>
-                <Button onClick={() => setShowAddModal(true)} className="bg-forest hover:bg-forest/90">
+                <Button onClick={() => setShowAddModal(true)} className="bg-cactus-green hover:bg-succulent">
                   <Plus className="w-4 h-4 mr-2" />
                   Add Your First Plant
                 </Button>
