@@ -16,6 +16,7 @@ import Knowledge from "@/pages/knowledge";
 import KnowledgeSearch from "@/pages/knowledge-search";
 import KnowledgeGenus from "@/pages/knowledge-genus";
 import KnowledgeSpecies from "@/pages/knowledge-species";
+import KnowledgeVariant from "@/pages/knowledge-variant";
 import Import from "@/pages/import";
 import Settings from "@/pages/settings";
 import NotFound from "@/pages/not-found";
@@ -55,6 +56,7 @@ function Router() {
           <Route path="/knowledge/search" component={KnowledgeSearch} />
           <Route path="/knowledge/genus/:genusName" component={KnowledgeGenus} />
           <Route path="/knowledge/species/:genusName/:speciesName" component={KnowledgeSpecies} />
+          <Route path="/knowledge/variant/:genusName/:speciesName/:variantName" component={KnowledgeVariant} />
           <Route path="/import" component={Import} />
           <Route path="/settings" component={Settings} />
         </>

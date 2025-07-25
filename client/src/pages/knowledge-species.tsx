@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cactusGenera } from "@shared/cactus-data";
+import { cactusGenera, type CactusSpecies } from "@shared/cactus-data";
 
 export default function KnowledgeSpecies() {
   const [, params] = useRoute("/knowledge/species/:genusName/:speciesName");
@@ -62,7 +62,20 @@ export default function KnowledgeSpecies() {
     );
   }
 
-  const speciesExists = genus.species.includes(speciesName.toLowerCase());
+  // Find species (could be string or CactusSpecies object)
+  const foundSpecies = genus.species.find((s: any) => {
+    if (typeof s === 'string') {
+      return s.toLowerCase() === speciesName.toLowerCase();
+    }
+    return s.name.toLowerCase() === speciesName.toLowerCase();
+  });
+
+  const speciesExists = !!foundSpecies;
+  
+  // Convert to CactusSpecies object for consistent handling
+  const species: CactusSpecies = typeof foundSpecies === 'string' 
+    ? { name: foundSpecies }
+    : foundSpecies || { name: speciesName };
   
   if (!speciesExists) {
     return (
@@ -210,8 +223,9 @@ export default function KnowledgeSpecies() {
           {/* Main Content */}
           <div className="lg:col-span-2">
             <Tabs defaultValue="overview" className="space-y-6">
-              <TabsList className="grid w-full grid-cols-4">
+              <TabsList className="grid w-full grid-cols-5">
                 <TabsTrigger value="overview">Overview</TabsTrigger>
+                <TabsTrigger value="variants">Variants</TabsTrigger>
                 <TabsTrigger value="cultivation">Cultivation</TabsTrigger>
                 <TabsTrigger value="characteristics">Features</TabsTrigger>
                 <TabsTrigger value="collection">In Collections</TabsTrigger>
@@ -248,6 +262,122 @@ export default function KnowledgeSpecies() {
                         </div>
                       </div>
                     </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              {/* Taxonomic Variants Tab */}
+              <TabsContent value="variants">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <Info className="w-5 h-5 mr-2" />
+                      Taxonomic Variants of {genus.name} {species.name}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {species.variants && species.variants.length > 0 ? (
+                      <div className="space-y-6">
+                        <p className="text-gray-700 mb-6">
+                          This species has {species.variants.length} documented taxonomic variants including subspecies, varieties, forms, cultivars, clones, and mutations.
+                        </p>
+                        
+                        <div className="grid gap-4">
+                          {species.variants.map((variant) => {
+                            const getTypeColor = (type: string) => {
+                              switch (type) {
+                                case 'subspecies': return 'bg-blue-100 text-blue-800 border-blue-200';
+                                case 'variety': return 'bg-green-100 text-green-800 border-green-200';
+                                case 'form': return 'bg-purple-100 text-purple-800 border-purple-200';
+                                case 'cultivar': return 'bg-orange-100 text-orange-800 border-orange-200';
+                                case 'clone': return 'bg-pink-100 text-pink-800 border-pink-200';
+                                case 'mutation': return 'bg-red-100 text-red-800 border-red-200';
+                                default: return 'bg-gray-100 text-gray-800 border-gray-200';
+                              }
+                            };
+
+                            const formatVariantName = () => {
+                              switch (variant.type) {
+                                case 'subspecies':
+                                  return `${genus.name} ${species.name} subsp. ${variant.name}`;
+                                case 'variety':
+                                  return `${genus.name} ${species.name} var. ${variant.name}`;
+                                case 'form':
+                                  return `${genus.name} ${species.name} f. ${variant.name}`;
+                                case 'cultivar':
+                                  return `${genus.name} ${species.name} '${variant.name}'`;
+                                case 'clone':
+                                  return `${genus.name} ${species.name} "${variant.name}"`;
+                                case 'mutation':
+                                  return `${genus.name} ${species.name} ${variant.name}`;
+                                default:
+                                  return `${genus.name} ${species.name} ${variant.name}`;
+                              }
+                            };
+
+                            return (
+                              <Link 
+                                key={variant.name}
+                                href={`/knowledge/variant/${genusName}/${species.name}/${variant.name}`}  
+                              >
+                                <div className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors cursor-pointer">
+                                  <div className="flex items-start justify-between mb-3">
+                                    <div className="flex-1">
+                                      <h4 className="font-medium text-cactus-green italic text-lg mb-1">
+                                        {formatVariantName()}
+                                      </h4>
+                                      <Badge className={`${getTypeColor(variant.type)} text-xs font-normal`}>
+                                        {variant.type.charAt(0).toUpperCase() + variant.type.slice(1)}
+                                      </Badge>
+                                    </div>
+                                  </div>
+                                  
+                                  {variant.description && (
+                                    <p className="text-gray-700 text-sm mb-3 leading-relaxed">
+                                      {variant.description}
+                                    </p>
+                                  )}
+                                  
+                                  <div className="flex items-center text-xs text-gray-500 space-x-4">
+                                    {variant.discoverer && (
+                                      <span>Discovered by {variant.discoverer}</span>
+                                    )}
+                                    {variant.year && (
+                                      <span>{variant.year}</span>
+                                    )}
+                                  </div>
+                                </div>
+                              </Link>
+                            );
+                          })}
+                        </div>
+                        
+                        <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg">
+                          <h4 className="font-semibold text-blue-900 mb-2">Understanding Taxonomic Categories</h4>
+                          <div className="text-sm text-blue-800 space-y-1">
+                            <p><strong>Subspecies:</strong> Geographically distinct populations within a species</p>
+                            <p><strong>Variety:</strong> Naturally occurring variants with distinct characteristics</p>
+                            <p><strong>Form:</strong> Minor variants, typically differing in single traits</p>
+                            <p><strong>Cultivar:</strong> Cultivated varieties selected for specific traits</p>
+                            <p><strong>Clone:</strong> Genetically identical plants propagated from one individual</p>
+                            <p><strong>Mutation:</strong> Variants arising from genetic changes, often with unusual growth</p>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-center py-8">
+                        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                          <Info className="w-8 h-8 text-gray-400" />
+                        </div>
+                        <h3 className="text-lg font-medium text-gray-900 mb-2">No Variants Documented</h3>
+                        <p className="text-gray-600 mb-4">
+                          Currently, no subspecies, varieties, forms, cultivars, clones, or mutations have been documented for this species in our database.
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          Many species have undocumented variants. If you know of varieties or cultivars, they can be added to your collection manually.
+                        </p>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -396,20 +526,26 @@ export default function KnowledgeSpecies() {
               <CardContent>
                 <div className="space-y-2">
                   {genus.species
-                    .filter((s: string) => s !== speciesName.toLowerCase())
+                    .filter((s: any) => {
+                      const name = typeof s === 'string' ? s : s.name;
+                      return name.toLowerCase() !== speciesName.toLowerCase();
+                    })
                     .slice(0, 5)
-                    .map((relatedSpecies: string) => (
-                      <Link 
-                        key={relatedSpecies} 
-                        href={`/knowledge/species/${genusName}/${relatedSpecies}`}
-                      >
-                        <div className="p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
-                          <p className="text-sm italic text-cactus-green">
-                            {genus.name} {relatedSpecies}
-                          </p>
-                        </div>
-                      </Link>
-                    ))}
+                    .map((relatedSpecies: any) => {
+                      const name = typeof relatedSpecies === 'string' ? relatedSpecies : relatedSpecies.name;
+                      return (
+                        <Link 
+                          key={name} 
+                          href={`/knowledge/species/${genusName}/${name}`}
+                        >
+                          <div className="p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                            <p className="text-sm italic text-cactus-green">
+                              {genus.name} {name}
+                            </p>
+                          </div>
+                        </Link>
+                      );
+                    })}
                   {genus.species.length > 6 && (
                     <Link href={`/knowledge/genus/${genusName}`}>
                       <div className="p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer text-center">
