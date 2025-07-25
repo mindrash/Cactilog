@@ -8,8 +8,9 @@ import Sidebar from "@/components/sidebar";
 import PlantCard from "@/components/plant-card";
 import AddPlantModal from "@/components/add-plant-modal";
 import PlantDetailModal from "@/components/plant-detail-modal";
+import ExportCollectionModal from "@/components/export-collection-modal";
 import { Plant } from "@shared/schema";
-import { Search, Filter, Plus, Grid, List } from "lucide-react";
+import { Search, Filter, Plus, Grid, List, Download } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -30,6 +31,7 @@ export default function Collection() {
   const [typeFilter, setTypeFilter] = useState("");
   const [genusFilter, setGenusFilter] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showExportModal, setShowExportModal] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedPlant, setSelectedPlant] = useState<Plant | null>(null);
 
@@ -133,6 +135,16 @@ export default function Collection() {
                   <Button variant="outline" className="px-4">
                     <Filter className="w-4 h-4 mr-2" />
                     More Filters
+                  </Button>
+                  
+                  <Button 
+                    variant="outline" 
+                    className="px-4"
+                    onClick={() => setShowExportModal(true)}
+                    disabled={filteredPlants.length === 0}
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    Export
                   </Button>
                   
                   {/* View Toggle */}
@@ -262,6 +274,11 @@ export default function Collection() {
           onOpenChange={(open) => !open && setSelectedPlant(null)}
         />
       )}
+      
+      <ExportCollectionModal 
+        isOpen={showExportModal}
+        onClose={() => setShowExportModal(false)}
+      />
     </div>
   );
 }
