@@ -47,6 +47,17 @@ The application uses a monorepo structure with shared schemas:
 
 ### Recent Changes
 
+#### July 25, 2025 - Knowledge Base Care Guides Implementation
+- **Implemented comprehensive Care Guides system** with detailed cultivation information for specific cactus and succulent species
+- Created species-specific care guides for Trichocereus pachanoi, T. peruvianus, and Mammillaria hahniana with authentic cultivation data
+- **Built fallback general cactus care guide** providing comprehensive care instructions when species-specific data unavailable
+- Designed tabbed interface organizing care information into: Basics (lighting, watering, temperature, soil), Advanced (propagation, detailed requirements), Problems (common issues and solutions), and Notes (species-specific tips)
+- **Added comprehensive cultivation coverage** including lighting requirements, watering schedules, temperature ranges, soil composition, fertilizing guidelines, and propagation methods
+- Integrated filtering and search functionality to find care guides by genus or species
+- **Enhanced Knowledge Base navigation** - updated main page and header dropdown to include functional Care Guides link
+- Added clear indicators when displaying general vs species-specific care information
+- **Comprehensive care data structure** supporting seasonal variations, dormancy requirements, and species-specific cultivation notes
+
 #### July 25, 2025 - Community Photo Gallery Implementation
 - **Implemented comprehensive photo gallery feature** replacing "coming soon" placeholder with fully functional interface
 - Created backend API endpoint `/api/photos/public` to fetch all public plant photos ordered by latest activity
