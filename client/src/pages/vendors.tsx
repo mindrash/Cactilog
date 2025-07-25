@@ -1,12 +1,15 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/useAuth";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 import { Header } from "@/components/header";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ExternalLink, Search, Filter, Store, MapPin, Star, DollarSign } from "lucide-react";
+import { ExternalLink, Search, Filter, Store, MapPin, Star, DollarSign, Plus, Settings, Database } from "lucide-react";
 
 interface Vendor {
   id: number;
@@ -24,12 +27,39 @@ interface Vendor {
 
 export default function Vendors() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedSpecialty, setSelectedSpecialty] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedReputation, setSelectedReputation] = useState("");
+  const [selectedSpecialty, setSelectedSpecialty] = useState("all");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedReputation, setSelectedReputation] = useState("all");
+  
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const { data: vendors, isLoading } = useQuery<Vendor[]>({
     queryKey: ["/api/vendors"],
+  });
+
+  const { data: adminStatus } = useQuery({
+    queryKey: ["/api/admin/status"],
+    enabled: !!user,
+  });
+
+  const seedVendorsMutation = useMutation({
+    mutationFn: () => apiRequest("/api/vendors/seed", { method: "POST" }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/vendors"] });
+      toast({
+        title: "Success",
+        description: "Vendor database seeded successfully",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
   });
 
   if (isLoading) {
@@ -48,9 +78,9 @@ export default function Vendors() {
                          vendor.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          vendor.location.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesSpecialty = !selectedSpecialty || vendor.specialties.includes(selectedSpecialty);
-    const matchesCategory = !selectedCategory || vendor.categories.includes(selectedCategory);
-    const matchesReputation = !selectedReputation || vendor.reputation === selectedReputation;
+    const matchesSpecialty = selectedSpecialty === "all" || !selectedSpecialty || vendor.specialties.includes(selectedSpecialty);
+    const matchesCategory = selectedCategory === "all" || !selectedCategory || vendor.categories.includes(selectedCategory);
+    const matchesReputation = selectedReputation === "all" || !selectedReputation || vendor.reputation === selectedReputation;
 
     return matchesSearch && matchesSpecialty && matchesCategory && matchesReputation;
   }) || [];
@@ -95,10 +125,26 @@ export default function Vendors() {
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="page-title-xl mb-4">
-            <Store className="w-8 h-8 inline-block mr-3 text-cactus-green" />
-            Trusted Vendors
-          </h1>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex-1"></div>
+            <h1 className="page-title-xl">
+              <Store className="w-8 h-8 inline-block mr-3 text-cactus-green" />
+              Trusted Vendors
+            </h1>
+            <div className="flex-1 flex justify-end">
+              {adminStatus?.isAdmin && (
+                <Button
+                  onClick={() => seedVendorsMutation.mutate()}
+                  disabled={seedVendorsMutation.isPending}
+                  variant="outline"
+                  size="sm"
+                >
+                  <Database className="w-4 h-4 mr-2" />
+                  {seedVendorsMutation.isPending ? "Seeding..." : "Seed Database"}
+                </Button>
+              )}
+            </div>
+          </div>
           <p className="text-gray-600 max-w-2xl mx-auto">
             Discover reputable suppliers for cacti, succulents, seeds, pots, and cultivation gear. 
             All vendors have been carefully curated for quality and reliability.
@@ -125,7 +171,7 @@ export default function Vendors() {
                 <SelectValue placeholder="Specialty" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Specialties</SelectItem>
+                <SelectItem value="all">All Specialties</SelectItem>
                 <SelectItem value="seeds">Seeds</SelectItem>
                 <SelectItem value="plants">Plants</SelectItem>
                 <SelectItem value="pots">Pots</SelectItem>
@@ -141,7 +187,7 @@ export default function Vendors() {
                 <SelectValue placeholder="Category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Categories</SelectItem>
+                <SelectItem value="all">All Categories</SelectItem>
                 <SelectItem value="cacti">Cacti</SelectItem>
                 <SelectItem value="succulents">Succulents</SelectItem>
                 <SelectItem value="equipment">Equipment</SelectItem>
@@ -153,7 +199,7 @@ export default function Vendors() {
                 <SelectValue placeholder="Reputation" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Types</SelectItem>
+                <SelectItem value="all">All Types</SelectItem>
                 <SelectItem value="premium">Premium</SelectItem>
                 <SelectItem value="reliable">Reliable</SelectItem>
                 <SelectItem value="specialty">Specialty</SelectItem>
@@ -162,7 +208,7 @@ export default function Vendors() {
             </Select>
           </div>
 
-          {(searchTerm || selectedSpecialty || selectedCategory || selectedReputation) && (
+          {(searchTerm || (selectedSpecialty !== "all") || (selectedCategory !== "all") || (selectedReputation !== "all")) && (
             <div className="mt-4 flex items-center gap-2">
               <Filter className="w-4 h-4 text-gray-400" />
               <span className="text-sm text-gray-600">
@@ -173,9 +219,9 @@ export default function Vendors() {
                 size="sm"
                 onClick={() => {
                   setSearchTerm("");
-                  setSelectedSpecialty("");
-                  setSelectedCategory("");
-                  setSelectedReputation("");
+                  setSelectedSpecialty("all");
+                  setSelectedCategory("all");
+                  setSelectedReputation("all");
                 }}
               >
                 Clear Filters

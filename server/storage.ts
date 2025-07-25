@@ -93,9 +93,9 @@ export interface IStorage {
   updatePhotoReport(id: string, updates: Partial<InsertPhotoReport>): Promise<PhotoReport | undefined>;
   
   // Admin operations
-  getAdminUser(userId: string): Promise<AdminUser | undefined>;
-  getAdminUserByEmail(email: string): Promise<AdminUser | undefined>;
-  createAdminUser(admin: InsertAdminUser): Promise<AdminUser>;
+  getAdminUser(userId: string): Promise<any | undefined>;
+  getAdminUserByEmail(email: string): Promise<any | undefined>;
+  createAdminUser(admin: any): Promise<any>;
   isUserAdmin(userId: string): Promise<boolean>;
   
   // User settings operations
@@ -112,7 +112,7 @@ export interface IStorage {
   // Vendor operations
   getAllVendors(): Promise<Vendor[]>;
   getVendorsBySpecialty(specialty: string): Promise<Vendor[]>;
-  seedVendors(vendorData: any[]): Promise<number>;
+  seedVendors(): Promise<number>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -686,17 +686,17 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Admin operations
-  async getAdminUser(userId: string): Promise<AdminUser | undefined> {
+  async getAdminUser(userId: string): Promise<any | undefined> {
     const [admin] = await db.select().from(adminUsers).where(eq(adminUsers.userId, userId));
     return admin;
   }
 
-  async getAdminUserByEmail(email: string): Promise<AdminUser | undefined> {
+  async getAdminUserByEmail(email: string): Promise<any | undefined> {
     const [admin] = await db.select().from(adminUsers).where(eq(adminUsers.email, email));
     return admin;
   }
 
-  async createAdminUser(admin: InsertAdminUser): Promise<AdminUser> {
+  async createAdminUser(admin: any): Promise<any> {
     const [newAdmin] = await db.insert(adminUsers).values(admin).returning();
     return newAdmin;
   }
@@ -731,7 +731,9 @@ export class DatabaseStorage implements IStorage {
     return vendorsList;
   }
 
-  async seedVendors(vendorData: any[]): Promise<number> {
+  async seedVendors(): Promise<number> {
+    const { vendorData } = await import("@shared/vendor-data");
+    
     // Check if vendors already exist
     const existingVendors = await db.select().from(vendors);
     if (existingVendors.length > 0) {
