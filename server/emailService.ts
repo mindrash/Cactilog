@@ -3,7 +3,7 @@ import { MailService } from '@sendgrid/mail';
 // Email service for sending photo report notifications
 export class EmailService {
   private mailService: MailService;
-  private fromEmail = 'noreply@cactitracker.com';
+  private fromEmail = 'noreply@cactilog.com';
 
   constructor() {
     this.mailService = new MailService();
@@ -30,7 +30,7 @@ export class EmailService {
     }
 
     try {
-      const emailSubject = `CactiTracker Photo Report: ${reportDetails.genus} ${reportDetails.species}`;
+      const emailSubject = `Cactilog Photo Report: ${reportDetails.genus} ${reportDetails.species}`;
       
       const emailHtml = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -50,13 +50,13 @@ export class EmailService {
           </div>
 
           <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin: 20px 0;">
-            <p style="margin: 0;"><strong>Action Required:</strong> Please review this report in the CactiTracker admin panel.</p>
+            <p style="margin: 0;"><strong>Action Required:</strong> Please review this report in the Cactilog admin panel.</p>
           </div>
 
           <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 30px 0;" />
           
           <p style="color: #666; font-size: 14px;">
-            This is an automated notification from CactiTracker.<br>
+            This is an automated notification from Cactilog.<br>
             Report ID: ${reportDetails.reportId}
           </p>
         </div>

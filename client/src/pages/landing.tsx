@@ -42,7 +42,7 @@ export default function Landing() {
               <CactusIcon className="text-white" size={24} />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-900">CactiTracker</h1>
+              <h1 className="text-xl font-bold text-gray-900">Cactilog</h1>
               <p className="text-sm text-gray-600">Community Collection</p>
             </div>
           </div>

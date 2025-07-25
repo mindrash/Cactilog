@@ -2,7 +2,7 @@
 
 ## Overview
 
-CactiTracker is a full-stack web application for managing plant collections, specifically focused on cacti and succulents. The application allows users to track their plants, monitor growth, and manage their botanical collections with a clean, modern interface.
+Cactilog is a full-stack web application for managing plant collections, specifically focused on cacti and succulents. The application allows users to track their plants, monitor growth, and manage their botanical collections with a clean, modern interface.
 
 ## User Preferences
 
@@ -100,7 +100,7 @@ The application uses a monorepo structure with shared schemas:
 - Transformed landing page to display latest public plant collections for unauthenticated users
 - Added comprehensive Header navigation component with desktop and mobile support
 - **Restructured page architecture**:
-  - **Home page (/)**: Shows community feed with ALL public plants from CactiTracker for authenticated users
+  - **Home page (/)**: Shows community feed with ALL public plants from Cactilog for authenticated users
   - **Dashboard page (/dashboard)**: Shows user's personal collection stats and recent plants
   - **Landing page**: Public feed for unauthenticated visitors
 - Updated routing and navigation to include both Home and Dashboard
