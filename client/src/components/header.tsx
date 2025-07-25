@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Sprout, Plus, ChevronDown } from "lucide-react";
+import CactusIcon from "@/components/cactus-icon";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -27,8 +28,8 @@ export default function Header() {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
             <div className="flex-shrink-0 flex items-center">
-              <div className="w-8 h-8 bg-forest rounded-lg flex items-center justify-center mr-3">
-                <Sprout className="text-white" size={20} />
+              <div className="w-8 h-8 bg-cactus-green rounded-lg flex items-center justify-center mr-3">
+                <CactusIcon className="text-white" size={20} />
               </div>
               <h1 className="text-xl font-bold text-gray-900">CactiTracker</h1>
             </div>
@@ -37,7 +38,7 @@ export default function Header() {
           <div className="flex items-center space-x-4">
             <Button 
               onClick={() => setShowAddModal(true)}
-              className="bg-forest hover:bg-forest/90"
+              className="bg-cactus-green hover:bg-succulent"
             >
               <Plus className="w-4 h-4 mr-2" />
               Add Plant
@@ -48,7 +49,7 @@ export default function Header() {
                 <Button variant="ghost" className="flex items-center space-x-3 hover:bg-gray-50">
                   <Avatar className="w-8 h-8">
                     <AvatarImage src={user?.profileImageUrl || ""} alt="User avatar" />
-                    <AvatarFallback className="bg-forest text-white text-sm">
+                    <AvatarFallback className="bg-cactus-green text-white text-sm">
                       {userInitials}
                     </AvatarFallback>
                   </Avatar>
