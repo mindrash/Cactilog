@@ -12,66 +12,79 @@ export default function CactusIcon({ className = "", size = 24 }: CactusIconProp
       fill="none"
       className={className}
     >
-      {/* Main cactus stem */}
-      <rect
-        x="10"
-        y="8"
-        width="4"
-        height="12"
-        rx="2"
+      {/* Main barrel body - wider, more rounded */}
+      <ellipse
+        cx="12"
+        cy="14"
+        rx="5"
+        ry="7"
         fill="currentColor"
         className="opacity-90"
       />
       
-      {/* Left arm */}
-      <rect
-        x="6"
-        y="12"
-        width="5"
-        height="3"
-        rx="1.5"
-        fill="currentColor"
-        className="opacity-80"
+      {/* Vertical ridges/sections */}
+      <path
+        d="M9 8 Q9 14 9 20"
+        stroke="currentColor"
+        strokeWidth="0.5"
+        fill="none"
+        className="opacity-50"
+      />
+      <path
+        d="M12 7 Q12 14 12 21"
+        stroke="currentColor"
+        strokeWidth="0.5"
+        fill="none"
+        className="opacity-50"
+      />
+      <path
+        d="M15 8 Q15 14 15 20"
+        stroke="currentColor"
+        strokeWidth="0.5"
+        fill="none"
+        className="opacity-50"
       />
       
-      {/* Right arm */}
-      <rect
-        x="13"
-        y="10"
-        width="5"
-        height="3"
-        rx="1.5"
-        fill="currentColor"
-        className="opacity-80"
-      />
+      {/* Spines arranged in rows */}
+      {/* Top row */}
+      <circle cx="8.5" cy="9" r="0.4" fill="currentColor" className="opacity-70" />
+      <circle cx="10.5" cy="8.5" r="0.4" fill="currentColor" className="opacity-70" />
+      <circle cx="12" cy="8.2" r="0.4" fill="currentColor" className="opacity-70" />
+      <circle cx="13.5" cy="8.5" r="0.4" fill="currentColor" className="opacity-70" />
+      <circle cx="15.5" cy="9" r="0.4" fill="currentColor" className="opacity-70" />
       
-      {/* Small spikes on main stem */}
-      <circle cx="11" cy="11" r="0.5" fill="currentColor" className="opacity-60" />
-      <circle cx="13" cy="13" r="0.5" fill="currentColor" className="opacity-60" />
-      <circle cx="11" cy="15" r="0.5" fill="currentColor" className="opacity-60" />
-      <circle cx="13" cy="17" r="0.5" fill="currentColor" className="opacity-60" />
+      {/* Middle row */}
+      <circle cx="8" cy="12" r="0.4" fill="currentColor" className="opacity-70" />
+      <circle cx="10" cy="11.5" r="0.4" fill="currentColor" className="opacity-70" />
+      <circle cx="12" cy="11.5" r="0.4" fill="currentColor" className="opacity-70" />
+      <circle cx="14" cy="11.5" r="0.4" fill="currentColor" className="opacity-70" />
+      <circle cx="16" cy="12" r="0.4" fill="currentColor" className="opacity-70" />
       
-      {/* Small spikes on left arm */}
-      <circle cx="7.5" cy="13.5" r="0.3" fill="currentColor" className="opacity-60" />
-      <circle cx="9" cy="13.5" r="0.3" fill="currentColor" className="opacity-60" />
+      {/* Lower middle row */}
+      <circle cx="8.5" cy="15" r="0.4" fill="currentColor" className="opacity-70" />
+      <circle cx="10.5" cy="14.5" r="0.4" fill="currentColor" className="opacity-70" />
+      <circle cx="12" cy="14.5" r="0.4" fill="currentColor" className="opacity-70" />
+      <circle cx="13.5" cy="14.5" r="0.4" fill="currentColor" className="opacity-70" />
+      <circle cx="15.5" cy="15" r="0.4" fill="currentColor" className="opacity-70" />
       
-      {/* Small spikes on right arm */}
-      <circle cx="15" cy="11.5" r="0.3" fill="currentColor" className="opacity-60" />
-      <circle cx="16.5" cy="11.5" r="0.3" fill="currentColor" className="opacity-60" />
+      {/* Bottom row */}
+      <circle cx="9" cy="18" r="0.4" fill="currentColor" className="opacity-70" />
+      <circle cx="11" cy="17.5" r="0.4" fill="currentColor" className="opacity-70" />
+      <circle cx="13" cy="17.5" r="0.4" fill="currentColor" className="opacity-70" />
+      <circle cx="15" cy="18" r="0.4" fill="currentColor" className="opacity-70" />
       
-      {/* Small flower on top */}
-      <circle cx="12" cy="7" r="1.5" fill="#ff6b9d" className="opacity-80" />
-      <circle cx="12" cy="7" r="0.8" fill="#ffeb3b" className="opacity-90" />
+      {/* Small flower on top center */}
+      <circle cx="12" cy="6.5" r="1.2" fill="#ff6b9d" className="opacity-80" />
+      <circle cx="12" cy="6.5" r="0.6" fill="#ffeb3b" className="opacity-90" />
       
       {/* Pot base */}
-      <rect
-        x="8"
-        y="20"
-        width="8"
-        height="2"
-        rx="1"
+      <ellipse
+        cx="12"
+        cy="21.5"
+        rx="6"
+        ry="1.5"
         fill="currentColor"
-        className="opacity-50"
+        className="opacity-40"
       />
     </svg>
   );
