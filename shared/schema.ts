@@ -9,7 +9,9 @@ import {
   decimal,
   date,
   integer,
+  boolean,
 } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { relations } from "drizzle-orm";
@@ -177,6 +179,53 @@ export const insertSeedSchema = createInsertSchema(seeds).omit({
 // Types
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
+
+// Species images table for curated botanical photography
+export const speciesImages = pgTable("species_images", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  genus: varchar("genus").notNull(),
+  species: varchar("species").notNull(),
+  imageUrl: varchar("image_url").notNull(),
+  imageSource: varchar("image_source").notNull(), // 'wikimedia', 'manual', 'historical'
+  sourceAttribution: varchar("source_attribution"), // Required for CC images
+  sourceUrl: varchar("source_url"), // Original source URL
+  imageType: varchar("image_type").notNull().default("photograph"), // 'photograph', 'illustration', 'historical'
+  isPrimary: boolean("is_primary").default(false), // Main image for species
+  uploadedBy: varchar("uploaded_by").references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Photo reports for incorrect/inappropriate images
+export const photoReports = pgTable("photo_reports", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  imageId: varchar("image_id").references(() => speciesImages.id).notNull(),
+  reporterUserId: varchar("reporter_user_id").references(() => users.id),
+  reporterEmail: varchar("reporter_email"), // For anonymous reports
+  reportType: varchar("report_type").notNull(), // 'incorrect_species', 'inappropriate', 'copyright', 'poor_quality'
+  description: varchar("description", { length: 1000 }),
+  status: varchar("status").notNull().default("pending"), // 'pending', 'reviewed', 'resolved', 'dismissed'
+  adminNotes: varchar("admin_notes", { length: 1000 }),
+  reviewedBy: varchar("reviewed_by").references(() => users.id),
+  reviewedAt: timestamp("reviewed_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Admin users table for elevated permissions
+export const adminUsers = pgTable("admin_users", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id).notNull(),
+  email: varchar("email").notNull().unique(),
+  role: varchar("role").notNull().default("admin"), // 'admin', 'super_admin'
+  permissions: jsonb("permissions").default(sql`'{"manage_images": true, "review_reports": true, "manage_users": false}'`),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export type SpeciesImage = typeof speciesImages.$inferSelect;
+export type InsertSpeciesImage = typeof speciesImages.$inferInsert;
+export type PhotoReport = typeof photoReports.$inferSelect;
+export type InsertPhotoReport = typeof photoReports.$inferInsert;
 export type Plant = typeof plants.$inferSelect;
 export type InsertPlant = z.infer<typeof insertPlantSchema>;
 export type GrowthRecord = typeof growthRecords.$inferSelect;

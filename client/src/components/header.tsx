@@ -1,7 +1,8 @@
 import { Link, useLocation } from "wouter";
 import { useState } from "react";
-import { Plus, Menu, User, LogOut, ChevronDown, Home, BarChart3, FolderOpen, TrendingUp, Camera, Users, Settings, Sprout, BookOpen, Search } from "lucide-react";
+import { Plus, Menu, User, LogOut, ChevronDown, Home, BarChart3, FolderOpen, TrendingUp, Camera, Users, Settings, Sprout, BookOpen, Search, Shield } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -34,6 +35,7 @@ const navigationGroups = {
   ],
   account: [
     { href: "/settings", label: "Settings", icon: Settings },
+    { href: "/admin", label: "Admin Dashboard", icon: Shield, adminOnly: true },
   ],
 };
 
@@ -42,6 +44,12 @@ export default function Header() {
   const [location] = useLocation();
   const [showAddPlant, setShowAddPlant] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+
+  // Check admin status
+  const { data: adminStatus } = useQuery({
+    queryKey: ["/api/admin/status"],
+    enabled: !!user,
+  });
 
   const isActive = (href: string) => {
     if (href === "/") {

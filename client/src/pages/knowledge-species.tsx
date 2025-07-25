@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { SpeciesImageGallery } from "@/components/species-image-gallery";
 import { cactusGenera, type CactusSpecies } from "@shared/cactus-data";
 
 export default function KnowledgeSpecies() {
@@ -223,8 +224,9 @@ export default function KnowledgeSpecies() {
           {/* Main Content */}
           <div className="lg:col-span-2">
             <Tabs defaultValue="overview" className="space-y-6">
-              <TabsList className="grid w-full grid-cols-5">
+              <TabsList className="grid w-full grid-cols-6">
                 <TabsTrigger value="overview">Overview</TabsTrigger>
+                <TabsTrigger value="images">Images</TabsTrigger>
                 <TabsTrigger value="variants">Variants</TabsTrigger>
                 <TabsTrigger value="cultivation">Cultivation</TabsTrigger>
                 <TabsTrigger value="characteristics">Features</TabsTrigger>
@@ -262,6 +264,21 @@ export default function KnowledgeSpecies() {
                         </div>
                       </div>
                     </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              {/* Images Tab */}
+              <TabsContent value="images">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <Camera className="w-5 h-5 mr-2" />
+                      Botanical Images
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <SpeciesImageGallery genus={genusName} species={speciesName} />
                   </CardContent>
                 </Card>
               </TabsContent>
