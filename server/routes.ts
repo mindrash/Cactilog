@@ -2,6 +2,9 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
+import { SpeciesImageService } from "./wikimedia";
+import { createInsertSchema } from "drizzle-zod";
+import { speciesImages, photoReports } from "@shared/schema";
 import { insertPlantSchema, insertGrowthRecordSchema, insertSeedSchema } from "@shared/schema";
 import { z } from "zod";
 
@@ -373,6 +376,157 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error updating collection visibility:", error);
       res.status(500).json({ message: "Failed to update collection visibility" });
+    }
+  });
+
+  // Species image routes
+  const speciesImageService = new SpeciesImageService();
+
+  // Get images for a species
+  app.get('/api/species/:genus/:species/images', async (req, res) => {
+    try {
+      const { genus, species } = req.params;
+      const images = await storage.getSpeciesImages(genus, species);
+      
+      // If no images exist, try to fetch from Wikimedia
+      if (images.length === 0 && req.user) {
+        const userId = (req.user as any)?.claims?.sub;
+        if (userId) {
+          const fetchedImages = await speciesImageService.fetchAndStoreImages(genus, species, userId);
+          for (const image of fetchedImages) {
+            await storage.createSpeciesImage(image);
+          }
+          const newImages = await storage.getSpeciesImages(genus, species);
+          return res.json(newImages);
+        }
+      }
+      
+      res.json(images);
+    } catch (error) {
+      console.error("Error fetching species images:", error);
+      res.status(500).json({ message: "Failed to fetch species images" });
+    }
+  });
+
+  // Report a photo
+  app.post('/api/species/images/:imageId/report', async (req, res) => {
+    try {
+      const { imageId } = req.params;
+      const { reportType, description, reporterEmail } = req.body;
+      const userId = (req.user as any)?.claims?.sub;
+
+      // Validate report type
+      const validReportTypes = ['incorrect_species', 'inappropriate', 'copyright', 'poor_quality'];
+      if (!validReportTypes.includes(reportType)) {
+        return res.status(400).json({ message: 'Invalid report type' });
+      }
+
+      // Create the report
+      const report = await storage.createPhotoReport({
+        imageId,
+        reporterUserId: userId || null,
+        reporterEmail: reporterEmail || null,
+        reportType,
+        description: description || null,
+        status: 'pending'
+      });
+
+      console.log(`✓ Photo report created: ${report.id} for image ${imageId}`);
+
+      res.json({ success: true, reportId: report.id });
+    } catch (error) {
+      console.error("Error creating photo report:", error);
+      res.status(500).json({ message: "Failed to create photo report" });
+    }
+  });
+
+  // Admin routes (protected)
+  app.get('/api/admin/reports', isAuthenticated, async (req, res) => {
+    try {
+      const userId = (req.user as any)?.claims?.sub;
+      const isAdmin = await storage.isUserAdmin(userId);
+      
+      if (!isAdmin) {
+        return res.status(403).json({ message: 'Admin access required' });
+      }
+
+      const { status } = req.query;
+      const reports = await storage.getPhotoReports(status as string);
+      res.json(reports);
+    } catch (error) {
+      console.error("Error fetching photo reports:", error);
+      res.status(500).json({ message: "Failed to fetch photo reports" });
+    }
+  });
+
+  // Update photo report (admin only)
+  app.patch('/api/admin/reports/:reportId', isAuthenticated, async (req, res) => {
+    try {
+      const userId = (req.user as any)?.claims?.sub;
+      const isAdmin = await storage.isUserAdmin(userId);
+      
+      if (!isAdmin) {
+        return res.status(403).json({ message: 'Admin access required' });
+      }
+
+      const { reportId } = req.params;
+      const { status, adminNotes } = req.body;
+
+      const updatedReport = await storage.updatePhotoReport(reportId, {
+        status,
+        adminNotes,
+        reviewedBy: userId,
+        reviewedAt: new Date()
+      });
+
+      res.json(updatedReport);
+    } catch (error) {
+      console.error("Error updating photo report:", error);
+      res.status(500).json({ message: "Failed to update photo report" });
+    }
+  });
+
+  // Check if user is admin
+  app.get('/api/admin/status', isAuthenticated, async (req, res) => {
+    try {
+      const userId = (req.user as any)?.claims?.sub;
+      const isAdmin = await storage.isUserAdmin(userId);
+      res.json({ isAdmin });
+    } catch (error) {
+      console.error("Error checking admin status:", error);
+      res.status(500).json({ message: "Failed to check admin status" });
+    }
+  });
+
+  // Initialize Tom as admin on first login
+  app.post('/api/admin/initialize', isAuthenticated, async (req, res) => {
+    try {
+      const userId = (req.user as any)?.claims?.sub;
+      const userEmail = (req.user as any)?.claims?.email;
+      
+      if (userEmail === 'tomlawson@gmail.com') {
+        const existingAdmin = await storage.getAdminUserByEmail(userEmail);
+        if (!existingAdmin) {
+          await storage.createAdminUser({
+            userId,
+            email: userEmail,
+            role: 'super_admin',
+            permissions: {
+              manage_images: true,
+              review_reports: true,
+              manage_users: true,
+              manage_admins: true
+            }
+          });
+          console.log('✓ Tom Lawson initialized as super admin');
+        }
+        return res.json({ success: true, message: 'Admin initialized' });
+      }
+      
+      res.status(403).json({ message: 'Unauthorized' });
+    } catch (error) {
+      console.error("Error initializing admin:", error);
+      res.status(500).json({ message: "Failed to initialize admin" });
     }
   });
 

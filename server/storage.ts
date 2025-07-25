@@ -4,6 +4,9 @@ import {
   growthRecords,
   plantPhotos,
   seeds,
+  speciesImages,
+  photoReports,
+  adminUsers,
   type User,
   type UpsertUser,
   type Plant,
@@ -14,6 +17,12 @@ import {
   type InsertPlantPhoto,
   type Seed,
   type InsertSeed,
+  type SpeciesImage,
+  type InsertSpeciesImage,
+  type PhotoReport,
+  type InsertPhotoReport,
+  type AdminUser,
+  type InsertAdminUser,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, ilike, or, count } from "drizzle-orm";
@@ -64,6 +73,23 @@ export interface IStorage {
     plants: Plant[];
     total: number;
   }>;
+  
+  // Species image operations
+  getSpeciesImages(genus: string, species: string): Promise<SpeciesImage[]>;
+  createSpeciesImage(image: InsertSpeciesImage): Promise<SpeciesImage>;
+  updateSpeciesImage(id: string, updates: Partial<InsertSpeciesImage>): Promise<SpeciesImage | undefined>;
+  deleteSpeciesImage(id: string, userId: string): Promise<boolean>;
+  
+  // Photo report operations
+  createPhotoReport(report: InsertPhotoReport): Promise<PhotoReport>;
+  getPhotoReports(status?: string): Promise<PhotoReport[]>;
+  updatePhotoReport(id: string, updates: Partial<InsertPhotoReport>): Promise<PhotoReport | undefined>;
+  
+  // Admin operations
+  getAdminUser(userId: string): Promise<AdminUser | undefined>;
+  getAdminUserByEmail(email: string): Promise<AdminUser | undefined>;
+  createAdminUser(admin: InsertAdminUser): Promise<AdminUser>;
+  isUserAdmin(userId: string): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -392,6 +418,86 @@ export class DatabaseStorage implements IStorage {
       .where(eq(users.id, userId))
       .returning();
     return updatedUser;
+  }
+
+  // Species image operations
+  async getSpeciesImages(genus: string, species: string): Promise<SpeciesImage[]> {
+    return await db
+      .select()
+      .from(speciesImages)
+      .where(and(eq(speciesImages.genus, genus), eq(speciesImages.species, species)))
+      .orderBy(desc(speciesImages.isPrimary), desc(speciesImages.createdAt));
+  }
+
+  async createSpeciesImage(image: InsertSpeciesImage): Promise<SpeciesImage> {
+    const [newImage] = await db.insert(speciesImages).values(image).returning();
+    return newImage;
+  }
+
+  async updateSpeciesImage(id: string, updates: Partial<InsertSpeciesImage>): Promise<SpeciesImage | undefined> {
+    const [updatedImage] = await db
+      .update(speciesImages)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(speciesImages.id, id))
+      .returning();
+    return updatedImage;
+  }
+
+  async deleteSpeciesImage(id: string, userId: string): Promise<boolean> {
+    const image = await db.select().from(speciesImages).where(eq(speciesImages.id, id));
+    if (!image[0]) return false;
+    
+    const isAdmin = await this.isUserAdmin(userId);
+    if (!isAdmin && image[0].uploadedBy !== userId) return false;
+    
+    const result = await db.delete(speciesImages).where(eq(speciesImages.id, id));
+    return result.rowCount! > 0;
+  }
+
+  // Photo report operations
+  async createPhotoReport(report: InsertPhotoReport): Promise<PhotoReport> {
+    const [newReport] = await db.insert(photoReports).values(report).returning();
+    return newReport;
+  }
+
+  async getPhotoReports(status?: string): Promise<PhotoReport[]> {
+    const query = db.select().from(photoReports);
+    
+    if (status) {
+      return await query.where(eq(photoReports.status, status)).orderBy(desc(photoReports.createdAt));
+    }
+    
+    return await query.orderBy(desc(photoReports.createdAt));
+  }
+
+  async updatePhotoReport(id: string, updates: Partial<InsertPhotoReport>): Promise<PhotoReport | undefined> {
+    const [updatedReport] = await db
+      .update(photoReports)
+      .set(updates)
+      .where(eq(photoReports.id, id))
+      .returning();
+    return updatedReport;
+  }
+
+  // Admin operations
+  async getAdminUser(userId: string): Promise<AdminUser | undefined> {
+    const [admin] = await db.select().from(adminUsers).where(eq(adminUsers.userId, userId));
+    return admin;
+  }
+
+  async getAdminUserByEmail(email: string): Promise<AdminUser | undefined> {
+    const [admin] = await db.select().from(adminUsers).where(eq(adminUsers.email, email));
+    return admin;
+  }
+
+  async createAdminUser(admin: InsertAdminUser): Promise<AdminUser> {
+    const [newAdmin] = await db.insert(adminUsers).values(admin).returning();
+    return newAdmin;
+  }
+
+  async isUserAdmin(userId: string): Promise<boolean> {
+    const admin = await this.getAdminUser(userId);
+    return !!admin;
   }
 }
 

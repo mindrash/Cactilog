@@ -19,6 +19,7 @@ import KnowledgeSpecies from "@/pages/knowledge-species";
 import KnowledgeVariant from "@/pages/knowledge-variant";
 import Import from "@/pages/import";
 import Settings from "@/pages/settings";
+import AdminDashboard from "@/pages/admin-dashboard";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -59,6 +60,7 @@ function Router() {
           <Route path="/knowledge/variant/:genusName/:speciesName/:variantName" component={KnowledgeVariant} />
           <Route path="/import" component={Import} />
           <Route path="/settings" component={Settings} />
+          <Route path="/admin" component={AdminDashboard} />
         </>
       )}
       <Route component={NotFound} />
