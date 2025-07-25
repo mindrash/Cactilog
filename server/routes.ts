@@ -50,6 +50,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.put('/api/auth/user/display-name', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { displayName } = req.body;
+      
+      if (typeof displayName !== 'string') {
+        return res.status(400).json({ message: "Display name must be a string" });
+      }
+      
+      const user = await storage.updateUserDisplayName(userId, displayName);
+      res.json(user);
+    } catch (error) {
+      console.error("Error updating display name:", error);
+      if (error instanceof Error) {
+        return res.status(400).json({ message: error.message });
+      }
+      res.status(500).json({ message: "Failed to update display name" });
+    }
+  });
+
   // Dashboard stats
   app.get('/api/dashboard/stats', isAuthenticated, async (req: any, res) => {
     try {

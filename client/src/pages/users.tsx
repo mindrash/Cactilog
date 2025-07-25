@@ -70,6 +70,11 @@ export default function Users() {
   };
 
   const getDisplayName = (user: UserWithStats) => {
+    // Prioritize custom display name if set
+    if (user.displayName && user.displayName.trim()) {
+      return user.displayName;
+    }
+    
     if (user.firstName && user.lastName) {
       return `${user.firstName} ${user.lastName}`;
     } else if (user.firstName) {
