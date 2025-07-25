@@ -12,66 +12,79 @@ export default function CactusIcon({ className = "", size = 24 }: CactusIconProp
       fill="none"
       className={className}
     >
-      {/* Main circular barrel cactus body - top-down view */}
+      {/* Main columnar cactus body - top-down circular view */}
       <circle
         cx="12"
         cy="12"
-        r="9"
+        r="8"
         fill="currentColor"
         className="opacity-90"
       />
       
-      {/* Radiating ridges from center - like the reference image */}
-      <g className="opacity-40">
-        {/* Vertical and horizontal main ridges */}
-        <line x1="12" y1="3" x2="12" y2="21" stroke="currentColor" strokeWidth="0.8" />
-        <line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" strokeWidth="0.8" />
-        
-        {/* Diagonal ridges */}
-        <line x1="5.5" y1="5.5" x2="18.5" y2="18.5" stroke="currentColor" strokeWidth="0.8" />
-        <line x1="18.5" y1="5.5" x2="5.5" y2="18.5" stroke="currentColor" strokeWidth="0.8" />
-        
-        {/* Additional ridges for more detailed look */}
-        <line x1="7" y1="3.5" x2="17" y2="20.5" stroke="currentColor" strokeWidth="0.6" />
-        <line x1="17" y1="3.5" x2="7" y2="20.5" stroke="currentColor" strokeWidth="0.6" />
-        <line x1="3.5" y1="7" x2="20.5" y2="17" stroke="currentColor" strokeWidth="0.6" />
-        <line x1="3.5" y1="17" x2="20.5" y2="7" stroke="currentColor" strokeWidth="0.6" />
+      {/* Vertical ribs running from center to edge - trichocereus pattern */}
+      <g className="opacity-50" stroke="currentColor" strokeWidth="0.6" fill="none">
+        <line x1="12" y1="4" x2="12" y2="20" />
+        <line x1="18.9" y1="8.4" x2="5.1" y2="15.6" />
+        <line x1="18.9" y1="15.6" x2="5.1" y2="8.4" />
+        <line x1="20" y1="12" x2="4" y2="12" />
+        <line x1="18.4" y1="5.6" x2="5.6" y2="18.4" />
+        <line x1="18.4" y1="18.4" x2="5.6" y2="5.6" />
+        <line x1="15.6" y1="4.1" x2="8.4" y2="19.9" />
+        <line x1="15.6" y1="19.9" x2="8.4" y2="4.1" />
       </g>
       
-      {/* Spines along the ridges - radiating outward */}
-      <g className="opacity-70">
-        {/* Top spines */}
-        <line x1="11.5" y1="4" x2="12.5" y2="5" stroke="currentColor" strokeWidth="0.6" />
-        <line x1="12" y1="3.5" x2="12" y2="4.5" stroke="currentColor" strokeWidth="0.6" />
+      {/* Prominent spines radiating outward - clearly visible */}
+      <g className="opacity-80" stroke="currentColor" strokeWidth="1" fill="none">
+        {/* Primary long spines */}
+        <line x1="12" y1="2" x2="12" y2="4" />
+        <line x1="20" y1="12" x2="18" y2="12" />
+        <line x1="12" y1="22" x2="12" y2="20" />
+        <line x1="4" y1="12" x2="6" y2="12" />
         
-        {/* Right spines */}
-        <line x1="19" y1="11.5" x2="20" y2="12.5" stroke="currentColor" strokeWidth="0.6" />
-        <line x1="19.5" y1="12" x2="20.5" y2="12" stroke="currentColor" strokeWidth="0.6" />
-        
-        {/* Bottom spines */}
-        <line x1="11.5" y1="19" x2="12.5" y2="20" stroke="currentColor" strokeWidth="0.6" />
-        <line x1="12" y1="19.5" x2="12" y2="20.5" stroke="currentColor" strokeWidth="0.6" />
-        
-        {/* Left spines */}
-        <line x1="4" y1="11.5" x2="5" y2="12.5" stroke="currentColor" strokeWidth="0.6" />
-        <line x1="3.5" y1="12" x2="4.5" y2="12" stroke="currentColor" strokeWidth="0.6" />
-        
-        {/* Diagonal spines */}
-        <line x1="6.5" y1="6.5" x2="7.5" y2="7.5" stroke="currentColor" strokeWidth="0.5" />
-        <line x1="17.5" y1="6.5" x2="16.5" y2="7.5" stroke="currentColor" strokeWidth="0.5" />
-        <line x1="17.5" y1="17.5" x2="16.5" y2="16.5" stroke="currentColor" strokeWidth="0.5" />
-        <line x1="6.5" y1="17.5" x2="7.5" y2="16.5" stroke="currentColor" strokeWidth="0.5" />
+        {/* Diagonal long spines */}
+        <line x1="19.4" y1="4.6" x2="17.7" y2="6.3" />
+        <line x1="19.4" y1="19.4" x2="17.7" y2="17.7" />
+        <line x1="4.6" y1="19.4" x2="6.3" y2="17.7" />
+        <line x1="4.6" y1="4.6" x2="6.3" y2="6.3" />
       </g>
       
-      {/* Central flower cluster - like in the reference */}
-      <circle cx="12" cy="12" r="1.5" fill="#ff6b9d" className="opacity-80" />
-      <circle cx="12" cy="12" r="0.8" fill="#ffeb3b" className="opacity-90" />
+      {/* Secondary shorter spines */}
+      <g className="opacity-70" stroke="currentColor" strokeWidth="0.8" fill="none">
+        <line x1="16.9" y1="5.5" x2="15.8" y2="6.6" />
+        <line x1="18.5" y1="7.1" x2="17.4" y2="8.2" />
+        <line x1="18.5" y1="16.9" x2="17.4" y2="15.8" />
+        <line x1="16.9" y1="18.5" x2="15.8" y2="17.4" />
+        <line x1="7.1" y1="18.5" x2="8.2" y2="17.4" />
+        <line x1="5.5" y1="16.9" x2="6.6" y2="15.8" />
+        <line x1="5.5" y1="7.1" x2="6.6" y2="8.2" />
+        <line x1="7.1" y1="5.5" x2="8.2" y2="6.6" />
+        
+        {/* Intermediate spines */}
+        <line x1="15" y1="3.8" x2="14.2" y2="4.6" />
+        <line x1="20.2" y1="9" x2="19.4" y2="9.8" />
+        <line x1="20.2" y1="15" x2="19.4" y2="14.2" />
+        <line x1="15" y1="20.2" x2="14.2" y2="19.4" />
+        <line x1="9" y1="20.2" x2="9.8" y2="19.4" />
+        <line x1="3.8" y1="15" x2="4.6" y2="14.2" />
+        <line x1="3.8" y1="9" x2="4.6" y2="9.8" />
+        <line x1="9" y1="3.8" x2="9.8" y2="4.6" />
+      </g>
       
-      {/* Small flower buds around center */}
-      <circle cx="10.5" cy="10.5" r="0.4" fill="#ff6b9d" className="opacity-60" />
-      <circle cx="13.5" cy="10.5" r="0.4" fill="#ff6b9d" className="opacity-60" />
-      <circle cx="13.5" cy="13.5" r="0.4" fill="#ff6b9d" className="opacity-60" />
-      <circle cx="10.5" cy="13.5" r="0.4" fill="#ff6b9d" className="opacity-60" />
+      {/* Tiny inner spines for detail */}
+      <g className="opacity-60" stroke="currentColor" strokeWidth="0.5" fill="none">
+        <line x1="13.5" y1="8.5" x2="13" y2="9" />
+        <line x1="15.5" y1="10.5" x2="15" y2="11" />
+        <line x1="15.5" y1="13.5" x2="15" y2="13" />
+        <line x1="13.5" y1="15.5" x2="13" y2="15" />
+        <line x1="10.5" y1="15.5" x2="11" y2="15" />
+        <line x1="8.5" y1="13.5" x2="9" y2="13" />
+        <line x1="8.5" y1="10.5" x2="9" y2="11" />
+        <line x1="10.5" y1="8.5" x2="11" y2="9" />
+      </g>
+      
+      {/* Central growing point */}
+      <circle cx="12" cy="12" r="1" fill="currentColor" className="opacity-70" />
+      <circle cx="12" cy="12" r="0.5" fill="#90EE90" className="opacity-80" />
     </svg>
   );
 }
