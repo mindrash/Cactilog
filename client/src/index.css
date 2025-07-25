@@ -2,13 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Original background styling */
+/* Green background styling */
 .cactus-pattern-bg {
-  background-color: #f9fafb;
+  background-color: #91b891;
 }
 
 .cactus-pattern-bg-light {
-  background-color: #f9fafb;
+  background-color: #91b891;
 }
 
 /* Custom font classes */
