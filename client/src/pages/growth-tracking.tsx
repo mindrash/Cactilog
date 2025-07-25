@@ -170,7 +170,7 @@ export default function GrowthTracking() {
           <Card>
             <CardContent className="p-12 text-center">
               <TrendingUp className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
+              <h3 className="subsection-title mb-2">
                 {searchTerm ? "No matching plants found" : "Start tracking growth"}
               </h3>
               <p className="text-gray-600 mb-4">
@@ -197,7 +197,7 @@ export default function GrowthTracking() {
                   <CardContent className="p-6">
                     <div className="flex justify-between items-start mb-4">
                       <div>
-                        <h3 className="font-semibold text-gray-900 mb-1">
+                        <h3 className="subsection-title mb-1">
                           {plant.customId}
                         </h3>
                         <p className="text-sm text-gray-600 italic">

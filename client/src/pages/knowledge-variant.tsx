@@ -170,7 +170,7 @@ export default function KnowledgeVariant() {
             </Badge>
           </div>
           
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+          <h1 className="page-title-lg mb-2">
             <span className="italic text-cactus-green">{formatName()}</span>
           </h1>
           

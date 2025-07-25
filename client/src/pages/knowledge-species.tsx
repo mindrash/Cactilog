@@ -204,7 +204,7 @@ export default function KnowledgeSpecies() {
 
         {/* Species Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+          <h1 className="page-title-lg mb-2">
             <span className="italic text-cactus-green">{scientificName}</span>
           </h1>
           <div className="flex items-center space-x-4 mb-4">
@@ -403,7 +403,7 @@ export default function KnowledgeSpecies() {
                         <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                           <Info className="w-8 h-8 text-gray-400" />
                         </div>
-                        <h3 className="text-lg font-medium text-gray-900 mb-2">No Variants Documented</h3>
+                        <h3 className="subsection-title mb-2">No Variants Documented</h3>
                         <p className="text-gray-600 mb-4">
                           Currently, no subspecies, varieties, forms, cultivars, clones, or mutations have been documented for this species in our database.
                         </p>

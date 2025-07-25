@@ -146,7 +146,7 @@ export default function Photos() {
           <Card>
             <CardContent className="p-12 text-center">
               <Camera className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
+              <h3 className="subsection-title mb-2">
                 {searchTerm ? "No matching photos found" : "No photos shared yet"}
               </h3>
               <p className="text-gray-600">
@@ -174,7 +174,7 @@ export default function Photos() {
                 <CardContent className="p-4">
                   {/* Plant Info */}
                   <div className="mb-3">
-                    <h3 className="font-semibold text-gray-900 text-sm mb-1">
+                    <h3 className="subsection-title text-sm mb-1">
                       {item.plant.customId}
                     </h3>
                     <p className="text-xs text-gray-600 italic">
