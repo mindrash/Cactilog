@@ -27,7 +27,7 @@ export function getSession() {
   const pgStore = connectPg(session);
   const sessionStore = new pgStore({
     conString: process.env.DATABASE_URL,
-    createTableIfMissing: false,
+    createTableIfMissing: true,
     ttl: sessionTtl,
     tableName: "sessions",
   });
@@ -38,8 +38,9 @@ export function getSession() {
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: true,
+      secure: false, // Set to false for development
       maxAge: sessionTtl,
+      sameSite: 'lax',
     },
   });
 }
@@ -59,7 +60,7 @@ async function upsertUser(
   provider?: string
 ) {
   await storage.upsertUser({
-    id: claims["sub"],
+    id: String(claims["sub"]),
     email: claims["email"],
     firstName: claims["first_name"],
     lastName: claims["last_name"],
@@ -102,6 +103,18 @@ export async function setupAuth(app: Express) {
     );
     passport.use(strategy);
   }
+  
+  // Also register for localhost for development
+  const localhostStrategy = new Strategy(
+    {
+      name: `replitauth:localhost`,
+      config,
+      scope: "openid email profile offline_access",
+      callbackURL: `http://localhost:5000/api/callback`,
+    },
+    verify,
+  );
+  passport.use(localhostStrategy);
 
   passport.serializeUser((user: Express.User, cb) => cb(null, user));
   passport.deserializeUser((user: Express.User, cb) => cb(null, user));
@@ -129,10 +142,7 @@ export async function setupAuth(app: Express) {
 
   // Legacy route for backwards compatibility
   app.get("/api/login", (req, res, next) => {
-    passport.authenticate(`replitauth:${req.hostname}`, {
-      prompt: "login consent",
-      scope: ["openid", "email", "profile", "offline_access"],
-    })(req, res, next);
+    passport.authenticate(`replitauth:${req.hostname}`)(req, res, next);
   });
 
   app.get("/api/callback", (req, res, next) => {
@@ -157,7 +167,7 @@ export async function setupAuth(app: Express) {
 export const isAuthenticated: RequestHandler = async (req, res, next) => {
   const user = req.user as any;
 
-  if (!req.isAuthenticated() || !user.expires_at) {
+  if (!req.isAuthenticated() || !user || !user.expires_at) {
     return res.status(401).json({ message: "Unauthorized" });
   }
 
