@@ -77,7 +77,7 @@ export default function Collection() {
   });
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen cactus-pattern-bg-light">
       <Header />
       <div className="flex">
         <Sidebar />

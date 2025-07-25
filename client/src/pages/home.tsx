@@ -36,7 +36,7 @@ export default function Home() {
   const pagination = publicFeed?.pagination;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-lime-wash/20 to-pine-mist/30">
+    <div className="min-h-screen bg-gradient-to-br from-lime-wash/20 to-pine-mist/30 cactus-pattern-bg">
       <Header />
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Welcome Section */}
