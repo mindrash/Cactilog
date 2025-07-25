@@ -310,6 +310,72 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // User browsing routes
+  app.get('/api/users/public', isAuthenticated, async (req, res) => {
+    try {
+      const users = await storage.getPublicUsers();
+      res.json(users);
+    } catch (error) {
+      console.error("Error fetching public users:", error);
+      res.status(500).json({ message: "Failed to fetch users" });
+    }
+  });
+
+  app.get('/api/users/:userId', isAuthenticated, async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const user = await storage.getUserWithStats(userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      res.json(user);
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      res.status(500).json({ message: "Failed to fetch user" });
+    }
+  });
+
+  app.get('/api/users/:userId/plants', isAuthenticated, async (req, res) => {
+    try {
+      const { userId } = req.params;
+      
+      // First check if user exists and has public collection
+      const user = await storage.getUserWithStats(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      if (user.collectionPublic !== 'public') {
+        return res.status(403).json({ message: "User's collection is private" });
+      }
+      
+      const plants = await storage.getUserPublicPlants(userId);
+      res.json(plants);
+    } catch (error) {
+      console.error("Error fetching user plants:", error);
+      res.status(500).json({ message: "Failed to fetch user plants" });
+    }
+  });
+
+  app.patch('/api/users/collection-visibility', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user?.claims?.sub;
+      const { visibility } = req.body;
+      
+      if (!['public', 'private'].includes(visibility)) {
+        return res.status(400).json({ message: "Invalid visibility value" });
+      }
+      
+      const updatedUser = await storage.updateUserCollectionVisibility(userId, visibility);
+      res.json(updatedUser);
+    } catch (error) {
+      console.error("Error updating collection visibility:", error);
+      res.status(500).json({ message: "Failed to update collection visibility" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

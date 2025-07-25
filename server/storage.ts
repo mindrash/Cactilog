@@ -327,6 +327,72 @@ export class DatabaseStorage implements IStorage {
       total: totalResult.count,
     };
   }
+  // User browsing operations
+  async getPublicUsers(): Promise<Array<User & { plantCount: number; publicPlantCount: number; uniqueGenera: number }>> {
+    const usersWithStats = await db
+      .select({
+        id: users.id,
+        email: users.email,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        profileImageUrl: users.profileImageUrl,
+        authProvider: users.authProvider,
+        collectionPublic: users.collectionPublic,
+        createdAt: users.createdAt,
+        updatedAt: users.updatedAt,
+        plantCount: sql<number>`COUNT(${plants.id})::int`,
+        publicPlantCount: sql<number>`COUNT(CASE WHEN ${plants.isPublic} = 'public' THEN 1 END)::int`,
+        uniqueGenera: sql<number>`COUNT(DISTINCT ${plants.genus})::int`,
+      })
+      .from(users)
+      .leftJoin(plants, eq(plants.userId, users.id))
+      .where(eq(users.collectionPublic, 'public'))
+      .groupBy(users.id)
+      .orderBy(desc(sql`COUNT(${plants.id})`));
+
+    return usersWithStats;
+  }
+
+  async getUserWithStats(userId: string): Promise<(User & { plantCount: number; publicPlantCount: number; uniqueGenera: number }) | undefined> {
+    const [userWithStats] = await db
+      .select({
+        id: users.id,
+        email: users.email,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        profileImageUrl: users.profileImageUrl,
+        authProvider: users.authProvider,
+        collectionPublic: users.collectionPublic,
+        createdAt: users.createdAt,
+        updatedAt: users.updatedAt,
+        plantCount: sql<number>`COUNT(${plants.id})::int`,
+        publicPlantCount: sql<number>`COUNT(CASE WHEN ${plants.isPublic} = 'public' THEN 1 END)::int`,
+        uniqueGenera: sql<number>`COUNT(DISTINCT ${plants.genus})::int`,
+      })
+      .from(users)
+      .leftJoin(plants, eq(plants.userId, users.id))
+      .where(eq(users.id, userId))
+      .groupBy(users.id);
+
+    return userWithStats;
+  }
+
+  async getUserPublicPlants(userId: string): Promise<Plant[]> {
+    return await db
+      .select()
+      .from(plants)
+      .where(and(eq(plants.userId, userId), eq(plants.isPublic, 'public')))
+      .orderBy(desc(plants.createdAt));
+  }
+
+  async updateUserCollectionVisibility(userId: string, visibility: 'public' | 'private'): Promise<User | undefined> {
+    const [updatedUser] = await db
+      .update(users)
+      .set({ collectionPublic: visibility, updatedAt: new Date() })
+      .where(eq(users.id, userId))
+      .returning();
+    return updatedUser;
+  }
 }
 
 export const storage = new DatabaseStorage();
