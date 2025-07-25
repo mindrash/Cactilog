@@ -2,6 +2,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import Header from "@/components/header";
+import { SEO, seoConfigs } from "@/components/seo";
 import { Camera, Heart, User, Calendar, Search, Image } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -75,6 +76,7 @@ export default function Photos() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-lime-wash/20 to-pine-mist/30 cactus-pattern-bg">
+      <SEO {...seoConfigs.photos} />
       <Header />
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}

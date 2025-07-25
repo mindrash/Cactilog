@@ -22,6 +22,7 @@ import {
   Info
 } from "lucide-react";
 import Header from "@/components/header";
+import { SEO, seoConfigs } from "@/components/seo";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { cactusGenera, type CactusSpecies } from "@shared/cactus-data";
 
@@ -528,6 +529,7 @@ export default function KnowledgeCareGuides() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-lime-wash/20 to-pine-mist/30 cactus-pattern-bg">
+      <SEO {...seoConfigs.careGuides} />
       <Header />
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Header */}

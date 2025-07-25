@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import { SEO, seoConfigs } from "@/components/seo";
 import { Users as UsersIcon, Sprout, Eye, EyeOff, ArrowUpDown, Heart, TreePine } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -97,6 +98,7 @@ export default function Users() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-lime-wash/20 to-pine-mist/30 cactus-pattern-bg">
+      <SEO {...seoConfigs.users} />
       <Header />
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Header Section */}

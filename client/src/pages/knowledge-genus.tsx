@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, BookOpen, Search, Leaf, Info, Camera } from "lucide-react";
 import Header from "@/components/header";
 import { Link } from "wouter";
+import { SEO, seoConfigs } from "@/components/seo";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { cactusGenera } from "@shared/cactus-data";
 import { SpeciesImageGallery } from "@/components/species-image-gallery";
@@ -77,6 +78,7 @@ export default function KnowledgeGenus() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-lime-wash/20 to-pine-mist/30 cactus-pattern-bg">
+      <SEO {...seoConfigs.knowledgeGenus(genus.name)} />
       <Header />
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Navigation */}
