@@ -6,7 +6,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { Eye, EyeOff, Settings as SettingsIcon } from "lucide-react";
+import { Eye, EyeOff, Settings as SettingsIcon, Camera } from "lucide-react";
 import Header from "@/components/header";
 import { isUnauthorizedError } from "@/lib/authUtils";
 
@@ -15,6 +15,7 @@ export default function Settings() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [collectionPublic, setCollectionPublic] = useState(true);
+  const [contributePhotos, setContributePhotos] = useState(false);
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -31,10 +32,13 @@ export default function Settings() {
     }
   }, [isAuthenticated, isLoading, toast]);
 
-  // Set initial privacy setting from user data
+  // Set initial settings from user data
   useEffect(() => {
     if (user?.collectionPublic) {
       setCollectionPublic(user.collectionPublic === 'public');
+    }
+    if (user?.contributePhotosToKnowledgeBase !== undefined && user?.contributePhotosToKnowledgeBase !== null) {
+      setContributePhotos(user.contributePhotosToKnowledgeBase);
     }
   }, [user]);
 
@@ -47,7 +51,6 @@ export default function Settings() {
         title: "Settings Updated",
         description: "Your collection visibility has been updated successfully.",
       });
-      // Invalidate user query to refresh the data
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
     },
     onError: (error) => {
@@ -71,9 +74,46 @@ export default function Settings() {
     },
   });
 
+  const updateKnowledgeBaseContribution = useMutation({
+    mutationFn: async (contribute: boolean) => {
+      return await apiRequest('/api/users/knowledge-base-contribution', 'PATCH', { contribute });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Settings Updated",
+        description: "Your Knowledge Base contribution setting has been updated successfully.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+    },
+    onError: (error) => {
+      if (isUnauthorizedError(error)) {
+        toast({
+          title: "Unauthorized",
+          description: "You are logged out. Logging in again...",
+          variant: "destructive",
+        });
+        setTimeout(() => {
+          window.location.href = "/api/login";
+        }, 500);
+        return;
+      }
+      
+      toast({
+        title: "Error",
+        description: "Failed to update Knowledge Base contribution setting. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleCollectionVisibilityChange = (isPublic: boolean) => {
     setCollectionPublic(isPublic);
     updateCollectionVisibility.mutate(isPublic ? 'public' : 'private');
+  };
+
+  const handleKnowledgeBaseContributionChange = (contribute: boolean) => {
+    setContributePhotos(contribute);
+    updateKnowledgeBaseContribution.mutate(contribute);
   };
 
   if (isLoading || !isAuthenticated) {
@@ -127,6 +167,35 @@ export default function Settings() {
                 />
               </div>
 
+              <div className="flex items-center justify-between pt-6 border-t">
+                <div className="space-y-0.5">
+                  <Label className="text-base font-medium">
+                    Contribute Photos to Knowledge Base
+                  </Label>
+                  <div className="text-sm text-gray-600">
+                    {contributePhotos ? (
+                      <div className="flex items-center">
+                        <Camera className="w-4 h-4 mr-1" />
+                        Your plant photos can appear in the Knowledge Base for matching genus/species
+                      </div>
+                    ) : (
+                      <div className="flex items-center">
+                        <EyeOff className="w-4 h-4 mr-1" />
+                        Your photos will only appear in your personal collection
+                      </div>
+                    )}
+                  </div>
+                  <div className="text-xs text-gray-500 mt-1">
+                    Help other plant enthusiasts by sharing your photos with proper attribution
+                  </div>
+                </div>
+                <Switch
+                  checked={contributePhotos}
+                  onCheckedChange={handleKnowledgeBaseContributionChange}
+                  disabled={updateKnowledgeBaseContribution.isPending}
+                />
+              </div>
+
               <div className="bg-gray-50 rounded-lg p-4">
                 <h4 className="font-medium text-gray-900 mb-2">What does this control?</h4>
                 <ul className="text-sm text-gray-600 space-y-1">
@@ -134,6 +203,7 @@ export default function Settings() {
                   <li>• Whether other users can browse your plant collection</li>
                   <li>• Your public plant count and statistics visibility</li>
                   <li>• Individual plant privacy settings still apply regardless of this setting</li>
+                  <li>• <strong>Knowledge Base Photos:</strong> When enabled, your plant photos will also appear in the species galleries for educational purposes</li>
                 </ul>
               </div>
             </CardContent>

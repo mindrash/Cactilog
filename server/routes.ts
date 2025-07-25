@@ -379,6 +379,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch('/api/users/knowledge-base-contribution', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user?.claims?.sub;
+      const { contribute } = req.body;
+      
+      if (typeof contribute !== 'boolean') {
+        return res.status(400).json({ message: "Contribute must be a boolean value" });
+      }
+      
+      const updatedUser = await storage.updateKnowledgeBaseContribution(userId, contribute);
+      res.json(updatedUser);
+    } catch (error) {
+      console.error("Error updating Knowledge Base contribution:", error);
+      res.status(500).json({ message: "Failed to update Knowledge Base contribution setting" });
+    }
+  });
+
   // Species image routes
   const speciesImageService = new SpeciesImageService();
 
@@ -416,6 +433,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching species images:", error);
       res.status(500).json({ message: "Failed to fetch species images" });
+    }
+  });
+
+  // Get user-contributed photos for a species
+  app.get('/api/species/:genus/:species/user-photos', async (req, res) => {
+    try {
+      const { genus, species } = req.params;
+      const userPhotos = await storage.getUserContributedPhotos(genus, species);
+      res.json(userPhotos);
+    } catch (error) {
+      console.error("Error fetching user-contributed photos:", error);
+      res.status(500).json({ message: "Failed to fetch user-contributed photos" });
     }
   });
 

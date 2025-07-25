@@ -21,10 +21,34 @@ export function SpeciesImageGallery({ genus, species, maxImages, showSpeciesName
     queryKey: [`/api/species/${genus}/${species}/images`],
   });
 
-  // Limit images if maxImages is specified
-  const images = maxImages ? allImages.slice(0, maxImages) : allImages;
+  const { data: userPhotos = [], isLoading: userPhotosLoading } = useQuery<any[]>({
+    queryKey: [`/api/species/${genus}/${species}/user-photos`],
+  });
 
-  if (isLoading) {
+  // Combine species images with user-contributed photos
+  const combinedImages = [
+    ...allImages.map(img => ({ ...img, source: 'species' as const })),
+    ...userPhotos.map((photo: any) => ({
+      id: `user-${photo.id}`,
+      imageUrl: photo.imageUrl,
+      caption: photo.caption || `Photo by ${photo.userFirstName || 'Anonymous'}`,
+      genus,
+      species,
+      imageType: 'photograph' as const,
+      isPrimary: false,
+      license: 'User Contribution',
+      createdAt: photo.createdAt,
+      source: 'user' as const,
+      contributorName: photo.userFirstName && photo.userLastName 
+        ? `${photo.userFirstName} ${photo.userLastName}` 
+        : photo.userFirstName || 'Anonymous'
+    }))
+  ];
+
+  // Limit images if maxImages is specified
+  const images = maxImages ? combinedImages.slice(0, maxImages) : combinedImages;
+
+  if (isLoading || userPhotosLoading) {
     return (
       <div className="space-y-4">
         <div className="animate-pulse bg-sage-100 h-64 rounded-lg"></div>
@@ -71,6 +95,12 @@ export function SpeciesImageGallery({ genus, species, maxImages, showSpeciesName
           <Badge variant="outline" className="bg-white/90 text-sage-700">
             {currentImage.imageType === 'photograph' ? 'Photo' : 'Illustration'}
           </Badge>
+          {(currentImage as any).source === 'user' && (
+            <Badge variant="outline" className="bg-blue-100 text-blue-800">
+              <User className="w-3 h-3 mr-1" />
+              Community
+            </Badge>
+          )}
         </div>
 
         {/* Report Button */}
@@ -134,19 +164,17 @@ export function SpeciesImageGallery({ genus, species, maxImages, showSpeciesName
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
           <div className="flex items-center gap-2">
             <Badge variant="outline" className="text-xs">
-              {currentImage.imageSource}
+              {(currentImage as any).source === 'user' ? 'Community' : (currentImage as any).imageSource || 'Botanical Database'}
             </Badge>
             <span className="text-sage-600">Source</span>
           </div>
 
-          {currentImage.sourceAttribution && (
-            <div className="flex items-center gap-2">
-              <User className="h-4 w-4 text-sage-500" />
-              <span className="text-sage-600 truncate">
-                {currentImage.sourceAttribution}
-              </span>
-            </div>
-          )}
+          <div className="flex items-center gap-2">
+            <User className="h-4 w-4 text-sage-500" />
+            <span className="text-sage-600 truncate">
+              {(currentImage as any).contributorName || (currentImage as any).sourceAttribution || 'Wikimedia Commons'}
+            </span>
+          </div>
 
           {currentImage.createdAt && (
             <div className="flex items-center gap-2">
@@ -156,13 +184,23 @@ export function SpeciesImageGallery({ genus, species, maxImages, showSpeciesName
               </span>
             </div>
           )}
+
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="text-xs">
+              {(currentImage as any).source === 'user' ? 'Community Contribution' : (currentImage as any).license || 'CC0'}
+            </Badge>
+            <span className="text-sage-600">License</span>
+          </div>
         </div>
 
-        {currentImage.sourceAttribution && (
-          <p className="text-xs text-sage-500 border-t border-sage-200 pt-2">
-            <strong>Attribution:</strong> {currentImage.sourceAttribution}
-          </p>
-        )}
+        <div className="text-xs text-sage-600 border-t border-sage-200 pt-2">
+          {currentImage.caption}
+          {(currentImage as any).contributorName && (
+            <span className="block mt-1 font-medium">
+              Contributed by {(currentImage as any).contributorName}
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Report Modal */}
