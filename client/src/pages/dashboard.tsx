@@ -79,7 +79,11 @@ export default function Dashboard() {
             <StatsCard
               title="Total Plants"
               value={stats?.totalPlants || 0}
-              icon={<CactusIcon className="text-cactus-green" size={20} />}
+              icon={<img 
+                src="/attached_assets/cactilog-logo-large_1753468813072.png" 
+                alt="Plants"
+                className="w-5 h-5 object-contain"
+              />}
               bgColor="bg-cactus-green/10"
             />
             <StatsCard
@@ -117,7 +121,11 @@ export default function Dashboard() {
               </div>
             ) : (
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
-                <CactusIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" size={48} />
+                <img 
+                  src="/attached_assets/cactilog-logo-large_1753468813072.png" 
+                  alt="No plants"
+                  className="w-12 h-12 object-contain mx-auto mb-4 opacity-40"
+                />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">No plants yet</h3>
                 <p className="text-gray-600 mb-4">Start building your collection by adding your first plant.</p>
                 <Button onClick={() => setShowAddModal(true)} className="bg-cactus-green hover:bg-succulent">
