@@ -154,14 +154,16 @@ export default function KnowledgeGenus() {
                 {filteredSpecies.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {filteredSpecies.map((species, index) => (
-                      <div key={index} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
-                        <div className="font-medium text-gray-900 italic mb-1">
-                          {genus.name} {species}
+                      <Link key={index} href={`/knowledge/species/${genusName}/${species}`}>
+                        <div className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 hover:border-cactus-green transition-colors cursor-pointer">
+                          <div className="font-medium text-gray-900 italic mb-1">
+                            {genus.name} {species}
+                          </div>
+                          <div className="text-sm text-gray-600">
+                            Click for detailed information
+                          </div>
                         </div>
-                        <div className="text-sm text-gray-600">
-                          Species: {species}
-                        </div>
-                      </div>
+                      </Link>
                     ))}
                   </div>
                 ) : (
@@ -219,11 +221,13 @@ export default function KnowledgeGenus() {
               <CardContent>
                 <div className="space-y-2">
                   {genus.species.slice(0, 5).map((species, index) => (
-                    <div key={index} className="text-sm">
-                      <span className="font-medium italic">
-                        {genus.name} {species}
-                      </span>
-                    </div>
+                    <Link key={index} href={`/knowledge/species/${genusName}/${species}`}>
+                      <div className="text-sm hover:bg-gray-50 p-2 rounded-lg cursor-pointer transition-colors">
+                        <span className="font-medium italic text-cactus-green">
+                          {genus.name} {species}
+                        </span>
+                      </div>
+                    </Link>
                   ))}
                   {genus.species.length > 5 && (
                     <div className="text-sm text-gray-500 pt-2">
