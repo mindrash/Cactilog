@@ -53,6 +53,9 @@ The application uses a monorepo structure with shared schemas:
 - Used proper CSS architecture with semantic class names for easy maintenance
 - **Fixed title size consistency** across dashboard and collection pages using centralized typography system
 - **Improved collection card layout** - moved Custom ID to its own line to reduce cramped appearance and improve readability
+- **Updated plant classification system** from simple "cactus/succulent" to 14 botanical families (Cactaceae, Aizoaceae, Crassulaceae, etc.) for scientific accuracy
+- **Migrated existing plant records** from type field to family field with proper botanical family assignments
+- **Updated all UI components** including collection filters, plant cards, and form modals to use botanical family system
 
 #### July 25, 2025 - Google Fonts Integration & Centralized Typography System
 - **Added Google Fonts integration** with Bagel Fat One decorative font for distinctive brand identity

@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { insertPlantSchema, type InsertPlant } from "@shared/schema";
+import { insertPlantSchema, type InsertPlant, BOTANICAL_FAMILIES } from "@shared/schema";
 import { cactusGenera, succulentGenera, getSpeciesForGenus } from "@shared/cactus-data";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -41,14 +41,14 @@ interface AddPlantModalProps {
 export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [selectedType, setSelectedType] = useState<string>("cactus");
+  const [selectedFamily, setSelectedFamily] = useState<string>("Cactaceae");
   const [selectedGenus, setSelectedGenus] = useState<string>("Trichocereus");
   const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
 
   const form = useForm<InsertPlant>({
     resolver: zodResolver(insertPlantSchema),
     defaultValues: {
-      type: "cactus",
+      family: "Cactaceae",
       genus: "Trichocereus",
       species: "none",
       cultivar: "",
@@ -63,24 +63,24 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
     },
   });
 
-  // Get available genera based on selected type
+  // Get available genera based on selected family
   const availableGenera = useMemo(() => {
-    if (!selectedType) return [];
-    const genera = selectedType === "cactus" ? cactusGenera : succulentGenera;
+    if (!selectedFamily) return [];
+    const genera = selectedFamily === "Cactaceae" ? cactusGenera : succulentGenera;
     return genera.map(g => ({
       name: g.name,
       commonName: g.commonName,
       displayName: g.commonName ? `${g.name} (${g.commonName})` : g.name
     })).sort((a, b) => a.name.localeCompare(b.name));
-  }, [selectedType]);
+  }, [selectedFamily]);
 
   // Get available species based on selected genus
   const availableSpecies = useMemo(() => {
     if (!selectedGenus) return [];
-    return getSpeciesForGenus(selectedGenus, selectedType === "succulent")
+    return getSpeciesForGenus(selectedGenus, selectedFamily !== "Cactaceae")
       .filter(species => species && species.trim() !== "")
       .sort();
-  }, [selectedGenus, selectedType]);
+  }, [selectedGenus, selectedFamily]);
 
   const createPlantMutation = useMutation({
     mutationFn: async (data: InsertPlant) => {
@@ -120,7 +120,7 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
         description: "Your plant has been successfully added to your collection.",
       });
       form.reset({
-        type: "cactus",
+        family: "Cactaceae",
         genus: "Trichocereus",
         species: "none",
         cultivar: "",
@@ -132,7 +132,7 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
         notes: "",
         customId: "",
       });
-      setSelectedType("cactus");
+      setSelectedFamily("Cactaceae");
       setSelectedGenus("Trichocereus");
       setSelectedPhoto(null);
       onOpenChange(false);
@@ -193,27 +193,30 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
-                  name="type"
+                  name="family"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Type *</FormLabel>
+                      <FormLabel>Family *</FormLabel>
                       <Select onValueChange={(value) => {
                         field.onChange(value);
-                        setSelectedType(value);
-                        // Reset genus and species when type changes
-                        const firstGenus = value === "cactus" ? "Trichocereus" : "Echeveria";
+                        setSelectedFamily(value);
+                        // Reset genus and species when family changes
+                        const firstGenus = value === "Cactaceae" ? "Trichocereus" : "Echeveria";
                         form.setValue("genus", firstGenus);
                         form.setValue("species", "none");
                         setSelectedGenus(firstGenus);
                       }} value={field.value}>
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select type" />
+                            <SelectValue placeholder="Select family" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="cactus">Cactus</SelectItem>
-                          <SelectItem value="succulent">Succulent</SelectItem>
+                          {BOTANICAL_FAMILIES.map((family) => (
+                            <SelectItem key={family} value={family}>
+                              {family}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                       <FormMessage />

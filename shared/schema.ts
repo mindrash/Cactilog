@@ -47,7 +47,7 @@ export const plants = pgTable("plants", {
   id: serial("id").primaryKey(),
   userId: varchar("user_id").notNull(),
   customId: varchar("custom_id"), // User-defined ID like "TRI-PACH-PC-1"
-  type: varchar("type").notNull(), // cactus, succulent
+  family: varchar("family").notNull(), // Botanical families: Cactaceae, Aizoaceae, etc.
   genus: varchar("genus").notNull(),
   species: varchar("species"),
   cultivar: varchar("cultivar"),
@@ -101,7 +101,7 @@ export const seeds = pgTable("seeds", {
   id: serial("id").primaryKey(),
   userId: varchar("user_id").notNull(),
   customId: varchar("custom_id"), // User-defined ID like "SDS-LOPH-WILL-1"
-  type: varchar("type").notNull(),
+  family: varchar("family").notNull(), // Botanical families: Cactaceae, Aizoaceae, etc.
   genus: varchar("genus").notNull(),
   species: varchar("species"),
   cultivar: varchar("cultivar"),
@@ -170,7 +170,7 @@ export const insertPlantSchema = createInsertSchema(plants).omit({
   createdAt: true,
   updatedAt: true,
 }).extend({
-  type: z.string().min(1, "Type is required"),
+  family: z.string().min(1, "Family is required"),
   genus: z.string().min(1, "Genus is required"),
   species: z.string().optional().nullable(),
   cultivar: z.string().optional().nullable(),
@@ -261,3 +261,21 @@ export type PlantLike = typeof plantLikes.$inferSelect;
 export type InsertPlantLike = typeof plantLikes.$inferInsert;
 export type Seed = typeof seeds.$inferSelect;
 export type InsertSeed = z.infer<typeof insertSeedSchema>;
+
+// Botanical families for plant classification
+export const BOTANICAL_FAMILIES = [
+  "Cactaceae",
+  "Aizoaceae", 
+  "Crassulaceae",
+  "Apocynaceae",
+  "Asphodelaceae",
+  "Euphorbiaceae",
+  "Agavoideae",
+  "Didiereaceae",
+  "Burseraceae",
+  "Portulacaceae",
+  "Talinaceae",
+  "Cucurbitaceae",
+  "Moraceae",
+  "Passifloraceae"
+] as const;
