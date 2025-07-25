@@ -184,7 +184,7 @@ export class DatabaseStorage implements IStorage {
     }
     
     if (filters?.type) {
-      whereConditions.push(eq(plants.type, filters.type));
+      whereConditions.push(eq(plants.family, filters.type));
     }
     
     if (filters?.genus) {
@@ -740,8 +740,14 @@ export class DatabaseStorage implements IStorage {
       return existingVendors.length; // Return existing count, don't re-seed
     }
 
-    // Insert all vendor data
-    const insertedVendors = await db.insert(vendors).values(vendorData).returning();
+    // Insert all vendor data with proper type casting
+    const insertedVendors = await db.insert(vendors).values(
+      vendorData.map(vendor => ({
+        ...vendor,
+        reputation: vendor.reputation as "premium" | "reliable" | "budget" | "specialty",
+        priceRange: vendor.priceRange as "budget" | "moderate" | "premium" | "luxury"
+      }))
+    ).returning();
     return insertedVendors.length;
   }
 }
