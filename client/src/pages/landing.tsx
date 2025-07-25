@@ -38,8 +38,12 @@ export default function Landing() {
       <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-cactus-green rounded-full flex items-center justify-center">
-              <CactusIcon className="text-white" size={24} />
+            <div className="w-10 h-10 flex items-center justify-center">
+              <img 
+                src="/attached_assets/cactilog-logo-large_1753468813072.png" 
+                alt="Cactilog"
+                className="w-10 h-10 object-contain"
+              />
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900">Cactilog</h1>
@@ -76,7 +80,11 @@ export default function Landing() {
           </div>
         ) : data?.plants?.length === 0 ? (
           <div className="text-center py-12">
-            <CactusIcon className="mx-auto text-gray-400 mb-4" size={48} />
+            <img 
+              src="/attached_assets/cactilog-logo-large_1753468813072.png" 
+              alt="Cactilog"
+              className="w-12 h-12 object-contain mx-auto mb-4 opacity-40"
+            />
             <h3 className="text-xl font-semibold text-gray-900 mb-2">No plants shared yet</h3>
             <p className="text-gray-600 mb-6">Be the first to share your plant collection!</p>
             <Button 

@@ -70,8 +70,12 @@ export default function Header() {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link href="/" className="flex items-center space-x-3 mr-4 lg:mr-8">
-              <div className="w-8 h-8 bg-cactus-green rounded-full flex items-center justify-center">
-                <CactusIcon className="text-white" size={20} />
+              <div className="w-8 h-8 flex items-center justify-center">
+                <img 
+                  src="/attached_assets/cactilog-logo-large_1753468813072.png" 
+                  alt="Cactilog"
+                  className="w-8 h-8 object-contain"
+                />
               </div>
               <div>
                 <h1 className="text-lg font-bold text-gray-900">Cactilog</h1>
@@ -243,8 +247,12 @@ export default function Header() {
                 <SheetContent side="right" className="w-64">
                   <SheetHeader>
                     <SheetTitle className="flex items-center space-x-2">
-                      <div className="w-6 h-6 bg-cactus-green rounded-full flex items-center justify-center">
-                        <CactusIcon className="text-white" size={16} />
+                      <div className="w-6 h-6 flex items-center justify-center">
+                        <img 
+                          src="/attached_assets/cactilog-logo-large_1753468813072.png" 
+                          alt="Cactilog"
+                          className="w-6 h-6 object-contain"
+                        />
                       </div>
                       <span>Cactilog</span>
                     </SheetTitle>
