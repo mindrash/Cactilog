@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ExternalLink, Search, Filter, Store, MapPin, Star, DollarSign, Plus, Settings, Database } from "lucide-react";
+import { ExternalLink, Search, Filter, Store, MapPin, Star, DollarSign, Plus, Settings, Database, List, Grid3X3 } from "lucide-react";
 
 interface Vendor {
   id: number;
@@ -31,6 +31,7 @@ export default function Vendors() {
   const [selectedSpecialty, setSelectedSpecialty] = useState("all");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedReputation, setSelectedReputation] = useState("all");
+  const [viewMode, setViewMode] = useState<"list" | "cards">("list");
   
   const { user } = useAuth();
   const { toast } = useToast();
@@ -208,6 +209,26 @@ export default function Vendors() {
                 <SelectItem value="budget">Budget</SelectItem>
               </SelectContent>
             </Select>
+            
+            {/* View Toggle */}
+            <div className="flex border rounded-lg overflow-hidden">
+              <Button
+                variant={viewMode === "list" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setViewMode("list")}
+                className="rounded-none"
+              >
+                <List className="w-4 h-4" />
+              </Button>
+              <Button
+                variant={viewMode === "cards" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setViewMode("cards")}
+                className="rounded-none"
+              >
+                <Grid3X3 className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
 
           {(searchTerm || (selectedSpecialty !== "all") || (selectedCategory !== "all") || (selectedReputation !== "all")) && (
@@ -232,9 +253,95 @@ export default function Vendors() {
           )}
         </div>
 
-        {/* Vendor Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredVendors.map((vendor) => (
+        {/* Vendor Display */}
+        {viewMode === "list" ? (
+          <div className="space-y-4">
+            {filteredVendors.map((vendor) => (
+              <Card key={vendor.id} className="w-full">
+                <CardContent className="p-6">
+                  <div className="flex flex-col lg:flex-row lg:items-start gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            {getReputationIcon(vendor.reputation)}
+                            <h3 className="text-xl font-semibold">{vendor.name}</h3>
+                          </div>
+                          <div className="flex items-center text-sm text-gray-500 mb-3">
+                            <MapPin className="w-4 h-4 mr-1" />
+                            {vendor.location}
+                          </div>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          <Badge className={getPriceRangeColor(vendor.priceRange)}>
+                            {vendor.priceRange}
+                          </Badge>
+                          <Badge variant="outline" className="capitalize">
+                            {vendor.reputation}
+                          </Badge>
+                        </div>
+                      </div>
+                      
+                      <p className="text-gray-600 mb-4 leading-relaxed">
+                        {vendor.description}
+                      </p>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                          <h4 className="font-medium text-sm text-gray-700 mb-2">Specialties</h4>
+                          <div className="flex flex-wrap gap-1">
+                            {vendor.specialties.map((specialty) => (
+                              <Badge 
+                                key={specialty} 
+                                variant="secondary"
+                                className={getSpecialtyColor(specialty)}
+                              >
+                                {specialty}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <h4 className="font-medium text-sm text-gray-700 mb-2">Categories</h4>
+                          <div className="flex flex-wrap gap-1">
+                            {vendor.categories.map((category) => (
+                              <Badge key={category} variant="outline" className="capitalize">
+                                {category}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="mb-4">
+                        <h4 className="font-medium text-sm text-gray-700 mb-2">Shipping Information</h4>
+                        <p className="text-sm text-gray-600">{vendor.shippingInfo}</p>
+                      </div>
+                      
+                      <Button 
+                        asChild
+                        className="w-full sm:w-auto"
+                      >
+                        <a 
+                          href={vendor.website} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center justify-center"
+                        >
+                          <ExternalLink className="w-4 h-4 mr-2" />
+                          Visit Website
+                        </a>
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredVendors.map((vendor) => (
             <Card key={vendor.id} className="h-full">
               <CardHeader>
                 <div className="flex items-start justify-between">
@@ -323,7 +430,8 @@ export default function Vendors() {
               </CardContent>
             </Card>
           ))}
-        </div>
+          </div>
+        )}
 
         {filteredVendors.length === 0 && (
           <div className="text-center py-12">
