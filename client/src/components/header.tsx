@@ -79,7 +79,7 @@ export default function Header() {
                 />
               </div>
               <div>
-                <h1 className="text-lg font-bold text-gray-900">Cactilog</h1>
+                <h1 className="text-lg font-bold text-gray-900 font-henny-penny">Cactilog</h1>
               </div>
             </Link>
 
@@ -255,7 +255,7 @@ export default function Header() {
                           className="w-6 h-6 object-contain"
                         />
                       </div>
-                      <span>Cactilog</span>
+                      <span className="font-henny-penny">Cactilog</span>
                     </SheetTitle>
                   </SheetHeader>
                   

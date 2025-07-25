@@ -47,6 +47,14 @@ The application uses a monorepo structure with shared schemas:
 
 ### Recent Changes
 
+#### July 25, 2025 - Google Fonts Integration & Custom Typography
+- **Added Google Fonts integration** with Henny Penny decorative font for distinctive brand identity
+- Implemented proper font loading optimization with preconnect and display=swap for performance
+- **Created custom font CSS class** for Henny Penny typography throughout the application
+- Applied decorative font to all "Cactilog" brand titles across main header, mobile menu, and landing page
+- **Enhanced brand personality** with playful, botanical character while maintaining professional appearance
+- Updated HTML head with optimized Google Fonts loading for better web performance
+
 #### July 25, 2025 - Knowledge Base Care Guides Implementation
 - **Implemented comprehensive Care Guides system** with detailed cultivation information for specific cactus and succulent species
 - Created species-specific care guides for Trichocereus pachanoi, T. peruvianus, and Mammillaria hahniana with authentic cultivation data
