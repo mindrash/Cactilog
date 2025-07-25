@@ -67,7 +67,7 @@ export default function Landing() {
       {/* Main Content */}
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl font-bold font-freckle-face title-cactus-green mb-4">
             Latest Cactus & Succulent Collections
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
@@ -88,7 +88,7 @@ export default function Landing() {
               alt="Cactilog"
               className="w-12 h-12 object-contain mx-auto mb-4 opacity-40"
             />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No plants shared yet</h3>
+            <h3 className="text-xl font-semibold font-freckle-face title-cactus-green mb-2">No plants shared yet</h3>
             <p className="text-gray-600 mb-6">Be the first to share your plant collection!</p>
             <Button 
               onClick={() => window.location.href = "/api/login"}

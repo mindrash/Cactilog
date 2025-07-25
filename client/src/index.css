@@ -25,6 +25,14 @@
   color: hsl(140, 20%, 45%); /* Lighter succulent green */
 }
 
+.font-freckle-face {
+  font-family: 'Freckle Face', cursive;
+}
+
+.title-cactus-green {
+  color: hsl(130, 30%, 40%); /* Pleasant cactus-influenced green for titles */
+}
+
 :root {
   --background: hsl(55, 35%, 97%); /* Soft cream with subtle yellow-green */
   --foreground: hsl(125, 15%, 25%); /* Deep muted green */

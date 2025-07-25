@@ -17,13 +17,13 @@ export default function Import() {
         <Sidebar />
         <main className="flex-1 p-6">
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Import Data</h2>
+            <h2 className="text-2xl font-bold font-freckle-face title-cactus-green mb-2">Import Data</h2>
             <p className="text-gray-600">Import your existing plant collection data</p>
           </div>
           
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
             <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Data Import Coming Soon</h3>
+            <h3 className="text-lg font-medium font-freckle-face title-cactus-green mb-2">Data Import Coming Soon</h3>
             <p className="text-gray-600 mb-4">This feature will allow you to import plant data from CSV files.</p>
           </div>
         </main>

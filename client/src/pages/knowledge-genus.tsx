@@ -50,7 +50,7 @@ export default function KnowledgeGenus() {
           <Card>
             <CardContent className="flex flex-col items-center justify-center py-12">
               <BookOpen className="h-12 w-12 text-gray-400 mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
+              <h3 className="text-lg font-medium font-freckle-face title-cactus-green mb-2">
                 Genus not found
               </h3>
               <p className="text-gray-600 mb-4">
@@ -94,8 +94,8 @@ export default function KnowledgeGenus() {
 
         {/* Genus Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            <span className="italic text-cactus-green">{genus.name}</span>
+          <h1 className="text-4xl font-bold font-freckle-face title-cactus-green mb-2">
+            <span className="italic">{genus.name}</span>
           </h1>
           <div className="flex items-center space-x-4 mb-4">
             <Badge variant="outline" className="text-sm">
