@@ -316,7 +316,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // User browsing routes
   app.get('/api/users/public', async (req, res) => {
     try {
-      const users = await storage.getPublicUsers();
+      const sortBy = (req.query.sortBy as string) || 'latest';
+      const validSortOptions = ['latest', 'likes', 'cacti'];
+      
+      if (!validSortOptions.includes(sortBy)) {
+        return res.status(400).json({ message: "Invalid sort option. Use 'latest', 'likes', or 'cacti'" });
+      }
+      
+      const users = await storage.getPublicUsers(sortBy as 'latest' | 'likes' | 'cacti');
       res.json(users);
     } catch (error) {
       console.error("Error fetching public users:", error);

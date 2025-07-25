@@ -367,7 +367,7 @@ export class DatabaseStorage implements IStorage {
     };
   }
   // User browsing operations
-  async getPublicUsers(): Promise<Array<User & { plantCount: number; publicPlantCount: number; uniqueGenera: number }>> {
+  async getPublicUsers(sortBy: 'latest' | 'likes' | 'cacti' = 'latest'): Promise<Array<User & { plantCount: number; publicPlantCount: number; uniqueGenera: number; totalLikes: number; latestPlantDate: Date | null }>> {
     const usersWithStats = await db
       .select({
         id: users.id,
@@ -380,15 +380,24 @@ export class DatabaseStorage implements IStorage {
         contributePhotosToKnowledgeBase: users.contributePhotosToKnowledgeBase,
         createdAt: users.createdAt,
         updatedAt: users.updatedAt,
-        plantCount: sql<number>`COUNT(${plants.id})::int`,
-        publicPlantCount: sql<number>`COUNT(CASE WHEN ${plants.isPublic} = 'public' THEN 1 END)::int`,
+        plantCount: sql<number>`COUNT(DISTINCT ${plants.id})::int`,
+        publicPlantCount: sql<number>`COUNT(DISTINCT CASE WHEN ${plants.isPublic} = 'public' THEN ${plants.id} END)::int`,
         uniqueGenera: sql<number>`COUNT(DISTINCT ${plants.genus})::int`,
+        totalLikes: sql<number>`COUNT(DISTINCT ${plantLikes.id})::int`,
+        latestPlantDate: sql<Date>`MAX(${plants.updatedAt})`,
       })
       .from(users)
       .leftJoin(plants, eq(plants.userId, users.id))
+      .leftJoin(plantLikes, and(eq(plantLikes.plantId, plants.id), eq(plants.isPublic, 'public')))
       .where(eq(users.collectionPublic, 'public'))
       .groupBy(users.id)
-      .orderBy(desc(sql`COUNT(${plants.id})`));
+      .orderBy(
+        sortBy === 'latest' 
+          ? desc(sql`MAX(${plants.updatedAt})`)
+          : sortBy === 'likes'
+          ? desc(sql`COUNT(DISTINCT ${plantLikes.id})`)
+          : desc(sql`COUNT(DISTINCT ${plants.id})`) // cacti count
+      );
 
     return usersWithStats;
   }

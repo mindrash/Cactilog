@@ -1,12 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
-import { Users as UsersIcon, Sprout, Eye, EyeOff } from "lucide-react";
+import { Users as UsersIcon, Sprout, Eye, EyeOff, ArrowUpDown, Heart, TreePine } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Header from "@/components/header";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import type { User } from "@shared/schema";
@@ -15,11 +16,14 @@ interface UserWithStats extends User {
   plantCount: number;
   publicPlantCount: number;
   uniqueGenera: number;
+  totalLikes: number;
+  latestPlantDate: Date | null;
 }
 
 export default function Users() {
   const { toast } = useToast();
   const { isAuthenticated, isLoading } = useAuth();
+  const [sortBy, setSortBy] = useState<'latest' | 'likes' | 'cacti'>('latest');
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -37,7 +41,12 @@ export default function Users() {
   }, [isAuthenticated, isLoading, toast]);
 
   const { data: users = [], isLoading: usersLoading } = useQuery<UserWithStats[]>({
-    queryKey: ["/api/users/public"],
+    queryKey: ["/api/users/public", sortBy],
+    queryFn: async () => {
+      const response = await fetch(`/api/users/public?sortBy=${sortBy}`);
+      if (!response.ok) throw new Error('Failed to fetch users');
+      return response.json();
+    },
     enabled: isAuthenticated,
   });
 
@@ -77,10 +86,44 @@ export default function Users() {
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Header Section */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Community Collections</h1>
-          <p className="text-gray-600">
-            Discover fellow cactus and succulent enthusiasts and browse their public collections.
-          </p>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">Community Collections</h1>
+              <p className="text-gray-600">
+                Discover fellow cactus and succulent enthusiasts and browse their public collections.
+              </p>
+            </div>
+            
+            {/* Sort Controls */}
+            <div className="flex items-center gap-2">
+              <ArrowUpDown className="w-4 h-4 text-gray-500" />
+              <Select value={sortBy} onValueChange={(value: 'latest' | 'likes' | 'cacti') => setSortBy(value)}>
+                <SelectTrigger className="w-48">
+                  <SelectValue placeholder="Sort by..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="latest">
+                    <div className="flex items-center gap-2">
+                      <Sprout className="w-4 h-4 text-green-600" />
+                      Latest Changes
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="likes">
+                    <div className="flex items-center gap-2">
+                      <Heart className="w-4 h-4 text-red-500" />
+                      Most Likes
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="cacti">
+                    <div className="flex items-center gap-2">
+                      <TreePine className="w-4 h-4 text-cactus-green" />
+                      Most Cacti
+                    </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
         </div>
 
         {/* Users Grid */}
@@ -144,18 +187,38 @@ export default function Users() {
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-3 gap-4 text-center">
-                      <div>
-                        <div className="text-xl font-bold text-cactus-green">{user.publicPlantCount}</div>
-                        <div className="text-xs text-gray-600">Public Plants</div>
+                    <div className="space-y-3">
+                      <div className="grid grid-cols-3 gap-4 text-center">
+                        <div>
+                          <div className="text-xl font-bold text-cactus-green">{user.publicPlantCount}</div>
+                          <div className="text-xs text-gray-600">Public Plants</div>
+                        </div>
+                        <div>
+                          <div className="text-xl font-bold text-forest">{user.plantCount}</div>
+                          <div className="text-xs text-gray-600">Total Plants</div>
+                        </div>
+                        <div>
+                          <div className="text-xl font-bold text-desert-sage">{user.uniqueGenera}</div>
+                          <div className="text-xs text-gray-600">Genera</div>
+                        </div>
                       </div>
-                      <div>
-                        <div className="text-xl font-bold text-forest">{user.plantCount}</div>
-                        <div className="text-xs text-gray-600">Total Plants</div>
-                      </div>
-                      <div>
-                        <div className="text-xl font-bold text-desert-sage">{user.uniqueGenera}</div>
-                        <div className="text-xs text-gray-600">Genera</div>
+                      
+                      {/* Additional stats based on sort type */}
+                      <div className="pt-2 border-t border-gray-100">
+                        <div className="flex items-center justify-between text-sm">
+                          <div className="flex items-center gap-1">
+                            <Heart className="w-4 h-4 text-red-500" />
+                            <span className="text-gray-600">{user.totalLikes || 0} likes</span>
+                          </div>
+                          {user.latestPlantDate && (
+                            <div className="flex items-center gap-1">
+                              <Sprout className="w-4 h-4 text-green-600" />
+                              <span className="text-gray-600">
+                                {new Date(user.latestPlantDate).toLocaleDateString()}
+                              </span>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </CardContent>
