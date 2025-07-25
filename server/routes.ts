@@ -688,9 +688,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/vendors/seed', isAuthenticated, async (req, res) => {
+  app.post('/api/vendors/seed', isAuthenticated, async (req: any, res) => {
     try {
-      const seededCount = await storage.seedVendors(vendorData);
+      const userId = req.user.claims.sub;
+      const isAdmin = await storage.isUserAdmin(userId);
+      
+      if (!isAdmin) {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+
+      const seededCount = await storage.seedVendors();
       res.json({ message: `Successfully seeded ${seededCount} vendors` });
     } catch (error) {
       console.error("Error seeding vendors:", error);
