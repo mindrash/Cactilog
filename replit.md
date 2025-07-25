@@ -47,6 +47,15 @@ The application uses a monorepo structure with shared schemas:
 
 ### Recent Changes
 
+#### July 25, 2025 - Plant Hearts/Likes Community Engagement System
+- **Added comprehensive heart/like functionality** for community plant engagement across all plant displays
+- Created PlantLikeButton component with animated heart icon showing like counts and toggle functionality
+- **Implemented plant likes database table** with user-plant relationship tracking and unique constraints
+- Added API endpoints for liking/unliking plants with proper authentication and error handling
+- **Integrated heart buttons throughout the app**: plant cards in community feed, collection pages, and plant detail modals
+- Added like count display and visual feedback with red heart fill when liked
+- Fixed community collections API endpoint authentication issues - now properly displays public user collections
+
 #### July 25, 2025 - Enhanced Botanical Taxonomy & Variant Classification
 - **Enhanced botanical taxonomy to capture complete taxonomic hierarchy** including subspecies, varieties, forms, cultivars, clones, and mutations
 - Added TaxonomicVariant interface with proper botanical classification structure supporting all major variant types
