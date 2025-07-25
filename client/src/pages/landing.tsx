@@ -47,7 +47,9 @@ export default function Landing() {
               />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-900 font-bagel-fat-one">Cactilog</h1>
+              <h1 className="cactilog-title-large font-bold">
+                <span className="cacti-green">Cacti</span><span className="log-green">log</span>
+              </h1>
               <p className="text-sm text-gray-600">Community Collection</p>
             </div>
           </div>

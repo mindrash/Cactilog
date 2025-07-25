@@ -7,6 +7,24 @@
   font-family: 'Bagel Fat One', cursive;
 }
 
+.cactilog-title {
+  font-family: 'Bagel Fat One', cursive;
+  font-size: 1.5rem;
+}
+
+.cactilog-title-large {
+  font-family: 'Bagel Fat One', cursive;
+  font-size: 1.75rem;
+}
+
+.cacti-green {
+  color: hsl(125, 25%, 35%); /* Main cactus green */
+}
+
+.log-green {
+  color: hsl(140, 20%, 45%); /* Lighter succulent green */
+}
+
 :root {
   --background: hsl(55, 35%, 97%); /* Soft cream with subtle yellow-green */
   --foreground: hsl(125, 15%, 25%); /* Deep muted green */
