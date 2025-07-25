@@ -85,7 +85,7 @@ export default function Collection() {
           <div className="mb-8">
             <div className="flex justify-between items-center mb-6">
               <div>
-                <h2 className="page-title-md mb-2">My Cacti</h2>
+                <h2 className="page-title-xl mb-2">My Cacti</h2>
                 <p className="text-gray-600">Browse and manage your plants</p>
               </div>
               <Button onClick={() => setShowAddModal(true)} className="bg-cactus-green hover:bg-succulent">
