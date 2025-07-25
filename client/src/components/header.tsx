@@ -70,7 +70,7 @@ export default function Header() {
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Link href="/" className="flex items-center space-x-2 mr-4 lg:mr-8">
+            <Link href="/" className="flex items-center space-x-1 mr-4 lg:mr-8">
               <div className="w-8 h-8 flex items-center justify-center">
                 <img 
                   src={logoImage} 
@@ -249,7 +249,7 @@ export default function Header() {
                 </SheetTrigger>
                 <SheetContent side="right" className="w-64">
                   <SheetHeader>
-                    <SheetTitle className="flex items-center space-x-1.5">
+                    <SheetTitle className="flex items-center space-x-1">
                       <div className="w-6 h-6 flex items-center justify-center">
                         <img 
                           src={logoImage} 
