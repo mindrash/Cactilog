@@ -255,86 +255,99 @@ export default function Vendors() {
 
         {/* Vendor Display */}
         {viewMode === "list" ? (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {filteredVendors.map((vendor) => (
-              <Card key={vendor.id} className="w-full">
-                <CardContent className="p-6">
-                  <div className="flex flex-col lg:flex-row lg:items-start gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-start justify-between mb-3">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-2">
-                            {getReputationIcon(vendor.reputation)}
-                            <h3 className="text-xl font-semibold">{vendor.name}</h3>
-                          </div>
-                          <div className="flex items-center text-sm text-gray-500 mb-3">
-                            <MapPin className="w-4 h-4 mr-1" />
-                            {vendor.location}
+              <Card key={vendor.id} className="w-full hover:shadow-md transition-shadow">
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-4">
+                    {/* Left: Main Info */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="flex items-center gap-2 min-w-0 flex-1">
+                          {getReputationIcon(vendor.reputation)}
+                          <h3 className="text-lg font-semibold truncate">{vendor.name}</h3>
+                          <div className="flex items-center text-sm text-gray-500 ml-2">
+                            <MapPin className="w-3 h-3 mr-1" />
+                            <span className="truncate">{vendor.location}</span>
                           </div>
                         </div>
-                        <div className="flex flex-wrap gap-2">
-                          <Badge className={getPriceRangeColor(vendor.priceRange)}>
+                        <div className="flex gap-1 ml-4 flex-shrink-0">
+                          <Badge className={getPriceRangeColor(vendor.priceRange)} size="sm">
                             {vendor.priceRange}
                           </Badge>
-                          <Badge variant="outline" className="capitalize">
+                          <Badge variant="outline" size="sm" className="capitalize">
                             {vendor.reputation}
                           </Badge>
                         </div>
                       </div>
                       
-                      <p className="text-gray-600 mb-4 leading-relaxed">
+                      <p className="text-sm text-gray-600 mb-3 line-clamp-2">
                         {vendor.description}
                       </p>
                       
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div>
-                          <h4 className="font-medium text-sm text-gray-700 mb-2">Specialties</h4>
+                      <div className="flex flex-wrap items-center gap-4 text-xs">
+                        <div className="flex items-center gap-1">
+                          <span className="font-medium text-gray-700">Specialties:</span>
                           <div className="flex flex-wrap gap-1">
-                            {vendor.specialties.map((specialty) => (
+                            {vendor.specialties.slice(0, 3).map((specialty) => (
                               <Badge 
                                 key={specialty} 
                                 variant="secondary"
+                                size="sm"
                                 className={getSpecialtyColor(specialty)}
                               >
                                 {specialty}
                               </Badge>
                             ))}
+                            {vendor.specialties.length > 3 && (
+                              <Badge variant="secondary" size="sm" className="bg-gray-100">
+                                +{vendor.specialties.length - 3}
+                              </Badge>
+                            )}
                           </div>
                         </div>
                         
-                        <div>
-                          <h4 className="font-medium text-sm text-gray-700 mb-2">Categories</h4>
+                        <div className="flex items-center gap-1">
+                          <span className="font-medium text-gray-700">Categories:</span>
                           <div className="flex flex-wrap gap-1">
                             {vendor.categories.map((category) => (
-                              <Badge key={category} variant="outline" className="capitalize">
+                              <Badge key={category} variant="outline" size="sm" className="capitalize">
                                 {category}
                               </Badge>
                             ))}
                           </div>
                         </div>
                       </div>
-                      
-                      <div className="mb-4">
-                        <h4 className="font-medium text-sm text-gray-700 mb-2">Shipping Information</h4>
-                        <p className="text-sm text-gray-600">{vendor.shippingInfo}</p>
-                      </div>
-                      
+                    </div>
+                    
+                    {/* Right: Action Button */}
+                    <div className="flex-shrink-0">
                       <Button 
                         asChild
-                        className="w-full sm:w-auto"
+                        size="sm"
+                        className="bg-cactus-green hover:bg-cactus-green/90"
                       >
                         <a 
                           href={vendor.website} 
                           target="_blank" 
                           rel="noopener noreferrer"
-                          className="inline-flex items-center justify-center"
+                          className="inline-flex items-center gap-1"
                         >
-                          <ExternalLink className="w-4 h-4 mr-2" />
-                          Visit Website
+                          <ExternalLink className="w-3 h-3" />
+                          Visit
                         </a>
                       </Button>
                     </div>
                   </div>
+                  
+                  {/* Expandable Shipping Info */}
+                  {vendor.shippingInfo && (
+                    <div className="mt-3 pt-3 border-t border-gray-100">
+                      <p className="text-xs text-gray-500 leading-relaxed">
+                        <span className="font-medium">Shipping:</span> {vendor.shippingInfo}
+                      </p>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             ))}
