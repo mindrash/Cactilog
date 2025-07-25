@@ -241,26 +241,43 @@ export default function KnowledgeSpecies() {
                       About {scientificName}
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-4">
-                    <p className="text-gray-700 leading-relaxed">
-                      <strong>{scientificName}</strong> is a member of the {genus.name} genus, 
-                      which is {genus.description.toLowerCase()}
-                    </p>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="flex items-start space-x-3">
-                        <MapPin className="w-5 h-5 text-cactus-green mt-1" />
-                        <div>
-                          <h4 className="font-semibold text-gray-900">Native Region</h4>
-                          <p className="text-gray-600 text-sm">{speciesInfo.nativeRegion}</p>
+                  <CardContent className="space-y-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                      <div className="lg:col-span-2 space-y-4">
+                        <p className="text-gray-700 leading-relaxed">
+                          <strong>{scientificName}</strong> is a member of the {genus.name} genus, 
+                          which is {genus.description.toLowerCase()}
+                        </p>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="flex items-start space-x-3">
+                            <MapPin className="w-5 h-5 text-cactus-green mt-1" />
+                            <div>
+                              <h4 className="font-semibold text-gray-900">Native Region</h4>
+                              <p className="text-gray-600 text-sm">{speciesInfo.nativeRegion}</p>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-start space-x-3">
+                            <Eye className="w-5 h-5 text-cactus-green mt-1" />
+                            <div>
+                              <h4 className="font-semibold text-gray-900">Growth Form</h4>
+                              <p className="text-gray-600 text-sm">{speciesInfo.growthForm}</p>
+                            </div>
+                          </div>
                         </div>
                       </div>
                       
-                      <div className="flex items-start space-x-3">
-                        <Eye className="w-5 h-5 text-cactus-green mt-1" />
-                        <div>
-                          <h4 className="font-semibold text-gray-900">Growth Form</h4>
-                          <p className="text-gray-600 text-sm">{speciesInfo.growthForm}</p>
+                      <div className="lg:col-span-1">
+                        {/* Representative image */}
+                        <div className="space-y-3">
+                          <h4 className="text-sm font-medium text-gray-700">Species Photo</h4>
+                          <SpeciesImageGallery 
+                            genus={genusName} 
+                            species={speciesName}
+                            maxImages={1}
+                            showSpeciesName={false}
+                          />
                         </div>
                       </div>
                     </div>
