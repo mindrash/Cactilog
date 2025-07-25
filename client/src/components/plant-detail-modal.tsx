@@ -16,6 +16,7 @@ import PhotoUpload from "@/components/photo-upload";
 import AddGrowthModal from "@/components/add-growth-modal";
 import { Edit, X, Plus, Trash2 } from "lucide-react";
 import PrivacyBadge from "./privacy-badge";
+import EditPlantModal from "./edit-plant-modal";
 
 interface PlantDetailModalProps {
   plant: Plant;
@@ -27,6 +28,7 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [showAddGrowthModal, setShowAddGrowthModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   const { data: growthRecords = [] } = useQuery<GrowthRecord[]>({
     queryKey: ["/api/plants", plant.id, "growth"],
@@ -87,8 +89,13 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
               </p>
             </div>
             <div className="flex items-center space-x-2">
-              <Button variant="outline" size="sm">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => setShowEditModal(true)}
+              >
                 <Edit className="w-4 h-4" />
+                Edit
               </Button>
               <Button 
                 variant="outline" 
@@ -226,6 +233,12 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
           plantId={plant.id}
           open={showAddGrowthModal}
           onOpenChange={setShowAddGrowthModal}
+        />
+
+        <EditPlantModal
+          plant={plant}
+          open={showEditModal}
+          onOpenChange={setShowEditModal}
         />
       </DialogContent>
     </Dialog>
