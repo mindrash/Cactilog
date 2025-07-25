@@ -2,19 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Cactus spine pattern background - using user's provided image */
+/* Simple green background for cactus theme */
 .cactus-pattern-bg {
-  background-image: url('/attached_assets/image_1753473558785.png');
-  background-size: 200px 200px;
-  background-repeat: repeat;
-  opacity: 1.0;
+  background-color: #f0fdf4;
 }
 
 .cactus-pattern-bg-light {
-  background-image: url('/attached_assets/image_1753473558785.png');
-  background-size: 250px 250px;
-  background-repeat: repeat;
-  opacity: 1.0;
+  background-color: #f7fee7;
 }
 
 /* Custom font classes */
