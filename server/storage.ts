@@ -619,6 +619,39 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
+  async getPublicPhotos(): Promise<any[]> {
+    // Get all photos from public plants ordered by latest activity
+    try {
+      return await db
+        .select({
+          photo: plantPhotos,
+          plant: {
+            id: plants.id,
+            customId: plants.customId,
+            genus: plants.genus,
+            species: plants.species,
+            commonName: plants.commonName,
+            updatedAt: plants.updatedAt,
+          },
+          user: {
+            id: users.id,
+            firstName: users.firstName,
+            lastName: users.lastName,
+            displayName: users.displayName,
+            profileImageUrl: users.profileImageUrl,
+          }
+        })
+        .from(plantPhotos)
+        .innerJoin(plants, eq(plantPhotos.plantId, plants.id))
+        .innerJoin(users, eq(plants.userId, users.id))
+        .where(eq(plants.isPublic, 'public'))
+        .orderBy(desc(plants.updatedAt)); // Order by latest plant activity
+    } catch (error) {
+      console.error('Error fetching public photos:', error);
+      return [];
+    }
+  }
+
   // Photo report operations
   async createPhotoReport(report: InsertPhotoReport): Promise<PhotoReport> {
     const [newReport] = await db.insert(photoReports).values(report).returning();
