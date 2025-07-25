@@ -55,7 +55,7 @@ export default function EditPlantModal({ plant, open, onOpenChange }: EditPlantM
       commonName: plant.commonName || "",
       supplier: plant.supplier || "",
       acquisitionDate: plant.acquisitionDate || "",
-      groundType: plant.groundType || "none",
+      initialType: plant.initialType || "none",
       isPublic: (plant.isPublic as "public" | "private") || "public",
       notes: plant.notes || "",
       customId: plant.customId || "",
@@ -125,7 +125,7 @@ export default function EditPlantModal({ plant, open, onOpenChange }: EditPlantM
       commonName: data.commonName?.trim() === "" ? null : data.commonName,
       supplier: data.supplier?.trim() === "" ? null : data.supplier,
       acquisitionDate: data.acquisitionDate?.trim() === "" ? null : data.acquisitionDate,
-      groundType: data.groundType === "none" ? null : data.groundType,
+      initialType: data.initialType === "none" ? null : data.initialType,
       notes: data.notes?.trim() === "" ? null : data.notes,
       customId: data.customId?.trim() === "" ? null : data.customId,
     };
@@ -325,14 +325,14 @@ export default function EditPlantModal({ plant, open, onOpenChange }: EditPlantM
                 />
                 <FormField
                   control={form.control}
-                  name="groundType"
+                  name="initialType"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Ground Type</FormLabel>
+                      <FormLabel>Initial Type</FormLabel>
                       <Select onValueChange={field.onChange} value={field.value || "none"}>
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select ground type" />
+                            <SelectValue placeholder="Select initial type" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -342,6 +342,8 @@ export default function EditPlantModal({ plant, open, onOpenChange }: EditPlantM
                           <SelectItem value="graft">Graft</SelectItem>
                           <SelectItem value="tip">Tip</SelectItem>
                           <SelectItem value="grafted">Grafted</SelectItem>
+                          <SelectItem value="mid">Mid</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />

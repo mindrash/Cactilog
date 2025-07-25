@@ -50,7 +50,7 @@ export const plants = pgTable("plants", {
   commonName: varchar("common_name"),
   supplier: varchar("supplier"),
   acquisitionDate: date("acquisition_date"),
-  groundType: varchar("ground_type"), // pup, root, graft, tip, grafted
+  initialType: varchar("initial_type"), // pup, root, graft, tip, grafted, mid, other
   isPublic: varchar("is_public").default("public").notNull(), // public, private
   notes: text("notes"),
   createdAt: timestamp("created_at").defaultNow(),
@@ -150,7 +150,7 @@ export const insertPlantSchema = createInsertSchema(plants).omit({
   commonName: z.string().optional().nullable(),
   supplier: z.string().optional().nullable(),
   acquisitionDate: z.string().optional().nullable(),
-  groundType: z.string().optional().nullable(),
+  initialType: z.string().optional().nullable(),
   isPublic: z.enum(["public", "private"]).default("public"),
   notes: z.string().optional().nullable(),
   customId: z.string().optional().nullable(),

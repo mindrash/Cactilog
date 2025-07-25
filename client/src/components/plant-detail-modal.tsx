@@ -145,8 +145,8 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                   <p className="text-sm">{plant.cultivar || "N/A"}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Ground Type</p>
-                  <p className="text-sm">{plant.groundType || "N/A"}</p>
+                  <p className="text-sm text-gray-600">Initial Type</p>
+                  <p className="text-sm">{plant.initialType || "N/A"}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Supplier</p>
