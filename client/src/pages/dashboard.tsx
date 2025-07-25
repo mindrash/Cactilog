@@ -57,7 +57,7 @@ export default function Dashboard() {
   const recentPlants = plants.slice(0, 4);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen cactus-pattern-bg-light">
       <Header />
       <div className="flex">
         <Sidebar />
