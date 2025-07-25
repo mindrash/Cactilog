@@ -67,7 +67,7 @@ export default function Landing() {
       {/* Main Content */}
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold font-freckle-face title-cactus-green mb-4">
+          <h2 className="page-title-xl mb-4">
             Latest Cactus & Succulent Collections
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">

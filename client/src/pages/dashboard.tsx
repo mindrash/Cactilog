@@ -65,7 +65,7 @@ export default function Dashboard() {
           <div className="mb-8">
             <div className="flex justify-between items-center mb-2">
               <div>
-                <h2 className="text-2xl font-bold font-freckle-face title-cactus-green mb-2">Dashboard</h2>
+                <h2 className="page-title-md mb-2">Dashboard</h2>
                 <p className="text-gray-600">Track and manage your plant collection</p>
               </div>
               <Button onClick={() => setShowAddModal(true)} className="bg-cactus-green hover:bg-succulent">
