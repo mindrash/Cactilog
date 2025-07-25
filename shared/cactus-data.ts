@@ -2,6 +2,7 @@
 export interface CactusGenus {
   name: string;
   commonName?: string;
+  description: string;
   species: string[];
 }
 
@@ -9,6 +10,7 @@ export const cactusGenera: CactusGenus[] = [
   {
     name: "Trichocereus",
     commonName: "San Pedro",
+    description: "Fast-growing columnar cacti native to South America, known for their distinctive ribs and large white nocturnal flowers. Many species are prized for their ornamental value and rapid growth rates.",
     species: [
       "pachanoi",
       "peruvianus", 
@@ -25,6 +27,7 @@ export const cactusGenera: CactusGenus[] = [
   {
     name: "Mammillaria",
     commonName: "Pincushion Cactus",
+    description: "One of the largest genera of cacti with over 200 species. Characterized by their spherical to cylindrical shape and tubercles arranged in spirals. Popular for their colorful flowers and ease of cultivation.",
     species: [
       "bocasana",
       "elongata",
@@ -54,6 +57,7 @@ export const cactusGenera: CactusGenus[] = [
   {
     name: "Lophophora",
     commonName: "Peyote",
+    description: "Small, spineless cacti native to Mexico and southwestern Texas. Distinctive for their button-like appearance and cultural significance. Slow-growing with pink or white flowers.",
     species: [
       "williamsii",
       "fricii",
@@ -64,6 +68,7 @@ export const cactusGenera: CactusGenus[] = [
   {
     name: "Ariocarpus",
     commonName: "Living Rock",
+    description: "Highly specialized cacti that mimic rocks in their natural habitat. Known for their flat, geometric appearance and extremely slow growth. Prized by collectors for their unique morphology.",
     species: [
       "fissuratus",
       "retusus",
@@ -77,6 +82,7 @@ export const cactusGenera: CactusGenus[] = [
   {
     name: "Opuntia",
     commonName: "Prickly Pear",
+    description: "Large genus of cacti with flattened pad-like stems. Known for their edible fruits and pads, these hardy cacti are found throughout the Americas. Popular for landscaping in arid regions.",
     species: [
       "microdasys",
       "ficus-indica",
@@ -95,7 +101,8 @@ export const cactusGenera: CactusGenus[] = [
   },
   {
     name: "Echinocereus",
-    commonName: "Hedgehog Cactus", 
+    commonName: "Hedgehog Cactus",
+    description: "Medium-sized cacti known for their cylindrical stems and spectacular large flowers. Native to the southwestern United States and Mexico. Popular for their vibrant blooms and relatively easy care.",
     species: [
       "triglochidiatus",
       "coccineus",
@@ -115,6 +122,7 @@ export const cactusGenera: CactusGenus[] = [
   {
     name: "Echinopsis",
     commonName: "Sea Urchin Cactus",
+    description: "Globular to short cylindrical cacti known for their large, funnel-shaped flowers that often bloom at night. Easy to grow and propagate, making them popular among beginners.",
     species: [
       "oxygona",
       "chamaecereus",
@@ -135,6 +143,7 @@ export const cactusGenera: CactusGenus[] = [
   {
     name: "Ferocactus",
     commonName: "Barrel Cactus",
+    description: "Large, barrel-shaped cacti with prominent ribs and strong spines. Native to southwestern North America, these slow-growing giants can live for over 100 years and reach impressive sizes.",
     species: [
       "wislizeni",
       "latispinus",
@@ -154,6 +163,7 @@ export const cactusGenera: CactusGenus[] = [
   {
     name: "Gymnocalycium",
     commonName: "Chin Cactus",
+    description: "Small to medium globular cacti named for their 'naked' flower buds without spines or hairs. Popular for their diverse forms and colorful flowers, easy to cultivate indoors.",
     species: [
       "baldianum",
       "mihanovichii",
@@ -175,6 +185,7 @@ export const cactusGenera: CactusGenus[] = [
   {
     name: "Astrophytum",
     commonName: "Star Cactus",
+    description: "Distinctive star-shaped cacti with prominent ribs and often white spots. Slow-growing and highly prized by collectors for their geometric beauty and unique appearance.",
     species: [
       "myriostigma",
       "asterias",
@@ -187,6 +198,7 @@ export const cactusGenera: CactusGenus[] = [
   {
     name: "Parodia",
     commonName: "Ball Cactus",
+    description: "Small to medium globular cacti known for their colorful flowers and attractive spination. Many species bloom reliably and are popular among indoor cactus enthusiasts.",
     species: [
       "leninghausii",
       "magnifica",
@@ -208,6 +220,7 @@ export const cactusGenera: CactusGenus[] = [
   {
     name: "Rebutia",
     commonName: "Crown Cactus",
+    description: "Small clustering cacti that produce abundant colorful flowers around the base. Easy to grow and flower, making them excellent choices for beginners and collectors alike.",
     species: [
       "heliosa",
       "marsoneri",
@@ -234,6 +247,7 @@ export const cactusGenera: CactusGenus[] = [
   {
     name: "Myrtillocactus",
     commonName: "Bilberry Cactus",
+    description: "Tree-like cacti that produce small edible berries. Known for their distinctive blue-green coloration and candelabra growth form in mature specimens.",
     species: [
       "geometrizans",
       "cochal",
@@ -244,6 +258,7 @@ export const cactusGenera: CactusGenus[] = [
   {
     name: "Lithops",
     commonName: "Living Stones",
+    description: "Master mimics that perfectly resemble stones in their natural habitat. These fascinating succulents have evolved extreme camouflage and require specialized care to thrive.",
     species: [
       "aucampiae",
       "bella",
@@ -288,6 +303,7 @@ export const cactusGenera: CactusGenus[] = [
   {
     name: "Cereus",
     commonName: "Night-blooming Cereus",
+    description: "Large columnar cacti known for their magnificent night-blooming flowers. These fast-growing cacti can reach impressive heights and are popular for their dramatic architectural presence.",
     species: [
       "peruvianus",
       "jamacaru",
@@ -302,6 +318,7 @@ export const cactusGenera: CactusGenus[] = [
   {
     name: "Cleistocactus",
     commonName: "Silver Torch",
+    description: "Columnar cacti with dense spination that often gives them a silvery appearance. Known for their tubular flowers that barely open, adapted for hummingbird pollination.",
     species: [
       "strausii",
       "winteri",

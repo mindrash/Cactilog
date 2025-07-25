@@ -47,8 +47,11 @@ The application uses a monorepo structure with shared schemas:
 
 ### Recent Changes
 
-#### July 25, 2025 - Organized Navigation & Community Collections
-- **Reorganized navigation into logical groups**: My Collection, Community, and Account
+#### July 25, 2025 - Knowledge Base & Organized Navigation
+- **Added comprehensive Knowledge Base section** with detailed information about cactus genera and species
+- Created three Knowledge Base pages: Browse Genera, Species Search, and individual Genus detail pages
+- Enhanced cactus data with detailed descriptions for all 20+ genera and 600+ species
+- **Reorganized navigation into logical groups**: My Collection, Community, Knowledge Base, and Account
 - Added dropdown menus for desktop navigation to reduce header clutter
 - Enhanced mobile navigation with grouped sections and icons
 - **Community Collections feature**: Browse other users' public plant collections

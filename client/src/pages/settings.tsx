@@ -40,10 +40,7 @@ export default function Settings() {
 
   const updateCollectionVisibility = useMutation({
     mutationFn: async (visibility: 'public' | 'private') => {
-      return await apiRequest('/api/users/collection-visibility', {
-        method: 'PATCH',
-        body: { visibility },
-      });
+      return await apiRequest('/api/users/collection-visibility', 'PATCH', { visibility });
     },
     onSuccess: () => {
       toast({
