@@ -8,8 +8,8 @@ async function throwIfResNotOk(res: Response) {
 }
 
 export async function apiRequest(
-  method: string,
   url: string,
+  method: string,
   data?: unknown | undefined,
 ): Promise<Response> {
   const res = await fetch(url, {
@@ -52,6 +52,9 @@ export const queryClient = new QueryClient({
     },
     mutations: {
       retry: false,
+      onError: (error) => {
+        console.error('Mutation error:', error);
+      }
     },
   },
 });
