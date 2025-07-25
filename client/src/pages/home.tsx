@@ -5,6 +5,7 @@ import { Plus, Activity, TrendingUp, Sprout } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import PlantCard from "@/components/plant-card";
+import Header from "@/components/header";
 import type { Plant } from "@shared/schema";
 
 interface DashboardStats {
@@ -28,6 +29,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-lime-wash/20 to-pine-mist/30">
+      <Header />
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Welcome Section */}
         <div className="mb-8">
