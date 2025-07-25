@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 /* Custom font classes */
-.font-henny-penny {
-  font-family: 'Henny Penny', cursive;
+.font-bagel-fat-one {
+  font-family: 'Bagel Fat One', cursive;
 }
 
 :root {

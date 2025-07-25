@@ -48,11 +48,11 @@ The application uses a monorepo structure with shared schemas:
 ### Recent Changes
 
 #### July 25, 2025 - Google Fonts Integration & Custom Typography
-- **Added Google Fonts integration** with Henny Penny decorative font for distinctive brand identity
+- **Added Google Fonts integration** with Bagel Fat One decorative font for distinctive brand identity
 - Implemented proper font loading optimization with preconnect and display=swap for performance
-- **Created custom font CSS class** for Henny Penny typography throughout the application
-- Applied decorative font to all "Cactilog" brand titles across main header, mobile menu, and landing page
-- **Enhanced brand personality** with playful, botanical character while maintaining professional appearance
+- **Created custom font CSS class** for Bagel Fat One typography throughout the application
+- Applied bold, modern font to all "Cactilog" brand titles across main header, mobile menu, and landing page
+- **Enhanced brand personality** with chunky, rounded character that's perfect for botanical applications
 - Updated HTML head with optimized Google Fonts loading for better web performance
 
 #### July 25, 2025 - Knowledge Base Care Guides Implementation
