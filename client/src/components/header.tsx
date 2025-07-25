@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { useState } from "react";
-import { Plus, Menu, User, LogOut, ChevronDown, Home, BarChart3, FolderOpen, TrendingUp, Camera, Users, Settings, Sprout } from "lucide-react";
+import { Plus, Menu, User, LogOut, ChevronDown, Home, BarChart3, FolderOpen, TrendingUp, Camera, Users, Settings, Sprout, BookOpen, Search } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,6 +27,10 @@ const navigationGroups = {
   ],
   community: [
     { href: "/users", label: "Community Collections", icon: Users },
+  ],
+  knowledge: [
+    { href: "/knowledge", label: "Browse Genera", icon: BookOpen },
+    { href: "/knowledge/search", label: "Species Search", icon: Search },
   ],
   account: [
     { href: "/settings", label: "Settings", icon: Settings },
@@ -122,6 +126,32 @@ export default function Header() {
                   <DropdownMenuLabel>Community</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   {navigationGroups.community.map((item) => (
+                    <Link key={item.href} href={item.href}>
+                      <DropdownMenuItem className="cursor-pointer">
+                        <item.icon className="w-4 h-4 mr-2" />
+                        {item.label}
+                      </DropdownMenuItem>
+                    </Link>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Knowledge Base Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant={isGroupActive(navigationGroups.knowledge) ? "default" : "ghost"}
+                    className={isGroupActive(navigationGroups.knowledge) ? "bg-cactus-green hover:bg-cactus-green/90" : ""}
+                  >
+                    <BookOpen className="w-4 h-4 mr-2" />
+                    Knowledge Base
+                    <ChevronDown className="w-4 h-4 ml-2" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-56">
+                  <DropdownMenuLabel>Knowledge Base</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {navigationGroups.knowledge.map((item) => (
                     <Link key={item.href} href={item.href}>
                       <DropdownMenuItem className="cursor-pointer">
                         <item.icon className="w-4 h-4 mr-2" />
@@ -255,6 +285,27 @@ export default function Header() {
                         Community
                       </div>
                       {navigationGroups.community.map((item) => (
+                        <Link key={item.href} href={item.href}>
+                          <Button
+                            variant={isActive(item.href) ? "default" : "ghost"}
+                            className={`w-full justify-start ${
+                              isActive(item.href) ? "bg-cactus-green hover:bg-cactus-green/90" : ""
+                            }`}
+                            onClick={() => setShowMobileMenu(false)}
+                          >
+                            <item.icon className="w-4 h-4 mr-2" />
+                            {item.label}
+                          </Button>
+                        </Link>
+                      ))}
+                    </div>
+
+                    {/* Knowledge Base Section */}
+                    <div className="pt-4">
+                      <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        Knowledge Base
+                      </div>
+                      {navigationGroups.knowledge.map((item) => (
                         <Link key={item.href} href={item.href}>
                           <Button
                             variant={isActive(item.href) ? "default" : "ghost"}

@@ -12,6 +12,9 @@ import GrowthTracking from "@/pages/growth-tracking";
 import Photos from "@/pages/photos";
 import Users from "@/pages/users";
 import UserProfile from "@/pages/user-profile";
+import Knowledge from "@/pages/knowledge";
+import KnowledgeSearch from "@/pages/knowledge-search";
+import KnowledgeGenus from "@/pages/knowledge-genus";
 import Import from "@/pages/import";
 import Settings from "@/pages/settings";
 import NotFound from "@/pages/not-found";
@@ -47,6 +50,9 @@ function Router() {
           <Route path="/photos" component={Photos} />
           <Route path="/users" component={Users} />
           <Route path="/users/:userId" component={UserProfile} />
+          <Route path="/knowledge" component={Knowledge} />
+          <Route path="/knowledge/search" component={KnowledgeSearch} />
+          <Route path="/knowledge/genus/:genusName" component={KnowledgeGenus} />
           <Route path="/import" component={Import} />
           <Route path="/settings" component={Settings} />
         </>
