@@ -47,14 +47,16 @@ The application uses a monorepo structure with shared schemas:
 
 ### Recent Changes
 
-#### July 25, 2025 - Community Collections & User Browsing
-- Added "Community Collections" feature for browsing other users' public plant collections
+#### July 25, 2025 - Organized Navigation & Community Collections
+- **Reorganized navigation into logical groups**: My Collection, Community, and Account
+- Added dropdown menus for desktop navigation to reduce header clutter
+- Enhanced mobile navigation with grouped sections and icons
+- **Community Collections feature**: Browse other users' public plant collections
 - Created database schema for user collection privacy (public/private setting)
 - Built comprehensive user directory with collection statistics (plant count, public plants, unique genera)
 - Added individual user profile pages showing public collections only
 - Enhanced Settings page with privacy controls for collection visibility
 - Users can opt-out of public collection browsing while keeping individual plant privacy
-- Navigation updated with "Community Collections" link for discovering other collectors
 
 #### July 25, 2025 - Public Community Feed & Navigation  
 - Changed "Ground Type" to "Initial Type" with Mid and Other options added

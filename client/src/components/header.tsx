@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { useState } from "react";
-import { Plus, Menu, User, LogOut, ChevronDown } from "lucide-react";
+import { Plus, Menu, User, LogOut, ChevronDown, Home, BarChart3, FolderOpen, TrendingUp, Camera, Users, Settings, Sprout } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,20 +9,29 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import CactusIcon from "@/components/cactus-icon";
 import AddPlantModal from "@/components/add-plant-modal";
 
-const navigationItems = [
-  { href: "/", label: "Home" },
-  { href: "/dashboard", label: "Dashboard" },
-  { href: "/collection", label: "Collection" },
-  { href: "/growth-tracking", label: "Growth" },
-  { href: "/photos", label: "Photos" },
-  { href: "/users", label: "Community Collections" },
-  { href: "/settings", label: "Settings" },
-];
+const navigationGroups = {
+  main: [
+    { href: "/", label: "Home", icon: Home },
+  ],
+  myCollection: [
+    { href: "/dashboard", label: "Dashboard", icon: BarChart3 },
+    { href: "/collection", label: "Collection", icon: FolderOpen },
+    { href: "/growth-tracking", label: "Growth Tracking", icon: TrendingUp },
+    { href: "/photos", label: "Photos", icon: Camera },
+  ],
+  community: [
+    { href: "/users", label: "Community Collections", icon: Users },
+  ],
+  account: [
+    { href: "/settings", label: "Settings", icon: Settings },
+  ],
+};
 
 export default function Header() {
   const { user } = useAuth();
@@ -35,6 +44,10 @@ export default function Header() {
       return location === "/";
     }
     return location.startsWith(href);
+  };
+
+  const isGroupActive = (items: typeof navigationGroups.myCollection) => {
+    return items.some(item => isActive(item.href));
   };
 
   return (
@@ -54,16 +67,70 @@ export default function Header() {
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-1">
-              {navigationItems.map((item) => (
+              {/* Home */}
+              {navigationGroups.main.map((item) => (
                 <Link key={item.href} href={item.href}>
                   <Button
                     variant={isActive(item.href) ? "default" : "ghost"}
                     className={isActive(item.href) ? "bg-cactus-green hover:bg-cactus-green/90" : ""}
                   >
+                    <item.icon className="w-4 h-4 mr-2" />
                     {item.label}
                   </Button>
                 </Link>
               ))}
+
+              {/* My Collection Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant={isGroupActive(navigationGroups.myCollection) ? "default" : "ghost"}
+                    className={isGroupActive(navigationGroups.myCollection) ? "bg-cactus-green hover:bg-cactus-green/90" : ""}
+                  >
+                    <Sprout className="w-4 h-4 mr-2" />
+                    My Collection
+                    <ChevronDown className="w-4 h-4 ml-2" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-56">
+                  <DropdownMenuLabel>My Collection</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {navigationGroups.myCollection.map((item) => (
+                    <Link key={item.href} href={item.href}>
+                      <DropdownMenuItem className="cursor-pointer">
+                        <item.icon className="w-4 h-4 mr-2" />
+                        {item.label}
+                      </DropdownMenuItem>
+                    </Link>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Community Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant={isGroupActive(navigationGroups.community) ? "default" : "ghost"}
+                    className={isGroupActive(navigationGroups.community) ? "bg-cactus-green hover:bg-cactus-green/90" : ""}
+                  >
+                    <Users className="w-4 h-4 mr-2" />
+                    Community
+                    <ChevronDown className="w-4 h-4 ml-2" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-56">
+                  <DropdownMenuLabel>Community</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {navigationGroups.community.map((item) => (
+                    <Link key={item.href} href={item.href}>
+                      <DropdownMenuItem className="cursor-pointer">
+                        <item.icon className="w-4 h-4 mr-2" />
+                        {item.label}
+                      </DropdownMenuItem>
+                    </Link>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </nav>
 
             {/* Desktop Actions */}
@@ -96,13 +163,19 @@ export default function Header() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem className="flex items-center space-x-2">
-                    <User className="w-4 h-4" />
-                    <span>Profile</span>
-                  </DropdownMenuItem>
+                  <DropdownMenuLabel>Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {navigationGroups.account.map((item) => (
+                    <Link key={item.href} href={item.href}>
+                      <DropdownMenuItem className="cursor-pointer">
+                        <item.icon className="w-4 h-4 mr-2" />
+                        {item.label}
+                      </DropdownMenuItem>
+                    </Link>
+                  ))}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
-                    className="flex items-center space-x-2 text-red-600"
+                    className="flex items-center space-x-2 text-red-600 cursor-pointer"
                     onClick={() => window.location.href = "/api/logout"}
                   >
                     <LogOut className="w-4 h-4" />
@@ -139,7 +212,8 @@ export default function Header() {
                   </SheetHeader>
                   
                   <div className="mt-6 space-y-1">
-                    {navigationItems.map((item) => (
+                    {/* Home */}
+                    {navigationGroups.main.map((item) => (
                       <Link key={item.href} href={item.href}>
                         <Button
                           variant={isActive(item.href) ? "default" : "ghost"}
@@ -148,10 +222,74 @@ export default function Header() {
                           }`}
                           onClick={() => setShowMobileMenu(false)}
                         >
+                          <item.icon className="w-4 h-4 mr-2" />
                           {item.label}
                         </Button>
                       </Link>
                     ))}
+
+                    {/* My Collection Section */}
+                    <div className="pt-4">
+                      <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        My Collection
+                      </div>
+                      {navigationGroups.myCollection.map((item) => (
+                        <Link key={item.href} href={item.href}>
+                          <Button
+                            variant={isActive(item.href) ? "default" : "ghost"}
+                            className={`w-full justify-start ${
+                              isActive(item.href) ? "bg-cactus-green hover:bg-cactus-green/90" : ""
+                            }`}
+                            onClick={() => setShowMobileMenu(false)}
+                          >
+                            <item.icon className="w-4 h-4 mr-2" />
+                            {item.label}
+                          </Button>
+                        </Link>
+                      ))}
+                    </div>
+
+                    {/* Community Section */}
+                    <div className="pt-4">
+                      <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        Community
+                      </div>
+                      {navigationGroups.community.map((item) => (
+                        <Link key={item.href} href={item.href}>
+                          <Button
+                            variant={isActive(item.href) ? "default" : "ghost"}
+                            className={`w-full justify-start ${
+                              isActive(item.href) ? "bg-cactus-green hover:bg-cactus-green/90" : ""
+                            }`}
+                            onClick={() => setShowMobileMenu(false)}
+                          >
+                            <item.icon className="w-4 h-4 mr-2" />
+                            {item.label}
+                          </Button>
+                        </Link>
+                      ))}
+                    </div>
+
+                    {/* Account Section */}
+                    <div className="pt-4">
+                      <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        Account
+                      </div>
+                      {navigationGroups.account.map((item) => (
+                        <Link key={item.href} href={item.href}>
+                          <Button
+                            variant={isActive(item.href) ? "default" : "ghost"}
+                            className={`w-full justify-start ${
+                              isActive(item.href) ? "bg-cactus-green hover:bg-cactus-green/90" : ""
+                            }`}
+                            onClick={() => setShowMobileMenu(false)}
+                          >
+                            <item.icon className="w-4 h-4 mr-2" />
+                            {item.label}
+                          </Button>
+                        </Link>
+                      ))}
+                    </div>
                   </div>
 
                   <div className="mt-6 pt-6 border-t space-y-2">
