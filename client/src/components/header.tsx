@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { useState } from "react";
-import { Plus, Menu, User, LogOut, ChevronDown, Home, BarChart3, FolderOpen, TrendingUp, Camera, Users, Settings, Sprout, BookOpen, Search, Shield } from "lucide-react";
+import { Plus, Menu, User, LogOut, ChevronDown, Home, BarChart3, FolderOpen, TrendingUp, Camera, Users, Settings, Sprout, BookOpen, Search, Shield, Leaf } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -32,6 +32,7 @@ const navigationGroups = {
   knowledge: [
     { href: "/knowledge", label: "Browse Genera", icon: BookOpen },
     { href: "/knowledge/search", label: "Species Search", icon: Search },
+    { href: "/knowledge/care-guides", icon: Leaf, label: "Care Guides" },
   ],
   account: [
     { href: "/settings", label: "Settings", icon: Settings },

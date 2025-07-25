@@ -74,19 +74,22 @@ export default function Knowledge() {
             </Card>
           </Link>
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-forest rounded-lg flex items-center justify-center">
-                  <Leaf className="w-6 h-6 text-white" />
+          <Link href="/knowledge/care-guides">
+            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <CardContent className="p-6">
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 bg-forest rounded-lg flex items-center justify-center">
+                    <Leaf className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900">Care Guides</h3>
+                    <p className="text-gray-600">Detailed cultivation guides for specific species</p>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-gray-400" />
                 </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900">Care Guides</h3>
-                  <p className="text-gray-600">Coming soon - detailed cultivation guides</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
 
         {/* Search Bar */}
