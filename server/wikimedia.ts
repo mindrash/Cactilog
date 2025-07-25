@@ -46,19 +46,26 @@ export class WikimediaImageService {
   }
 
   private async performSearch(searchTerm: string): Promise<WikimediaSearchResult> {
+    console.log(`🔍 Searching Wikimedia for: "${searchTerm}"`);
+    
     // Step 1: Search for files
     const searchParams = new URLSearchParams({
       action: 'query',
       format: 'json',
       list: 'search',
-      srsearch: `${searchTerm} filetype:bitmap|drawing`,
+      srsearch: searchTerm,
       srnamespace: '6', // File namespace
       srlimit: this.maxResults.toString(),
       srprop: 'title|snippet|size'
     });
 
-    const searchResponse = await fetch(`${this.baseUrl}?${searchParams}`);
+    const searchUrl = `${this.baseUrl}?${searchParams}`;
+    console.log(`📡 API call: ${searchUrl}`);
+    
+    const searchResponse = await fetch(searchUrl);
     const searchData = await searchResponse.json();
+    
+    console.log(`📊 Search returned ${searchData.query?.search?.length || 0} results`);
 
     if (!searchData.query?.search?.length) {
       return { images: [], hasMore: false };
@@ -116,16 +123,21 @@ export class WikimediaImageService {
     const lowerTitle = title.toLowerCase();
     
     // Exclude inappropriate content
-    const excludeTerms = ['logo', 'icon', 'symbol', 'cartoon', 'drawing', 'sketch'];
+    const excludeTerms = ['logo', 'icon', 'symbol', 'cartoon'];
     if (excludeTerms.some(term => lowerTitle.includes(term))) {
+      console.log(`❌ Excluded image (inappropriate): ${title}`);
       return false;
     }
 
-    // Prefer actual plant photographs
-    const preferTerms = ['cactus', 'plant', 'botanical', 'specimen', 'flower', 'bloom'];
-    const hasPlantContext = preferTerms.some(term => lowerTitle.includes(term));
+    // Accept most image files - be less restrictive
+    const isImageFile = lowerTitle.includes('.jpg') || lowerTitle.includes('.jpeg') || lowerTitle.includes('.png');
+    if (isImageFile) {
+      console.log(`✅ Accepted image: ${title}`);
+      return true;
+    }
     
-    return hasPlantContext || lowerTitle.includes('.jpg') || lowerTitle.includes('.jpeg');
+    console.log(`⚠️  Skipped non-image: ${title}`);
+    return false;
   }
 
   private extractAttribution(extMetadata: any): string {
@@ -153,14 +165,14 @@ export class SpeciesImageService {
   private wikimedia = new WikimediaImageService();
 
   // Fetch and store images for a species
-  async fetchAndStoreImages(genus: string, species: string, userId: string): Promise<SpeciesImage[]> {
+  async fetchAndStoreImages(genus: string, species: string, userId: string | null): Promise<SpeciesImage[]> {
     const searchResult = await this.wikimedia.searchSpeciesImages(genus, species);
     const storedImages: SpeciesImage[] = [];
 
     for (let index = 0; index < searchResult.images.length; index++) {
       const image = searchResult.images[index];
       const speciesImage: SpeciesImage = {
-        id: '', // Will be generated
+        id: crypto.randomUUID(), // Generate unique ID
         genus,
         species,
         imageUrl: image.url,
@@ -169,7 +181,7 @@ export class SpeciesImageService {
         sourceUrl: image.sourceUrl,
         imageType: 'photograph',
         isPrimary: index === 0, // First image is primary
-        uploadedBy: userId,
+        uploadedBy: userId || null,
         createdAt: new Date(),
         updatedAt: new Date()
       };
