@@ -73,7 +73,7 @@ export default function Header() {
                 <CactusIcon className="text-white" size={20} />
               </div>
               <div>
-                <h1 className="text-lg font-bold text-gray-900">CactiTracker</h1>
+                <h1 className="text-lg font-bold text-gray-900">Cactilog</h1>
               </div>
             </Link>
 
