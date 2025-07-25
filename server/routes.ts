@@ -314,7 +314,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // User browsing routes
-  app.get('/api/users/public', isAuthenticated, async (req, res) => {
+  app.get('/api/users/public', async (req, res) => {
     try {
       const users = await storage.getPublicUsers();
       res.json(users);

@@ -22,13 +22,11 @@ import {
   type InsertSpeciesImage,
   type PhotoReport,
   type InsertPhotoReport,
-  type AdminUser,
-  type InsertAdminUser,
   type PlantLike,
   type InsertPlantLike,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, and, ilike, or, count } from "drizzle-orm";
+import { eq, desc, and, ilike, or, count, sql } from "drizzle-orm";
 
 export interface IStorage {
   // User operations - mandatory for Replit Auth
@@ -379,6 +377,7 @@ export class DatabaseStorage implements IStorage {
         profileImageUrl: users.profileImageUrl,
         authProvider: users.authProvider,
         collectionPublic: users.collectionPublic,
+        contributePhotosToKnowledgeBase: users.contributePhotosToKnowledgeBase,
         createdAt: users.createdAt,
         updatedAt: users.updatedAt,
         plantCount: sql<number>`COUNT(${plants.id})::int`,
@@ -404,6 +403,7 @@ export class DatabaseStorage implements IStorage {
         profileImageUrl: users.profileImageUrl,
         authProvider: users.authProvider,
         collectionPublic: users.collectionPublic,
+        contributePhotosToKnowledgeBase: users.contributePhotosToKnowledgeBase,
         createdAt: users.createdAt,
         updatedAt: users.updatedAt,
         plantCount: sql<number>`COUNT(${plants.id})::int`,
@@ -538,7 +538,7 @@ export class DatabaseStorage implements IStorage {
             eq(plants.isPublic, 'public')
           )
         )
-        .orderBy(desc(plantPhotos.createdAt));
+        .orderBy(desc(plantPhotos.uploadedAt));
     } catch (error) {
       console.error('Error fetching user contributed photos:', error);
       return [];
