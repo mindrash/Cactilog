@@ -39,7 +39,7 @@ export default function PlantCard({ plant }: PlantCardProps) {
               {plant.customId || `#${plant.id}`}
             </span>
             <div className="flex items-center gap-2">
-              <PrivacyBadge isPublic={plant.isPublic || "private"} />
+              <PrivacyBadge isPublic={plant.isPublic || "public"} />
               <Badge 
                 variant={plant.type === 'cactus' ? 'default' : 'secondary'}
                 className={plant.type === 'cactus' ? 'bg-cactus-green/10 text-cactus-green' : 'bg-desert-sage/10 text-desert-sage'}

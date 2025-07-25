@@ -57,7 +57,7 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
       supplier: "",
       acquisitionDate: "",
       groundType: "none",
-      isPublic: "private",
+      isPublic: "public",
       notes: "",
       customId: "",
     },
@@ -496,8 +496,8 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="private">Private - Only you can see this plant</SelectItem>
                         <SelectItem value="public">Public - Visible in the community feed</SelectItem>
+                        <SelectItem value="private">Private - Only you can see this plant</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
