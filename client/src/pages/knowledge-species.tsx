@@ -510,7 +510,7 @@ export default function KnowledgeSpecies() {
                   </CardHeader>
                   <CardContent>
                     <p className="text-gray-600 text-sm mb-4">
-                      See how other CactiTracker users are growing {scientificName} in their collections.
+                      See how other Cactilog users are growing {scientificName} in their collections.
                     </p>
                     <div className="bg-gray-50 p-4 rounded-lg text-center">
                       <p className="text-gray-500 text-sm">

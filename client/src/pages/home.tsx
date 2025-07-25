@@ -42,7 +42,7 @@ export default function Home() {
         {/* Welcome Section */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Welcome to CactiTracker, {user?.firstName || "Plant Enthusiast"}!
+            Welcome to Cactilog, {user?.firstName || "Plant Enthusiast"}!
           </h1>
           <p className="text-gray-600">
             Discover the amazing world of cacti and succulents from our community.
