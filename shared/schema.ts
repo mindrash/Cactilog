@@ -37,6 +37,7 @@ export const users = pgTable("users", {
   authProvider: varchar("auth_provider"), // Track which OAuth provider was used
   collectionPublic: varchar("collection_public", { enum: ["public", "private"] }).default("public"),
   contributePhotosToKnowledgeBase: boolean("contribute_photos_to_knowledge_base").default(false),
+  displayName: varchar("display_name", { length: 20 }),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

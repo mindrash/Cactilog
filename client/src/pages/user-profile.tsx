@@ -117,6 +117,11 @@ export default function UserProfile() {
   };
 
   const getDisplayName = (user: UserWithStats) => {
+    // Prioritize custom display name if set
+    if (user.displayName && user.displayName.trim()) {
+      return user.displayName;
+    }
+    
     if (user.firstName && user.lastName) {
       return `${user.firstName} ${user.lastName}`;
     } else if (user.firstName) {
@@ -195,7 +200,7 @@ export default function UserProfile() {
                 <div className="text-sm text-gray-600 space-y-2">
                   <div className="flex items-center justify-center">
                     <Calendar className="w-4 h-4 mr-2" />
-                    Joined {formatDate(user.createdAt)}
+                    Joined {user.createdAt ? formatDate(user.createdAt) : 'Unknown'}
                   </div>
                 </div>
               </CardContent>

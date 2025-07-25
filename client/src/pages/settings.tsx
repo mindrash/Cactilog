@@ -4,9 +4,11 @@ import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { Eye, EyeOff, Settings as SettingsIcon, Camera } from "lucide-react";
+import { Eye, EyeOff, Settings as SettingsIcon, Camera, User, Save } from "lucide-react";
 import Header from "@/components/header";
 import { isUnauthorizedError } from "@/lib/authUtils";
 
@@ -16,6 +18,8 @@ export default function Settings() {
   const queryClient = useQueryClient();
   const [collectionPublic, setCollectionPublic] = useState(true);
   const [contributePhotos, setContributePhotos] = useState(false);
+  const [displayName, setDisplayName] = useState("");
+  const [displayNameError, setDisplayNameError] = useState("");
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -40,6 +44,7 @@ export default function Settings() {
     if (user?.contributePhotosToKnowledgeBase !== undefined && user?.contributePhotosToKnowledgeBase !== null) {
       setContributePhotos(user.contributePhotosToKnowledgeBase);
     }
+    setDisplayName(user?.displayName || "");
   }, [user]);
 
   const updateCollectionVisibility = useMutation({
@@ -106,6 +111,41 @@ export default function Settings() {
     },
   });
 
+  const updateDisplayName = useMutation({
+    mutationFn: async (name: string) => {
+      return await apiRequest('/api/auth/user/display-name', 'PUT', { displayName: name });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Display Name Updated",
+        description: "Your collection display name has been updated successfully.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+      setDisplayNameError("");
+    },
+    onError: (error) => {
+      if (isUnauthorizedError(error)) {
+        toast({
+          title: "Unauthorized",
+          description: "You are logged out. Logging in again...",
+          variant: "destructive",
+        });
+        setTimeout(() => {
+          window.location.href = "/api/login";
+        }, 500);
+        return;
+      }
+      
+      const errorMessage = error instanceof Error ? error.message : "Failed to update display name";
+      setDisplayNameError(errorMessage);
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleCollectionVisibilityChange = (isPublic: boolean) => {
     setCollectionPublic(isPublic);
     updateCollectionVisibility.mutate(isPublic ? 'public' : 'private');
@@ -114,6 +154,21 @@ export default function Settings() {
   const handleKnowledgeBaseContributionChange = (contribute: boolean) => {
     setContributePhotos(contribute);
     updateKnowledgeBaseContribution.mutate(contribute);
+  };
+
+  const handleDisplayNameSubmit = () => {
+    if (displayName.length > 20) {
+      setDisplayNameError("Display name must be 20 characters or less");
+      return;
+    }
+    
+    setDisplayNameError("");
+    updateDisplayName.mutate(displayName);
+  };
+
+  const handleDisplayNameChange = (value: string) => {
+    setDisplayName(value);
+    setDisplayNameError("");
   };
 
   if (isLoading || !isAuthenticated) {
@@ -213,41 +268,90 @@ export default function Settings() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
-                <SettingsIcon className="w-5 h-5" />
-                <span>Account Information</span>
+                <User className="w-5 h-5" />
+                <span>Collection Profile</span>
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label className="text-sm font-medium text-gray-600">Name</Label>
-                  <p className="text-base">
-                    {user?.firstName && user?.lastName 
-                      ? `${user.firstName} ${user.lastName}`
-                      : user?.firstName || "Not provided"
-                    }
-                  </p>
+            <CardContent className="space-y-6">
+              {/* Display Name Section */}
+              <div className="space-y-2">
+                <Label htmlFor="display-name" className="text-base font-medium">
+                  Collection Display Name
+                </Label>
+                <p className="text-sm text-gray-600">
+                  Choose how your name appears on your public collection (max 20 characters)
+                </p>
+                <div className="flex gap-2">
+                  <div className="flex-1">
+                    <Input
+                      id="display-name"
+                      type="text"
+                      value={displayName}
+                      onChange={(e) => handleDisplayNameChange(e.target.value)}
+                      placeholder={user?.firstName && user?.lastName ? `${user.firstName} ${user.lastName}` : (user?.email?.split("@")[0] || "Your display name")}
+                      maxLength={20}
+                      disabled={updateDisplayName.isPending}
+                      className={displayNameError ? "border-red-500" : ""}
+                    />
+                    {displayNameError && (
+                      <p className="text-sm text-red-600 mt-1">{displayNameError}</p>
+                    )}
+                    <p className="text-xs text-gray-500 mt-1">
+                      {displayName.length}/20 characters
+                    </p>
+                  </div>
+                  <Button
+                    onClick={handleDisplayNameSubmit}
+                    disabled={updateDisplayName.isPending}
+                    size="sm"
+                    className="min-w-[80px]"
+                  >
+                    {updateDisplayName.isPending ? (
+                      "Saving..."
+                    ) : (
+                      <>
+                        <Save className="h-4 w-4 mr-1" />
+                        Save
+                      </>
+                    )}
+                  </Button>
                 </div>
-                <div>
-                  <Label className="text-sm font-medium text-gray-600">Email</Label>
-                  <p className="text-base">{user?.email || "Not provided"}</p>
-                </div>
-                <div>
-                  <Label className="text-sm font-medium text-gray-600">Authentication Provider</Label>
-                  <p className="text-base capitalize">{user?.authProvider || "Unknown"}</p>
-                </div>
-                <div>
-                  <Label className="text-sm font-medium text-gray-600">Member Since</Label>
-                  <p className="text-base">
-                    {user?.createdAt 
-                      ? new Date(user.createdAt).toLocaleDateString('en-US', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric'
-                        })
-                      : "Unknown"
-                    }
-                  </p>
+              </div>
+
+              {/* Account Information */}
+              <div className="border-t pt-6">
+                <h4 className="font-medium text-gray-900 mb-4">Account Information</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-sm font-medium text-gray-600">Name</Label>
+                    <p className="text-base">
+                      {user?.firstName && user?.lastName 
+                        ? `${user.firstName} ${user.lastName}`
+                        : user?.firstName || "Not provided"
+                      }
+                    </p>
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium text-gray-600">Email</Label>
+                    <p className="text-base">{user?.email || "Not provided"}</p>
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium text-gray-600">Authentication Provider</Label>
+                    <p className="text-base capitalize">{user?.authProvider || "Unknown"}</p>
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium text-gray-600">Member Since</Label>
+                    <p className="text-base">
+                      {user?.createdAt 
+                        ? new Date(user.createdAt).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          })
+                        : "Unknown"
+                      }
+                    </p>
+                  </div>
                 </div>
               </div>
             </CardContent>

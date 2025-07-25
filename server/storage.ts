@@ -27,11 +27,13 @@ import {
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, ilike, or, count, sql } from "drizzle-orm";
+import { validateDisplayName, sanitizeDisplayName } from "./contentFilter";
 
 export interface IStorage {
   // User operations - mandatory for Replit Auth
   getUser(id: string): Promise<User | undefined>;
   upsertUser(user: UpsertUser): Promise<User>;
+  updateUserDisplayName(userId: string, displayName: string): Promise<User>;
   
   // Plant operations
   getPlants(userId: string, filters?: {
@@ -124,6 +126,31 @@ export class DatabaseStorage implements IStorage {
         },
       })
       .returning();
+    return user;
+  }
+
+  async updateUserDisplayName(userId: string, displayName: string): Promise<User> {
+    // Validate and sanitize display name
+    const sanitized = sanitizeDisplayName(displayName);
+    const validation = validateDisplayName(sanitized);
+    
+    if (!validation.isValid) {
+      throw new Error(validation.error);
+    }
+
+    const [user] = await db
+      .update(users)
+      .set({ 
+        displayName: sanitized || null,
+        updatedAt: new Date() 
+      })
+      .where(eq(users.id, userId))
+      .returning();
+      
+    if (!user) {
+      throw new Error("User not found");
+    }
+    
     return user;
   }
 
@@ -378,6 +405,7 @@ export class DatabaseStorage implements IStorage {
         authProvider: users.authProvider,
         collectionPublic: users.collectionPublic,
         contributePhotosToKnowledgeBase: users.contributePhotosToKnowledgeBase,
+        displayName: users.displayName,
         createdAt: users.createdAt,
         updatedAt: users.updatedAt,
         plantCount: sql<number>`COUNT(DISTINCT ${plants.id})::int`,
@@ -413,6 +441,7 @@ export class DatabaseStorage implements IStorage {
         authProvider: users.authProvider,
         collectionPublic: users.collectionPublic,
         contributePhotosToKnowledgeBase: users.contributePhotosToKnowledgeBase,
+        displayName: users.displayName,
         createdAt: users.createdAt,
         updatedAt: users.updatedAt,
         plantCount: sql<number>`COUNT(${plants.id})::int`,

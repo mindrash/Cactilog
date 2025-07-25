@@ -47,6 +47,15 @@ The application uses a monorepo structure with shared schemas:
 
 ### Recent Changes
 
+#### July 25, 2025 - Display Name Feature for Collections
+- **Added custom display name functionality** allowing users to set personalized names for their collections (20-character limit)
+- Created comprehensive content filtering system that blocks explicit words and inappropriate content
+- **Enhanced settings interface** with dedicated Collection Profile section for display name management
+- Updated all user display components (community collections, user profiles, settings) to prioritize custom display names
+- Added real-time character counter and validation with immediate error feedback
+- **Integrated throughout application**: Community collections directory, individual user profiles, and all user-facing displays now show custom names
+- Backend API includes proper validation, sanitization, and error handling for display name updates
+
 #### July 25, 2025 - Plant Hearts/Likes Community Engagement System
 - **Added comprehensive heart/like functionality** for community plant engagement across all plant displays
 - Created PlantLikeButton component with animated heart icon showing like counts and toggle functionality
