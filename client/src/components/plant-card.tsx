@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Camera } from "lucide-react";
 import PlantDetailModal from "./plant-detail-modal";
 import PrivacyBadge from "./privacy-badge";
+import { PlantLikeButton } from "./plant-like-button";
 
 interface PlantCardProps {
   plant: Plant;
@@ -20,11 +21,19 @@ export default function PlantCard({ plant }: PlantCardProps) {
     return new Date(dateString).toLocaleDateString();
   };
 
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Don't open modal if clicking on the like button
+    if ((e.target as HTMLElement).closest('[data-like-button]')) {
+      return;
+    }
+    setShowDetailModal(true);
+  };
+
   return (
     <>
       <Card 
         className="border border-gray-100 overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
-        onClick={() => setShowDetailModal(true)}
+        onClick={handleCardClick}
       >
         <div className="w-full h-48 bg-gray-100 flex items-center justify-center border-b border-gray-200">
           <div className="text-center text-gray-500">
@@ -57,6 +66,15 @@ export default function PlantCard({ plant }: PlantCardProps) {
           <div className="flex items-center justify-between text-xs text-gray-500">
             <span>{plant.supplier || "Unknown"}</span>
             <span>{formatDate(plant.acquisitionDate)}</span>
+          </div>
+          
+          {/* Like Button */}
+          <div className="flex justify-end mt-3 pt-3 border-t border-gray-100">
+            <PlantLikeButton 
+              plantId={plant.id} 
+              className="text-xs"
+              showCount={true}
+            />
           </div>
         </CardContent>
       </Card>

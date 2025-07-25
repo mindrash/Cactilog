@@ -84,6 +84,17 @@ export const plantPhotos = pgTable("plant_photos", {
   uploadedAt: timestamp("uploaded_at").defaultNow(),
 });
 
+// Plant likes table
+export const plantLikes = pgTable("plant_likes", {
+  id: serial("id").primaryKey(),
+  plantId: integer("plant_id").notNull(),
+  userId: varchar("user_id").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => [
+  // Ensure one like per user per plant
+  index("unique_user_plant_like").on(table.userId, table.plantId)
+]);
+
 // Seeds table for tracking seed sowing
 export const seeds = pgTable("seeds", {
   id: serial("id").primaryKey(),
@@ -116,6 +127,7 @@ export const plantsRelations = relations(plants, ({ one, many }) => ({
   }),
   growthRecords: many(growthRecords),
   photos: many(plantPhotos),
+  likes: many(plantLikes),
 }));
 
 export const growthRecordsRelations = relations(growthRecords, ({ one }) => ({
@@ -129,6 +141,17 @@ export const plantPhotosRelations = relations(plantPhotos, ({ one }) => ({
   plant: one(plants, {
     fields: [plantPhotos.plantId],
     references: [plants.id],
+  }),
+}));
+
+export const plantLikesRelations = relations(plantLikes, ({ one }) => ({
+  plant: one(plants, {
+    fields: [plantLikes.plantId],
+    references: [plants.id],
+  }),
+  user: one(users, {
+    fields: [plantLikes.userId],
+    references: [users.id],
   }),
 }));
 
@@ -233,5 +256,7 @@ export type GrowthRecord = typeof growthRecords.$inferSelect;
 export type InsertGrowthRecord = z.infer<typeof insertGrowthRecordSchema>;
 export type PlantPhoto = typeof plantPhotos.$inferSelect;
 export type InsertPlantPhoto = z.infer<typeof insertPlantPhotoSchema>;
+export type PlantLike = typeof plantLikes.$inferSelect;
+export type InsertPlantLike = typeof plantLikes.$inferInsert;
 export type Seed = typeof seeds.$inferSelect;
 export type InsertSeed = z.infer<typeof insertSeedSchema>;
