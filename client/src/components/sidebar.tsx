@@ -26,8 +26,8 @@ export default function Sidebar() {
               className={cn(
                 "flex items-center space-x-3 rounded-lg px-3 py-2 font-medium transition-colors",
                 isActive
-                  ? "text-forest bg-sage/10"
-                  : "text-gray-600 hover:text-forest hover:bg-sage/10"
+                  ? "text-cactus-green bg-desert-sage/10"
+                  : "text-gray-600 hover:text-cactus-green hover:bg-desert-sage/10"
               )}
             >
               <item.icon size={20} />

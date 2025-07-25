@@ -11,6 +11,7 @@ import PlantCard from "@/components/plant-card";
 import AddPlantModal from "@/components/add-plant-modal";
 import { Plant } from "@shared/schema";
 import { Sprout, Table, Plus, TrendingUp } from "lucide-react";
+import CactusIcon from "@/components/cactus-icon";
 import { Button } from "@/components/ui/button";
 
 export default function Dashboard() {
@@ -78,7 +79,7 @@ export default function Dashboard() {
             <StatsCard
               title="Total Plants"
               value={stats?.totalPlants || 0}
-              icon={<Sprout className="text-cactus-green" />}
+              icon={<CactusIcon className="text-cactus-green" size={20} />}
               bgColor="bg-cactus-green/10"
             />
             <StatsCard
@@ -116,7 +117,7 @@ export default function Dashboard() {
               </div>
             ) : (
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
-                <Sprout className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <CactusIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" size={48} />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">No plants yet</h3>
                 <p className="text-gray-600 mb-4">Start building your collection by adding your first plant.</p>
                 <Button onClick={() => setShowAddModal(true)} className="bg-cactus-green hover:bg-succulent">

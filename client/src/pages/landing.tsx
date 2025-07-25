@@ -1,5 +1,6 @@
 import { Sprout } from "lucide-react";
 import { FaGoogle, FaFacebook, FaGithub, FaTwitter, FaApple, FaMicrosoft } from "react-icons/fa";
+import CactusIcon from "@/components/cactus-icon";
 
 interface OAuthProvider {
   name: string;
@@ -68,7 +69,7 @@ export default function Landing() {
         <div className="bg-white rounded-xl shadow-2xl p-8">
           <div className="text-center mb-8">
             <div className="w-16 h-16 bg-cactus-green rounded-full flex items-center justify-center mx-auto mb-4">
-              <Sprout className="text-white text-2xl" size={32} />
+              <CactusIcon className="text-white" size={32} />
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome to CactiTracker</h2>
             <p className="text-gray-600">Manage your plant collection with ease</p>
