@@ -56,7 +56,7 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
       commonName: "",
       supplier: "",
       acquisitionDate: "",
-      groundType: "none",
+      initialType: "none",
       isPublic: "public",
       notes: "",
       customId: "",
@@ -128,7 +128,7 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
         commonName: "",
         supplier: "",
         acquisitionDate: "",
-        groundType: "none",
+        initialType: "none",
         notes: "",
         customId: "",
       });
@@ -169,7 +169,7 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
       commonName: data.commonName === "" ? null : data.commonName,
       supplier: data.supplier === "" ? null : data.supplier,
       acquisitionDate: data.acquisitionDate === "" ? null : data.acquisitionDate,
-      groundType: data.groundType === "" || data.groundType === "none" ? null : data.groundType,
+      initialType: data.initialType === "" || data.initialType === "none" ? null : data.initialType,
       notes: data.notes === "" ? null : data.notes,
       customId: data.customId === "" ? null : data.customId,
     };
@@ -401,14 +401,14 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
                 />
                 <FormField
                   control={form.control}
-                  name="groundType"
+                  name="initialType"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Ground Type</FormLabel>
+                      <FormLabel>Initial Type</FormLabel>
                       <Select onValueChange={field.onChange} value={field.value || "none"}>
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select ground type" />
+                            <SelectValue placeholder="Select initial type" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -418,6 +418,8 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
                           <SelectItem value="graft">Graft</SelectItem>
                           <SelectItem value="tip">Tip</SelectItem>
                           <SelectItem value="grafted">Grafted</SelectItem>
+                          <SelectItem value="mid">Mid</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
