@@ -16,7 +16,7 @@ import {
   type InsertSeed,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, and, ilike, or } from "drizzle-orm";
+import { eq, desc, and, ilike, or, count } from "drizzle-orm";
 
 export interface IStorage {
   // User operations - mandatory for Replit Auth
@@ -58,6 +58,12 @@ export interface IStorage {
     recentAdditions: number;
     growthRecords: number;
   }>;
+  
+  // Public feed operations
+  getPublicPlants(limit: number, offset: number): Promise<{
+    plants: Plant[];
+    total: number;
+  }>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -91,15 +97,16 @@ export class DatabaseStorage implements IStorage {
     let whereConditions = [eq(plants.userId, userId)];
     
     if (filters?.search) {
-      whereConditions.push(
-        or(
-          ilike(plants.commonName, `%${filters.search}%`),
-          ilike(plants.genus, `%${filters.search}%`),
-          ilike(plants.species, `%${filters.search}%`),
-          ilike(plants.supplier, `%${filters.search}%`),
-          ilike(plants.customId, `%${filters.search}%`)
-        )
+      const searchCondition = or(
+        ilike(plants.commonName, `%${filters.search}%`),
+        ilike(plants.genus, `%${filters.search}%`),
+        ilike(plants.species, `%${filters.search}%`),
+        ilike(plants.supplier, `%${filters.search}%`),
+        ilike(plants.customId, `%${filters.search}%`)
       );
+      if (searchCondition) {
+        whereConditions.push(searchCondition);
+      }
     }
     
     if (filters?.type) {
@@ -292,6 +299,32 @@ export class DatabaseStorage implements IStorage {
       uniqueGenera,
       recentAdditions,
       growthRecords: allGrowthRecords.length,
+    };
+  }
+
+  // Public feed operations
+  async getPublicPlants(limit: number, offset: number): Promise<{
+    plants: Plant[];
+    total: number;
+  }> {
+    // Get public plants with pagination
+    const publicPlants = await db
+      .select()
+      .from(plants)
+      .where(eq(plants.isPublic, "public"))
+      .orderBy(desc(plants.createdAt))
+      .limit(limit)
+      .offset(offset);
+
+    // Get total count of public plants
+    const [totalResult] = await db
+      .select({ count: count() })
+      .from(plants)
+      .where(eq(plants.isPublic, "public"));
+
+    return {
+      plants: publicPlants,
+      total: totalResult.count,
     };
   }
 }

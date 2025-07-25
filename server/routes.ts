@@ -9,6 +9,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
   await setupAuth(app);
 
+  // Public feed route (no authentication required)
+  app.get('/api/public/plants', async (req, res) => {
+    try {
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 20;
+      const offset = (page - 1) * limit;
+      
+      const { plants, total } = await storage.getPublicPlants(limit, offset);
+      
+      res.json({
+        plants,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+          hasNext: offset + limit < total,
+          hasPrev: page > 1
+        }
+      });
+    } catch (error) {
+      console.error("Error fetching public plants:", error);
+      res.status(500).json({ message: "Failed to fetch public plants" });
+    }
+  });
+
   // Auth routes
   app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
     try {

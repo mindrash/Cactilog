@@ -1,106 +1,135 @@
-import { Sprout } from "lucide-react";
-import { FaGoogle, FaFacebook, FaGithub, FaTwitter, FaApple, FaMicrosoft } from "react-icons/fa";
+import { useQuery } from "@tanstack/react-query";
+import { ChevronLeft, ChevronRight, LogIn } from "lucide-react";
 import CactusIcon from "@/components/cactus-icon";
+import PlantCard from "@/components/plant-card";
+import { Button } from "@/components/ui/button";
+import type { Plant } from "@shared/schema";
+import { useState } from "react";
 
-interface OAuthProvider {
-  name: string;
-  icon: React.ReactNode;
-  bgColor: string;
-  textColor: string;
-  hoverColor: string;
-  endpoint: string;
+interface PublicFeedResponse {
+  plants: Plant[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
 }
 
-const oauthProviders: OAuthProvider[] = [
-  {
-    name: "Google",
-    icon: <FaGoogle className="w-5 h-5" />,
-    bgColor: "bg-white",
-    textColor: "text-gray-700",
-    hoverColor: "hover:bg-gray-50",
-    endpoint: "/api/login/google"
-  },
-  {
-    name: "Facebook",
-    icon: <FaFacebook className="w-5 h-5" />,
-    bgColor: "bg-blue-600",
-    textColor: "text-white",
-    hoverColor: "hover:bg-blue-700",
-    endpoint: "/api/login/facebook"
-  },
-  {
-    name: "GitHub",
-    icon: <FaGithub className="w-5 h-5" />,
-    bgColor: "bg-gray-900",
-    textColor: "text-white",
-    hoverColor: "hover:bg-gray-800",
-    endpoint: "/api/login/github"
-  },
-  {
-    name: "Twitter",
-    icon: <FaTwitter className="w-5 h-5" />,
-    bgColor: "bg-blue-400",
-    textColor: "text-white",
-    hoverColor: "hover:bg-blue-500",
-    endpoint: "/api/login/twitter"
-  },
-  {
-    name: "Microsoft",
-    icon: <FaMicrosoft className="w-5 h-5" />,
-    bgColor: "bg-blue-500",
-    textColor: "text-white",
-    hoverColor: "hover:bg-blue-600",
-    endpoint: "/api/login/microsoft"
-  },
-  {
-    name: "Apple",
-    icon: <FaApple className="w-5 h-5" />,
-    bgColor: "bg-black",
-    textColor: "text-white",
-    hoverColor: "hover:bg-gray-800",
-    endpoint: "/api/login/apple"
-  }
-];
-
 export default function Landing() {
+  const [currentPage, setCurrentPage] = useState(1);
+  
+  const { data, isLoading } = useQuery<PublicFeedResponse>({
+    queryKey: ["/api/public/plants", currentPage],
+    queryFn: async () => {
+      const response = await fetch(`/api/public/plants?page=${currentPage}&limit=20`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch public plants");
+      }
+      return response.json();
+    },
+  });
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-lime-wash/20 to-pine-mist/30 flex items-center justify-center">
-      <div className="max-w-md w-full mx-4">
-        <div className="bg-white rounded-xl shadow-2xl p-8">
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-cactus-green rounded-full flex items-center justify-center mx-auto mb-4">
-              <CactusIcon className="text-white" size={32} />
+    <div className="min-h-screen bg-gradient-to-br from-lime-wash/20 to-pine-mist/30">
+      {/* Header */}
+      <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-50">
+        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-cactus-green rounded-full flex items-center justify-center">
+              <CactusIcon className="text-white" size={24} />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome to CactiTracker</h2>
-            <p className="text-gray-600">Manage your plant collection with ease</p>
+            <div>
+              <h1 className="text-xl font-bold text-gray-900">CactiTracker</h1>
+              <p className="text-sm text-gray-600">Community Collection</p>
+            </div>
           </div>
           
-          <div className="space-y-3 mb-6">
-            {oauthProviders.map((provider) => (
-              <button 
-                key={provider.name}
-                onClick={() => window.location.href = provider.endpoint}
-                className={`w-full ${provider.bgColor} ${provider.textColor} ${provider.hoverColor} border-2 ${provider.name === 'Google' ? 'border-gray-300' : 'border-transparent'} rounded-lg px-4 py-3 flex items-center justify-center transition-colors font-medium shadow-sm`}
-              >
-                {provider.icon}
-                <span className="ml-3">Continue with {provider.name}</span>
-              </button>
-            ))}
-          </div>
-          
-          <div className="text-center mb-4">
-            <p className="text-sm text-gray-500 mb-2">
-              Choose your preferred sign-in method
-            </p>
-            <p className="text-xs text-gray-400">
-              All providers support the same features and data access
-            </p>
-          </div>
-          
-          <div className="text-center text-sm text-gray-500">
-            By continuing, you agree to our Terms of Service and Privacy Policy
-          </div>
+          <Button 
+            onClick={() => window.location.href = "/api/login"}
+            className="bg-cactus-green hover:bg-cactus-green/90"
+          >
+            <LogIn className="w-4 h-4 mr-2" />
+            Sign In
+          </Button>
         </div>
+      </header>
+
+      {/* Main Content */}
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            Latest Cactus & Succulent Collections
+          </h2>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            Explore the amazing plant collections shared by our community. 
+            Join CactiTracker to share your own plants and track their growth.
+          </p>
+        </div>
+
+        {isLoading ? (
+          <div className="text-center py-12">
+            <div className="inline-block w-8 h-8 border-4 border-cactus-green border-t-transparent rounded-full animate-spin"></div>
+            <p className="mt-4 text-gray-600">Loading plant collection...</p>
+          </div>
+        ) : data?.plants?.length === 0 ? (
+          <div className="text-center py-12">
+            <CactusIcon className="mx-auto text-gray-400 mb-4" size={48} />
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">No plants shared yet</h3>
+            <p className="text-gray-600 mb-6">Be the first to share your plant collection!</p>
+            <Button 
+              onClick={() => window.location.href = "/api/login"}
+              className="bg-cactus-green hover:bg-cactus-green/90"
+            >
+              Start Your Collection
+            </Button>
+          </div>
+        ) : (
+          <>
+            {/* Plant Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+              {data?.plants?.map((plant) => (
+                <PlantCard key={plant.id} plant={plant} />
+              ))}
+            </div>
+
+            {/* Pagination */}
+            {data?.pagination && data.pagination.totalPages > 1 && (
+              <div className="flex items-center justify-center space-x-4">
+                <Button
+                  variant="outline"
+                  onClick={() => setCurrentPage(currentPage - 1)}
+                  disabled={!data.pagination.hasPrev}
+                  className="flex items-center space-x-2"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                  <span>Previous</span>
+                </Button>
+
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-gray-600">
+                    Page {data.pagination.page} of {data.pagination.totalPages}
+                  </span>
+                  <span className="text-sm text-gray-400">
+                    ({data.pagination.total} plants)
+                  </span>
+                </div>
+
+                <Button
+                  variant="outline"
+                  onClick={() => setCurrentPage(currentPage + 1)}
+                  disabled={!data.pagination.hasNext}
+                  className="flex items-center space-x-2"
+                >
+                  <span>Next</span>
+                  <ChevronRight className="w-4 h-4" />
+                </Button>
+              </div>
+            )}
+          </>
+        )}
       </div>
     </div>
   );
