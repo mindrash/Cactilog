@@ -47,13 +47,14 @@ The application uses a monorepo structure with shared schemas:
 
 ### Recent Changes
 
-#### July 25, 2025 - Subtle Cactus Pattern Background & Centralized Typography System
-- **Created subtle cactus spine pattern background** inspired by botanical imagery using proper CSS best practices
-- Implemented two background variants: `.cactus-pattern-bg` for main pages and `.cactus-pattern-bg-light` for dashboard pages
-- **Applied SVG-based background patterns** using data URLs with very low opacity (0.01-0.03) for subtle texture
-- Background patterns feature geometric spine designs with small circles and diamond shapes in forest green tones
+#### July 25, 2025 - Authentic Cactus Pattern Background & Typography System
+- **Created authentic cactus spine pattern background** based on user-provided reference image using proper CSS best practices
+- Implemented realistic areole (spine clusters) pattern with radiating golden spines on forest green background
+- **Applied SVG-based background patterns** using data URLs starting at 100% opacity for visibility testing
+- Background patterns feature authentic cactus surface structure with central areoles and radiating spines in yellow/gold
 - **Systematically applied to all pages** including home, knowledge, photos, users, settings, growth tracking, and knowledge sub-pages
-- Used proper CSS architecture with semantic class names for easy maintenance and consistent application
+- Used proper CSS architecture with semantic class names for easy maintenance and opacity adjustment
+- **Fixed title size consistency** across dashboard and collection pages using centralized typography system
 
 #### July 25, 2025 - Google Fonts Integration & Centralized Typography System
 - **Added Google Fonts integration** with Bagel Fat One decorative font for distinctive brand identity
