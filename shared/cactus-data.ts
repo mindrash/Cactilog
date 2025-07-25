@@ -1,9 +1,29 @@
 // Comprehensive cactus genera and species data for plant collection tracking
+export interface TaxonomicVariant {
+  name: string;
+  type: 'subspecies' | 'variety' | 'form' | 'cultivar' | 'clone' | 'mutation';
+  description?: string;
+  synonyms?: string[];
+  discoverer?: string;
+  year?: number;
+}
+
+export interface CactusSpecies {
+  name: string;
+  commonNames?: string[];
+  description?: string;
+  nativeRange?: string;
+  variants?: TaxonomicVariant[];
+  synonyms?: string[];
+  discoverer?: string;
+  year?: number;
+}
+
 export interface CactusGenus {
   name: string;
   commonName?: string;
   description: string;
-  species: string[];
+  species: (string | CactusSpecies)[];
 }
 
 export const cactusGenera: CactusGenus[] = [
@@ -12,9 +32,62 @@ export const cactusGenera: CactusGenus[] = [
     commonName: "San Pedro",
     description: "Fast-growing columnar cacti native to South America, known for their distinctive ribs and large white nocturnal flowers. Many species are prized for their ornamental value and rapid growth rates.",
     species: [
-      "pachanoi",
-      "peruvianus", 
-      "bridgesii",
+      {
+        name: "pachanoi",
+        commonNames: ["San Pedro", "Huachuma"],
+        description: "Sacred cactus of the Andes, fast-growing columnar species with 6-8 ribs",
+        nativeRange: "Ecuador, Peru, Bolivia",
+        discoverer: "Britton & Rose",
+        year: 1920,
+        variants: [
+          {
+            name: "macrogonus",
+            type: "variety",
+            description: "Larger form with thicker stems and fewer ribs"
+          },
+          {
+            name: "PC",
+            type: "clone",
+            description: "Predominant Cultivar - widely distributed ornamental clone"
+          },
+          {
+            name: "Landfill",
+            type: "clone",
+            description: "Named clone with distinctive spine characteristics"
+          }
+        ]
+      },
+      {
+        name: "peruvianus",
+        commonNames: ["Peruvian Torch", "Giganton"],
+        description: "Tall columnar cactus with 6-9 ribs and prominent spination",
+        nativeRange: "Peru",
+        variants: [
+          {
+            name: "puquiensis",
+            type: "variety",
+            description: "Shorter variety with denser spination"
+          },
+          {
+            name: "matucanus",
+            type: "variety",
+            description: "Form with distinctive blue-green coloration"
+          }
+        ]
+      },
+      {
+        name: "bridgesii",
+        commonNames: ["Bolivian Torch"],
+        description: "Columnar cactus with 4-8 ribs and variable spination",
+        nativeRange: "Bolivia, Northern Argentina",
+        variants: [
+          {
+            name: "monstrose",
+            type: "mutation",
+            description: "Crested or irregular growth form mutation"
+          }
+        ]
+      },
       "scopulicola",
       "cuzcoensis",
       "huanucoensis",
@@ -29,11 +102,75 @@ export const cactusGenera: CactusGenus[] = [
     commonName: "Pincushion Cactus",
     description: "One of the largest genera of cacti with over 200 species. Characterized by their spherical to cylindrical shape and tubercles arranged in spirals. Popular for their colorful flowers and ease of cultivation.",
     species: [
-      "bocasana",
-      "elongata",
+      {
+        name: "bocasana",
+        commonNames: ["Powder Puff Cactus", "Snowball Cactus"],
+        description: "Small clustering cactus with white hooked spines and woolly appearance",
+        nativeRange: "Central Mexico",
+        variants: [
+          {
+            name: "roseiflora",
+            type: "cultivar",
+            description: "Selected form with pink flowers instead of cream"
+          },
+          {
+            name: "multilanata",
+            type: "variety",
+            description: "Extra woolly form with dense white wool"
+          }
+        ]
+      },
+      {
+        name: "elongata",
+        commonNames: ["Gold Lace Cactus"],
+        description: "Clustering species forming dense mats with golden yellow spines",
+        nativeRange: "Central Mexico",
+        variants: [
+          {
+            name: "echinaria",
+            type: "variety",
+            description: "Form with denser, more prominent spination"
+          },
+          {
+            name: "stella-aurata",
+            type: "variety",
+            description: "Golden star variety with particularly attractive spine arrangement"
+          }
+        ]
+      },
+      {
+        name: "hahniana",
+        commonNames: ["Old Lady Cactus"],
+        description: "Spherical cactus covered in white wool and hair-like spines",
+        nativeRange: "Mexico",
+        variants: [
+          {
+            name: "bravoae",
+            type: "variety",
+            description: "Larger form with less dense wool covering"
+          },
+          {
+            name: "mendeliana",
+            type: "variety",
+            description: "Compact form with very dense white hair"
+          }
+        ]
+      },
+      {
+        name: "plumosa",
+        commonNames: ["Feather Cactus"],
+        description: "Small cactus with feathery white spines resembling down",
+        nativeRange: "Northeast Mexico",
+        variants: [
+          {
+            name: "cristata",
+            type: "mutation",
+            description: "Crested form creating fan-shaped growth"
+          }
+        ]
+      },
       "gracilis",
       "compressa",
-      "hahniana",
       "spinosissima",
       "zeilmanniana",
       "bombycina",
@@ -46,7 +183,6 @@ export const cactusGenera: CactusGenus[] = [
       "matudae",
       "mystax",
       "parkinsonii",
-      "plumosa",
       "prolifera",
       "rhodantha",
       "sempervivi",
@@ -1053,7 +1189,11 @@ export const succulentGenera: CactusGenus[] = [
 export function getSpeciesForGenus(genusName: string, isSucculent: boolean = false): string[] {
   const genera = isSucculent ? succulentGenera : cactusGenera;
   const genus = genera.find(g => g.name.toLowerCase() === genusName.toLowerCase());
-  return genus?.species.filter(species => species && species.trim() !== "") || [];
+  if (!genus) return [];
+  
+  return genus.species
+    .map(species => typeof species === 'string' ? species : species.name)
+    .filter(species => species && species.trim() !== "") || [];
 }
 
 // Helper function to get all genus names

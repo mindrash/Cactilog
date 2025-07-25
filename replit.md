@@ -47,17 +47,16 @@ The application uses a monorepo structure with shared schemas:
 
 ### Recent Changes
 
-#### July 25, 2025 - Collection Export & Species Detail Pages
-- **Added comprehensive collection export functionality** supporting CSV, Excel (.xlsx), and PDF formats
-- CSV format optimized for direct import into Google Sheets, Excel, and other spreadsheet applications
-- Excel export includes proper column formatting and widths for professional presentation
-- PDF export creates formatted reports suitable for printing and sharing
-- **Created detailed species pages** with comprehensive botanical information and cultivation guides
-- Fixed species clickability throughout Knowledge Base - all species now link to detailed information
-- Added tabbed interface for species details: Overview, Cultivation, Features, and Collections
-- Included genus-specific care guides with watering, lighting, temperature, and blooming information
-- Species pages show related species within the same genus for easy browsing
-- Export functionality integrated into Collection page with smart enable/disable based on plant count
+#### July 25, 2025 - Enhanced Botanical Taxonomy & Variant Classification
+- **Enhanced botanical taxonomy to capture complete taxonomic hierarchy** including subspecies, varieties, forms, cultivars, clones, and mutations
+- Added TaxonomicVariant interface with proper botanical classification structure supporting all major variant types
+- **Created comprehensive variant pages** with detailed information about taxonomic differences and proper naming conventions
+- Updated Trichocereus and Mammillaria species with authentic variant data including 'PC' clone, varieties, and crested forms
+- Added color-coded badges and icons for different variant types (subspecies=blue, variety=green, cultivar=orange, clone=pink, mutation=red)
+- **Integrated variant navigation** throughout Knowledge Base - users can browse from genus → species → variant level
+- Fixed species data structure compatibility issues with AddPlantModal and related components
+- Added educational content explaining the differences between subspecies, varieties, forms, cultivars, clones, and mutations
+- **Collection export functionality** supporting CSV, Excel (.xlsx), and PDF formats with Google Sheets compatibility
 
 #### July 25, 2025 - Knowledge Base & Organized Navigation
 - **Added comprehensive Knowledge Base section** with detailed information about cactus genera and species
