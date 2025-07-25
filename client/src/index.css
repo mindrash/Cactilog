@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom font classes */
+.font-henny-penny {
+  font-family: 'Henny Penny', cursive;
+}
+
 :root {
   --background: hsl(55, 35%, 97%); /* Soft cream with subtle yellow-green */
   --foreground: hsl(125, 15%, 25%); /* Deep muted green */
