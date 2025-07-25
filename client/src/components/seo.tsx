@@ -10,9 +10,9 @@ interface SEOProps {
 }
 
 const defaultSEO = {
-  title: "Cactilog - Professional Cactus & Succulent Collection Management",
-  description: "Track, manage, and grow your cactus and succulent collection with Cactilog. Features botanical family classification, growth tracking, community sharing, comprehensive knowledge base, and reputable vendor directory.",
-  keywords: "cactus collection, succulent tracking, plant management, botanical classification, cactus care, succulent care, plant community, garden management, horticultural database",
+  title: "Cactilog - Complete Platform for Cactus & Succulent Enthusiasts",
+  description: "Join thousands of collectors tracking their cacti and succulents. Smart collection management, growth tracking, vibrant community, comprehensive knowledge base with 1,200+ species, and trusted vendor directory - all free to use.",
+  keywords: "cactus collection, succulent tracking, plant management, botanical classification, cactus care, succulent care, plant community, garden management, horticultural database, Cactaceae, Aizoaceae, Crassulaceae, Euphorbiaceae, Apocynaceae, plant growth tracking, botanical photography, plant identification, succulent varieties, cactus species",
   ogImage: "https://cactilog.replit.app/og-image.jpg"
 };
 
@@ -32,14 +32,25 @@ export function SEO({ title, description, keywords, ogImage, canonicalPath }: SE
     // Update or create meta tags
     updateMetaTag('name', 'description', finalDescription);
     updateMetaTag('name', 'keywords', finalKeywords);
+    updateMetaTag('name', 'author', 'Cactilog Team');
+    updateMetaTag('name', 'robots', 'index, follow');
     updateMetaTag('property', 'og:title', finalTitle);
     updateMetaTag('property', 'og:description', finalDescription);
     updateMetaTag('property', 'og:image', finalOgImage);
+    updateMetaTag('property', 'og:image:alt', 'Cactilog - Cactus and Succulent Collection Management Platform');
     updateMetaTag('property', 'og:url', finalCanonical);
+    updateMetaTag('property', 'og:type', 'website');
+    updateMetaTag('property', 'og:site_name', 'Cactilog');
+    updateMetaTag('property', 'og:locale', 'en_US');
+    updateMetaTag('property', 'og:updated_time', new Date().toISOString());
+    updateMetaTag('property', 'twitter:card', 'summary_large_image');
     updateMetaTag('property', 'twitter:title', finalTitle);
     updateMetaTag('property', 'twitter:description', finalDescription);
     updateMetaTag('property', 'twitter:image', finalOgImage);
+    updateMetaTag('property', 'twitter:image:alt', 'Cactilog - Cactus and Succulent Collection Management Platform');
     updateMetaTag('property', 'twitter:url', finalCanonical);
+    updateMetaTag('property', 'twitter:creator', '@cactilog');
+    updateMetaTag('property', 'twitter:site', '@cactilog');
 
     // Update canonical link
     updateCanonicalLink(finalCanonical);
