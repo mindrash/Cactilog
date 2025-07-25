@@ -296,6 +296,7 @@ export const cactusGenera: CactusGenus[] = [
   {
     name: "Carnegiea",
     commonName: "Saguaro",
+    description: "Iconic giant columnar cactus of the Sonoran Desert. Can live over 150 years and reach heights of 40+ feet. The Arizona state flower and symbol of the American Southwest.",
     species: [
       "gigantea"
     ]
@@ -337,6 +338,7 @@ export const cactusGenera: CactusGenus[] = [
   {
     name: "Copiapoa",
     commonName: "Copiapoa",
+    description: "Chilean desert cacti adapted to extreme arid conditions. Known for their thick waxy coating and ability to survive in one of the world's driest deserts, the Atacama.",
     species: [
       "cinerea",
       "humilis",
@@ -364,6 +366,7 @@ export const cactusGenera: CactusGenus[] = [
   {
     name: "Echinocactus",
     commonName: "Golden Barrel",
+    description: "Large barrel-shaped cacti with golden spines. The classic 'barrel cactus' often seen in southwestern landscapes, known for their perfect spherical form and impressive size.",
     species: [
       "grusonii",
       "ingens",
@@ -375,6 +378,7 @@ export const cactusGenera: CactusGenus[] = [
   {
     name: "Turbinicarpus",
     commonName: "Turbinicarpus",
+    description: "Small, rare cacti from Mexico with intricate spine patterns. Highly sought after by collectors for their miniature size and detailed morphological features.",
     species: [
       "pseudomacrochele",
       "valdezianus",
@@ -394,6 +398,121 @@ export const cactusGenera: CactusGenus[] = [
       "swobodae",
       "viereckii"
     ]
+  },
+  // Additional major genera to reach closer to the 150+ genera documented
+  {
+    name: "Stenocereus",
+    commonName: "Pitaya",
+    description: "Large columnar cacti from Mexico and Central America. Many species produce edible fruits called pitaya, and some are important in traditional Mexican culture.",
+    species: [
+      "griseus",
+      "thurberi",
+      "alamosensis",
+      "aragonii",
+      "beneckei",
+      "chrysocarpus",
+      "dumortieri",
+      "eruca",
+      "fimbriatus",
+      "fricii",
+      "gummosus",
+      "hollianus",
+      "kerberi",
+      "laevigatus",
+      "martinezii",
+      "montanus",
+      "obtusangulus",
+      "pruinosus",
+      "queretaroensis",
+      "standleyi",
+      "stellatus",
+      "treleasei"
+    ]
+  },
+  {
+    name: "Pilosocereus",
+    commonName: "Tree Cactus",
+    description: "Columnar cacti with woolly areoles, native to Brazil and surrounding areas. Known for their impressive tree-like growth and distinctive white wool on mature plants.",
+    species: [
+      "azureus",
+      "pachycladus",
+      "magnificus",
+      "aureispinus",
+      "brasiliensis",
+      "chrysostele",
+      "catingicola",
+      "flexibilispinus",
+      "fulvilanatus",
+      "gounellei",
+      "leucocephalus",
+      "machrisii",
+      "pentaedrophorus",
+      "royenii",
+      "tuberculatus"
+    ]
+  },
+  {
+    name: "Thelocactus",
+    commonName: "Glory of Texas",
+    description: "Globular cacti from Mexico and southern Texas. Known for their prominent ribs and large, colorful flowers that are often disproportionately large for the plant size.",
+    species: [
+      "bicolor",
+      "setispinus",
+      "hexaedrophorus",
+      "leucacanthus",
+      "buekii",
+      "conothelos",
+      "fossulatus",
+      "hastifer",
+      "lausseri",
+      "lloydii",
+      "macdowellii",
+      "rinconensis",
+      "schwarzii",
+      "tulensis",
+      "wagnerianus"
+    ]
+  },
+  {
+    name: "Epithelantha",
+    commonName: "Button Cactus",
+    description: "Tiny cacti with dense white spination that gives them a button-like appearance. Among the smallest cacti, these miniature gems are prized by collectors.",
+    species: [
+      "micromeris",
+      "bokei",
+      "button",
+      "densispina",
+      "rufispina"
+    ]
+  },
+  {
+    name: "Leuchtenbergia",
+    commonName: "Agave Cactus",
+    description: "A monotypic genus resembling an agave more than a typical cactus. Has long, triangular tubercles and papery spines, representing a unique evolutionary path in cacti.",
+    species: [
+      "principis"
+    ]
+  },
+  {
+    name: "Lophocereus",
+    commonName: "Mexican Fencepost",
+    description: "Tall columnar cacti from northwestern Mexico. Often used as living fences, these cacti develop a distinctive crown of bristly spines when mature.",
+    species: [
+      "schottii",
+      "marginatus"
+    ]
+  },
+  {
+    name: "Neolloydia",
+    commonName: "Neolloydia",
+    description: "Small globular cacti from Mexico and southwestern US. Often confused with related genera, they're distinguished by their groove pattern and flower characteristics.",
+    species: [
+      "conoidea",
+      "matehualensis",
+      "pilispina",
+      "pseudopectinata",
+      "texensis"
+    ]
   }
 ];
 
@@ -402,6 +521,7 @@ export const succulentGenera: CactusGenus[] = [
   {
     name: "Echeveria",
     commonName: "Hen and Chicks",
+    description: "Rosette-forming succulents native to Mexico and Central America. Popular houseplants known for their colorful leaves and ease of propagation.",
     species: [
       "elegans",
       "agavoides",
@@ -422,6 +542,7 @@ export const succulentGenera: CactusGenus[] = [
   {
     name: "Aloe",
     commonName: "Aloe",
+    description: "Succulent plants known for their medicinal properties and architectural rosette form. Native to Africa and Madagascar, many species are widely cultivated worldwide.",
     species: [
       "vera",
       "arborescens", 
@@ -442,6 +563,7 @@ export const succulentGenera: CactusGenus[] = [
   {
     name: "Haworthia",
     commonName: "Zebra Plant",
+    description: "Small rosette-forming succulents native to South Africa. Popular houseplants known for their intricate patterns, translucent windows, and tolerance of low light conditions.",
     species: [
       "fasciata",
       "attenuata",
@@ -458,6 +580,7 @@ export const succulentGenera: CactusGenus[] = [
   {
     name: "Crassula",
     commonName: "Jade Plant",
+    description: "Diverse genus of succulents ranging from tiny groundcovers to tree-like forms. Known for their thick, fleshy leaves and star-shaped flowers, with many popular houseplant species.",
     species: [
       "ovata",
       "argentea",
@@ -478,6 +601,7 @@ export const succulentGenera: CactusGenus[] = [
   {
     name: "Sedum",
     commonName: "Stonecrop",
+    description: "Large genus of succulents with incredible diversity in form and habit. Found in many climates worldwide, from tiny alpine species to large shrubby forms.",
     species: [
       "rubrotinctum",
       "morganianum",
@@ -494,6 +618,7 @@ export const succulentGenera: CactusGenus[] = [
   {
     name: "Agave",
     commonName: "Century Plant",
+    description: "Large rosette succulents that bloom once after many years then die. Native to the Americas, famous for producing tequila and known for their dramatic architectural form.",
     species: [
       "americana",
       "attenuata",
