@@ -72,7 +72,7 @@ export default function GrowthTracking() {
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold font-freckle-face title-cactus-green mb-2">Growth Tracking</h1>
+          <h1 className="page-title-xl mb-2">Growth Tracking</h1>
           <p className="text-gray-600">Monitor and analyze your plants' growth over time</p>
         </div>
 

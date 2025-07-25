@@ -79,7 +79,7 @@ export default function Photos() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold font-freckle-face title-cactus-green mb-2">Community Photo Gallery</h1>
+          <h1 className="page-title-xl mb-2">Community Photo Gallery</h1>
           <p className="text-gray-600">Explore photos shared by the Cactilog community</p>
         </div>
 
