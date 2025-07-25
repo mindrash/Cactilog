@@ -91,7 +91,7 @@ export default function UserProfile() {
               <Link href="/users">
                 <Button variant="outline">
                   <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back to Users
+                  Back to Community Collections
                 </Button>
               </Link>
             </CardContent>
@@ -144,7 +144,7 @@ export default function UserProfile() {
           <Link href="/users">
             <Button variant="outline" size="sm">
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Users
+              Back to Community Collections
             </Button>
           </Link>
         </div>

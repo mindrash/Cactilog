@@ -77,7 +77,7 @@ export default function Users() {
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Header Section */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Community Members</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Community Collections</h1>
           <p className="text-gray-600">
             Discover fellow cactus and succulent enthusiasts and browse their public collections.
           </p>

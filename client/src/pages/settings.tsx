@@ -133,7 +133,7 @@ export default function Settings() {
               <div className="bg-gray-50 rounded-lg p-4">
                 <h4 className="font-medium text-gray-900 mb-2">What does this control?</h4>
                 <ul className="text-sm text-gray-600 space-y-1">
-                  <li>• Whether other users can see your profile in the Users directory</li>
+                  <li>• Whether other users can see your profile in the Community Collections directory</li>
                   <li>• Whether other users can browse your plant collection</li>
                   <li>• Your public plant count and statistics visibility</li>
                   <li>• Individual plant privacy settings still apply regardless of this setting</li>
