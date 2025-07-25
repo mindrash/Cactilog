@@ -6,11 +6,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, BookOpen, Search, Leaf, Info } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ArrowLeft, BookOpen, Search, Leaf, Info, Camera } from "lucide-react";
 import Header from "@/components/header";
 import { Link } from "wouter";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { cactusGenera } from "@shared/cactus-data";
+import { SpeciesImageGallery } from "@/components/species-image-gallery";
 
 export default function KnowledgeGenus() {
   const { genusName } = useParams<{ genusName: string }>();
@@ -105,89 +107,154 @@ export default function KnowledgeGenus() {
           </div>
         </div>
 
+        {/* Genus Information Tabs */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Description */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Info className="w-5 h-5 mr-2" />
-                  About {genus.name}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-700 leading-relaxed">
-                  {genus.description}
-                </p>
-              </CardContent>
-            </Card>
+          <div className="lg:col-span-2">
+            <Tabs defaultValue="about" className="w-full">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="about" className="flex items-center gap-2">
+                  <Info className="w-4 h-4" />
+                  About
+                </TabsTrigger>
+                <TabsTrigger value="species" className="flex items-center gap-2">
+                  <Leaf className="w-4 h-4" />
+                  Species
+                </TabsTrigger>
+                <TabsTrigger value="images" className="flex items-center gap-2">
+                  <Camera className="w-4 h-4" />
+                  Images
+                </TabsTrigger>
+              </TabsList>
 
-            {/* Species List */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <Leaf className="w-5 h-5 mr-2" />
-                    Species in {genus.name}
-                  </div>
-                  <Badge variant="outline">
-                    {filteredSpecies.length} of {genus.species.length}
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {/* Search Species */}
-                <div className="mb-6">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                    <Input
-                      type="text"
-                      placeholder="Search species..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10"
-                    />
-                  </div>
-                </div>
+              <TabsContent value="about" className="mt-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <Info className="w-5 h-5 mr-2" />
+                      About {genus.name}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-700 leading-relaxed">
+                      {genus.description}
+                    </p>
+                  </CardContent>
+                </Card>
+              </TabsContent>
 
-                {/* Species Grid */}
-                {filteredSpecies.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {filteredSpecies.map((species, index) => {
-                      const speciesName = typeof species === 'string' ? species : species.name;
-                      return (
-                        <Link key={speciesName} href={`/knowledge/species/${genusName}/${speciesName}`}>
-                          <div className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 hover:border-cactus-green transition-colors cursor-pointer">
-                            <div className="font-medium text-gray-900 italic mb-1">
-                              {genus.name} {speciesName}
-                            </div>
-                            <div className="text-sm text-gray-600">
-                              Click for detailed information
+              <TabsContent value="species" className="mt-6">
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <Leaf className="w-5 h-5 mr-2" />
+                        Species in {genus.name}
+                      </div>
+                      <Badge variant="outline">
+                        {filteredSpecies.length} of {genus.species.length}
+                      </Badge>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {/* Search Species */}
+                    <div className="mb-6">
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                        <Input
+                          type="text"
+                          placeholder="Search species..."
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                          className="pl-10"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Species Grid */}
+                    {filteredSpecies.length > 0 ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {filteredSpecies.map((species, index) => {
+                          const speciesName = typeof species === 'string' ? species : species.name;
+                          return (
+                            <Link key={speciesName} href={`/knowledge/species/${genusName}/${speciesName}`}>
+                              <div className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 hover:border-cactus-green transition-colors cursor-pointer">
+                                <div className="font-medium text-gray-900 italic mb-1">
+                                  {genus.name} {speciesName}
+                                </div>
+                                <div className="text-sm text-gray-600">
+                                  Click for detailed information
+                                </div>
+                              </div>
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8">
+                        <Search className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                        <p className="text-gray-600">
+                          No species found matching "{searchTerm}"
+                        </p>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={() => setSearchTerm("")}
+                          className="mt-2"
+                        >
+                          Clear search
+                        </Button>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              <TabsContent value="images" className="mt-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Camera className="w-5 h-5" />
+                      {genus.name} Image Gallery
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-8">
+                      {/* Show images from up to 3 popular species in this genus */}
+                      {filteredSpecies.slice(0, 3).map((species, index) => {
+                        const speciesName = typeof species === 'string' ? species : species.name;
+                        return (
+                          <div key={index} className="border-b border-gray-200 pb-6 last:border-b-0">
+                            <h4 className="text-lg font-medium text-gray-900 mb-4">
+                              <span className="italic">{genus.name} {speciesName}</span>
+                            </h4>
+                            <SpeciesImageGallery 
+                              genus={genus.name} 
+                              species={speciesName}
+                              maxImages={4}
+                              showSpeciesName={false}
+                            />
+                            <div className="mt-3">
+                              <Link href={`/knowledge/species/${genusName}/${speciesName}`}>
+                                <Button variant="outline" size="sm">
+                                  View Species Details →
+                                </Button>
+                              </Link>
                             </div>
                           </div>
-                        </Link>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <Search className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-                    <p className="text-gray-600">
-                      No species found matching "{searchTerm}"
-                    </p>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      onClick={() => setSearchTerm("")}
-                      className="mt-2"
-                    >
-                      Clear search
-                    </Button>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                        );
+                      })}
+                      
+                      {filteredSpecies.length === 0 && (
+                        <p className="text-gray-500 italic text-center py-8">
+                          No species available to display images for.
+                        </p>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
           </div>
 
           {/* Sidebar */}

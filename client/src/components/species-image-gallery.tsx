@@ -9,15 +9,20 @@ import { SpeciesImage } from "@shared/schema";
 interface SpeciesImageGalleryProps {
   genus: string;
   species: string;
+  maxImages?: number;
+  showSpeciesName?: boolean;
 }
 
-export function SpeciesImageGallery({ genus, species }: SpeciesImageGalleryProps) {
+export function SpeciesImageGallery({ genus, species, maxImages, showSpeciesName = true }: SpeciesImageGalleryProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [reportModalOpen, setReportModalOpen] = useState(false);
 
-  const { data: images = [], isLoading } = useQuery<SpeciesImage[]>({
+  const { data: allImages = [], isLoading } = useQuery<SpeciesImage[]>({
     queryKey: [`/api/species/${genus}/${species}/images`],
   });
+
+  // Limit images if maxImages is specified
+  const images = maxImages ? allImages.slice(0, maxImages) : allImages;
 
   if (isLoading) {
     return (
