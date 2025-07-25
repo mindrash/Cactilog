@@ -15,6 +15,7 @@ import {
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import CactusIcon from "@/components/cactus-icon";
 import AddPlantModal from "@/components/add-plant-modal";
+import logoImage from "@/assets/cactilog-logo.png";
 
 const navigationGroups = {
   main: [
@@ -72,7 +73,7 @@ export default function Header() {
             <Link href="/" className="flex items-center space-x-3 mr-4 lg:mr-8">
               <div className="w-8 h-8 flex items-center justify-center">
                 <img 
-                  src="/attached_assets/cactilog-logo-large_1753468813072.png" 
+                  src={logoImage} 
                   alt="Cactilog"
                   className="w-8 h-8 object-contain"
                 />
@@ -249,7 +250,7 @@ export default function Header() {
                     <SheetTitle className="flex items-center space-x-2">
                       <div className="w-6 h-6 flex items-center justify-center">
                         <img 
-                          src="/attached_assets/cactilog-logo-large_1753468813072.png" 
+                          src={logoImage} 
                           alt="Cactilog"
                           className="w-6 h-6 object-contain"
                         />

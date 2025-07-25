@@ -5,6 +5,7 @@ import PlantCard from "@/components/plant-card";
 import { Button } from "@/components/ui/button";
 import type { Plant } from "@shared/schema";
 import { useState } from "react";
+import logoImage from "@/assets/cactilog-logo.png";
 
 interface PublicFeedResponse {
   plants: Plant[];
@@ -40,7 +41,7 @@ export default function Landing() {
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 flex items-center justify-center">
               <img 
-                src="/attached_assets/cactilog-logo-large_1753468813072.png" 
+                src={logoImage} 
                 alt="Cactilog"
                 className="w-10 h-10 object-contain"
               />
@@ -81,7 +82,7 @@ export default function Landing() {
         ) : data?.plants?.length === 0 ? (
           <div className="text-center py-12">
             <img 
-              src="/attached_assets/cactilog-logo-large_1753468813072.png" 
+              src={logoImage} 
               alt="Cactilog"
               className="w-12 h-12 object-contain mx-auto mb-4 opacity-40"
             />
