@@ -47,14 +47,25 @@ The application uses a monorepo structure with shared schemas:
 
 ### Recent Changes
 
-#### July 25, 2025 - Privacy Settings & Trichocereus Logo
+#### July 25, 2025 - Public Community Feed & Navigation
+- Changed "Ground Type" to "Initial Type" with Mid and Other options added
+- Renamed database column from ground_type to initial_type
+- Created public feed API endpoint with pagination (20 items per page)
+- Transformed landing page to display latest public plant collections for unauthenticated users
+- Added comprehensive Header navigation component with desktop and mobile support
+- Created new Home page for authenticated users with dashboard stats and quick actions
+- Updated routing to separate landing page (public feed) from home page (authenticated dashboard)
+- Enhanced navigation with user dropdown menu and sign-out functionality
+- All authenticated pages now include proper header navigation and sidebar
+- Community feed allows browsing public plant collections without authentication
+
+#### Earlier - Privacy Settings & Trichocereus Logo
 - Added privacy settings to plant records (public/private visibility)
-- Updated database schema with isPublic field (defaults to private)
+- Updated database schema with isPublic field (defaults to public for community sharing)
 - Created PrivacyBadge component with eye icons for visual privacy indication
 - Integrated privacy badges into plant cards and detail modals
 - Redesigned logo as top-down trichocereus view with prominent radiating spines
 - Enhanced add-plant form with privacy setting section
-- Prepared infrastructure for upcoming community feed feature
 
 #### July 23, 2025 - Data Population & UI Fixes
 - Added comprehensive testing suite with vitest for smoke, integration, and API tests

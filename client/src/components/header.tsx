@@ -1,7 +1,7 @@
+import { Link, useLocation } from "wouter";
 import { useState } from "react";
+import { Plus, Menu, User, LogOut, ChevronDown } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { Sprout, Plus, ChevronDown } from "lucide-react";
-import CactusIcon from "@/components/cactus-icon";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,74 +10,185 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import ProviderBadge from "@/components/provider-badge";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import CactusIcon from "@/components/cactus-icon";
 import AddPlantModal from "@/components/add-plant-modal";
+
+const navigationItems = [
+  { href: "/", label: "Home" },
+  { href: "/collection", label: "Collection" },
+  { href: "/growth-tracking", label: "Growth" },
+  { href: "/photos", label: "Photos" },
+  { href: "/settings", label: "Settings" },
+];
 
 export default function Header() {
   const { user } = useAuth();
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [location] = useLocation();
+  const [showAddPlant, setShowAddPlant] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
-  const userInitials = user?.firstName && user?.lastName 
-    ? `${user.firstName[0]}${user.lastName[0]}`
-    : user?.email?.[0]?.toUpperCase() || "U";
+  const isActive = (href: string) => {
+    if (href === "/") {
+      return location === "/";
+    }
+    return location.startsWith(href);
+  };
 
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          <div className="flex items-center">
-            <div className="flex-shrink-0 flex items-center">
-              <div className="w-8 h-8 bg-cactus-green rounded-lg flex items-center justify-center mr-3">
+    <>
+      <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-50">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo */}
+            <Link href="/" className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-cactus-green rounded-full flex items-center justify-center">
                 <CactusIcon className="text-white" size={20} />
               </div>
-              <h1 className="text-xl font-bold text-gray-900">CactiTracker</h1>
+              <div>
+                <h1 className="text-lg font-bold text-gray-900">CactiTracker</h1>
+              </div>
+            </Link>
+
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex items-center space-x-1">
+              {navigationItems.map((item) => (
+                <Link key={item.href} href={item.href}>
+                  <Button
+                    variant={isActive(item.href) ? "default" : "ghost"}
+                    className={isActive(item.href) ? "bg-cactus-green hover:bg-cactus-green/90" : ""}
+                  >
+                    {item.label}
+                  </Button>
+                </Link>
+              ))}
+            </nav>
+
+            {/* Desktop Actions */}
+            <div className="hidden md:flex items-center space-x-3">
+              <Button
+                onClick={() => setShowAddPlant(true)}
+                className="bg-cactus-green hover:bg-cactus-green/90"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add Plant
+              </Button>
+
+              {/* User Menu */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="flex items-center space-x-2">
+                    {user?.profileImageUrl ? (
+                      <img
+                        src={user.profileImageUrl}
+                        alt="Profile"
+                        className="w-6 h-6 rounded-full object-cover"
+                      />
+                    ) : (
+                      <User className="w-4 h-4" />
+                    )}
+                    <span className="text-sm">
+                      {user?.firstName || user?.email?.split("@")[0] || "User"}
+                    </span>
+                    <ChevronDown className="w-3 h-3" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem className="flex items-center space-x-2">
+                    <User className="w-4 h-4" />
+                    <span>Profile</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    className="flex items-center space-x-2 text-red-600"
+                    onClick={() => window.location.href = "/api/logout"}
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span>Sign Out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+
+            {/* Mobile Menu */}
+            <div className="md:hidden flex items-center space-x-2">
+              <Button
+                size="sm"
+                onClick={() => setShowAddPlant(true)}
+                className="bg-cactus-green hover:bg-cactus-green/90"
+              >
+                <Plus className="w-4 h-4" />
+              </Button>
+
+              <Sheet open={showMobileMenu} onOpenChange={setShowMobileMenu}>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="sm">
+                    <Menu className="w-4 h-4" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-64">
+                  <SheetHeader>
+                    <SheetTitle className="flex items-center space-x-2">
+                      <div className="w-6 h-6 bg-cactus-green rounded-full flex items-center justify-center">
+                        <CactusIcon className="text-white" size={16} />
+                      </div>
+                      <span>CactiTracker</span>
+                    </SheetTitle>
+                  </SheetHeader>
+                  
+                  <div className="mt-6 space-y-1">
+                    {navigationItems.map((item) => (
+                      <Link key={item.href} href={item.href}>
+                        <Button
+                          variant={isActive(item.href) ? "default" : "ghost"}
+                          className={`w-full justify-start ${
+                            isActive(item.href) ? "bg-cactus-green hover:bg-cactus-green/90" : ""
+                          }`}
+                          onClick={() => setShowMobileMenu(false)}
+                        >
+                          {item.label}
+                        </Button>
+                      </Link>
+                    ))}
+                  </div>
+
+                  <div className="mt-6 pt-6 border-t space-y-2">
+                    <div className="flex items-center space-x-2 px-3 py-2">
+                      {user?.profileImageUrl ? (
+                        <img
+                          src={user.profileImageUrl}
+                          alt="Profile"
+                          className="w-6 h-6 rounded-full object-cover"
+                        />
+                      ) : (
+                        <User className="w-4 h-4" />
+                      )}
+                      <span className="text-sm">
+                        {user?.firstName || user?.email?.split("@")[0] || "User"}
+                      </span>
+                    </div>
+                    
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start text-red-600"
+                      onClick={() => window.location.href = "/api/logout"}
+                    >
+                      <LogOut className="w-4 h-4 mr-2" />
+                      Sign Out
+                    </Button>
+                  </div>
+                </SheetContent>
+              </Sheet>
             </div>
           </div>
-          
-          <div className="flex items-center space-x-4">
-            <Button 
-              onClick={() => setShowAddModal(true)}
-              className="bg-cactus-green hover:bg-succulent"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add Plant
-            </Button>
-            
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="flex items-center space-x-3 hover:bg-gray-50">
-                  <Avatar className="w-8 h-8">
-                    <AvatarImage src={user?.profileImageUrl || ""} alt="User avatar" />
-                    <AvatarFallback className="bg-cactus-green text-white text-sm">
-                      {userInitials}
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className="hidden sm:block text-sm font-medium text-gray-700">
-                    {user?.firstName || user?.email || "User"}
-                  </span>
-                  <ChevronDown className="w-4 h-4 text-gray-400" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <div className="px-3 py-2 text-sm">
-                  <p className="font-medium">{user?.firstName || user?.email || "User"}</p>
-                  <p className="text-xs text-muted-foreground">{user?.email}</p>
-                  <div className="mt-2">
-                    <ProviderBadge provider={user?.authProvider} />
-                  </div>
-                </div>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => window.location.href = '/api/logout'}>
-                  Logout
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
         </div>
-      </div>
-      
-      <AddPlantModal open={showAddModal} onOpenChange={setShowAddModal} />
-    </header>
+      </header>
+
+      {/* Add Plant Modal */}
+      <AddPlantModal
+        open={showAddPlant}
+        onOpenChange={setShowAddPlant}
+      />
+    </>
   );
 }
