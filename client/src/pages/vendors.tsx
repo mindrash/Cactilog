@@ -128,13 +128,13 @@ export default function Vendors() {
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex-1"></div>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-4">
+            <div className="hidden sm:block flex-1"></div>
             <h1 className="page-title-xl">
-              <Store className="w-8 h-8 inline-block mr-3 text-cactus-green" />
+              <Store className="w-6 h-6 sm:w-8 sm:h-8 inline-block mr-2 sm:mr-3 text-cactus-green" />
               Trusted Vendors
             </h1>
-            <div className="flex-1 flex justify-end">
+            <div className="flex-1 flex justify-center sm:justify-end">
               {adminStatus?.isAdmin && (
                 <Button
                   onClick={() => seedVendorsMutation.mutate()}
@@ -148,7 +148,7 @@ export default function Vendors() {
               )}
             </div>
           </div>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+          <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base">
             Discover reputable suppliers for cacti, succulents, seeds, pots, and cultivation gear. 
             All vendors have been carefully curated for quality and reliability.
           </p>
@@ -211,23 +211,27 @@ export default function Vendors() {
             </Select>
             
             {/* View Toggle */}
-            <div className="flex border rounded-lg overflow-hidden">
-              <Button
-                variant={viewMode === "list" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setViewMode("list")}
-                className="rounded-none"
-              >
-                <List className="w-4 h-4" />
-              </Button>
-              <Button
-                variant={viewMode === "cards" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setViewMode("cards")}
-                className="rounded-none"
-              >
-                <Grid3X3 className="w-4 h-4" />
-              </Button>
+            <div className="col-span-1 md:col-span-2 lg:col-span-1">
+              <div className="flex border rounded-lg overflow-hidden w-full lg:w-auto">
+                <Button
+                  variant={viewMode === "list" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setViewMode("list")}
+                  className="rounded-none flex-1 lg:flex-initial"
+                >
+                  <List className="w-4 h-4 mr-2 lg:mr-0" />
+                  <span className="lg:hidden">List</span>
+                </Button>
+                <Button
+                  variant={viewMode === "cards" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setViewMode("cards")}
+                  className="rounded-none flex-1 lg:flex-initial"
+                >
+                  <Grid3X3 className="w-4 h-4 mr-2 lg:mr-0" />
+                  <span className="lg:hidden">Cards</span>
+                </Button>
+              </div>
             </div>
           </div>
 
@@ -259,23 +263,25 @@ export default function Vendors() {
             {filteredVendors.map((vendor) => (
               <Card key={vendor.id} className="w-full hover:shadow-md transition-shadow">
                 <CardContent className="p-4">
-                  <div className="flex items-start gap-4">
+                  <div className="flex flex-col sm:flex-row sm:items-start gap-4">
                     {/* Left: Main Info */}
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between mb-2">
-                        <div className="flex items-center gap-2 min-w-0 flex-1">
-                          {getReputationIcon(vendor.reputation)}
-                          <h3 className="text-lg font-semibold truncate">{vendor.name}</h3>
-                          <div className="flex items-center text-sm text-gray-500 ml-2">
+                      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-2 gap-2">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 min-w-0 flex-1">
+                          <div className="flex items-center gap-2">
+                            {getReputationIcon(vendor.reputation)}
+                            <h3 className="text-lg font-semibold">{vendor.name}</h3>
+                          </div>
+                          <div className="flex items-center text-sm text-gray-500">
                             <MapPin className="w-3 h-3 mr-1" />
-                            <span className="truncate">{vendor.location}</span>
+                            <span>{vendor.location}</span>
                           </div>
                         </div>
-                        <div className="flex gap-1 ml-4 flex-shrink-0">
-                          <Badge className={getPriceRangeColor(vendor.priceRange)} size="sm">
+                        <div className="flex gap-1 flex-shrink-0">
+                          <Badge className={getPriceRangeColor(vendor.priceRange)}>
                             {vendor.priceRange}
                           </Badge>
-                          <Badge variant="outline" size="sm" className="capitalize">
+                          <Badge variant="outline" className="capitalize">
                             {vendor.reputation}
                           </Badge>
                         </div>
@@ -285,33 +291,32 @@ export default function Vendors() {
                         {vendor.description}
                       </p>
                       
-                      <div className="flex flex-wrap items-center gap-4 text-xs">
-                        <div className="flex items-center gap-1">
+                      <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 sm:gap-4 text-xs">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-1">
                           <span className="font-medium text-gray-700">Specialties:</span>
                           <div className="flex flex-wrap gap-1">
                             {vendor.specialties.slice(0, 3).map((specialty) => (
                               <Badge 
                                 key={specialty} 
                                 variant="secondary"
-                                size="sm"
                                 className={getSpecialtyColor(specialty)}
                               >
                                 {specialty}
                               </Badge>
                             ))}
                             {vendor.specialties.length > 3 && (
-                              <Badge variant="secondary" size="sm" className="bg-gray-100">
+                              <Badge variant="secondary" className="bg-gray-100">
                                 +{vendor.specialties.length - 3}
                               </Badge>
                             )}
                           </div>
                         </div>
                         
-                        <div className="flex items-center gap-1">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-1">
                           <span className="font-medium text-gray-700">Categories:</span>
                           <div className="flex flex-wrap gap-1">
                             {vendor.categories.map((category) => (
-                              <Badge key={category} variant="outline" size="sm" className="capitalize">
+                              <Badge key={category} variant="outline" className="capitalize">
                                 {category}
                               </Badge>
                             ))}
@@ -321,20 +326,20 @@ export default function Vendors() {
                     </div>
                     
                     {/* Right: Action Button */}
-                    <div className="flex-shrink-0">
+                    <div className="flex-shrink-0 self-start">
                       <Button 
                         asChild
                         size="sm"
-                        className="bg-cactus-green hover:bg-cactus-green/90"
+                        className="bg-cactus-green hover:bg-cactus-green/90 w-full sm:w-auto"
                       >
                         <a 
                           href={vendor.website} 
                           target="_blank" 
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1"
+                          className="inline-flex items-center justify-center gap-1"
                         >
                           <ExternalLink className="w-3 h-3" />
-                          Visit
+                          Visit Store
                         </a>
                       </Button>
                     </div>
