@@ -82,6 +82,19 @@ The application uses a monorepo structure with shared schemas:
 - System correctly authenticates existing admin users while preserving all account data and plant collections
 - Authentication flow: Google JWT verification → existing user lookup by email → profile update → session creation → dashboard access
 
+#### July 26, 2025 - Recommended Socials Community Feature & Critical Bug Fixes
+- **Created comprehensive "Recommended Socials" community feature** with 22 curated authentic YouTube channels and Instagram accounts for cactus/succulent enthusiasts
+- **Added 11 YouTube channels** including CactusQuest, Debra Lee Baldwin (6M+ views), Design for Serenity, Cactus Caffeine, Desert Plants of Avalon, and specialized content creators
+- **Added 11 Instagram accounts** including @aridzine, @worldofsucculents (850K+), @succulentmarket, @leafandclay, @earthwindandcactus, and community-focused accounts
+- **Implemented advanced search and filtering** with platform-specific filters (All Platforms, YouTube only, Instagram only) and search across names, descriptions, specialties
+- **Fixed critical plant editing bug** by correcting apiRequest parameter order from (method, URL) to (URL, method) preventing HTTP method errors
+- **Fixed photo deletion functionality** by replacing CommonJS require() calls with proper ES module imports (fs, path)
+- **Fixed user profile photo display** by removing authentication requirement for public plant photo queries
+- **Enhanced navigation structure** by adding Recommended Socials to Community dropdown with Share2 icon
+- **Used authentic research data** with verified follower counts, verified status badges, and comprehensive account descriptions
+- **Created comprehensive account database** with specialties, descriptions, external links, and platform-specific branding
+- All features fully functional with proper routing, navigation, and responsive design across desktop and mobile
+
 #### July 26, 2025 - Complete Logout Functionality Fix with Session Management
 - **Implemented comprehensive logout solution** resolving persistent authentication issues that were preventing proper user logout
 - **Enhanced server-side logout endpoint** with complete session destruction including direct database session store clearing and passport logout
