@@ -100,6 +100,7 @@ export const plantPhotos = pgTable("plant_photos", {
   originalName: varchar("original_name"),
   mimeType: varchar("mime_type"),
   size: integer("size"),
+  filePath: varchar("file_path"),
   uploadedAt: timestamp("uploaded_at").defaultNow(),
 });
 

@@ -17,17 +17,28 @@ export default function PhotoUpload({ plantId, className = "" }: PhotoUploadProp
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  // Fetch existing photos for this plant
+  const { data: photos = [] } = useQuery({
+    queryKey: ["/api/plants", plantId, "photos"],
+  });
+
   const uploadMutation = useMutation({
     mutationFn: async (file: File) => {
-      // For now, just send placeholder data - actual file upload would need proper backend setup
-      const photoData = {
-        filename: file.name,
-        originalName: file.name,
-        mimeType: file.type,
-        size: file.size,
-      };
+      // Create FormData to properly send file
+      const formData = new FormData();
+      formData.append('photo', file);
       
-      const response = await apiRequest('POST', `/api/plants/${plantId}/photos`, photoData);
+      const response = await fetch(`/api/plants/${plantId}/photos`, {
+        method: 'POST',
+        body: formData,
+        // Don't set Content-Type header - let browser set it with boundary for multipart/form-data
+      });
+      
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(`${response.status}: ${error}`);
+      }
+      
       return response.json();
     },
     onSuccess: () => {
@@ -88,28 +99,49 @@ export default function PhotoUpload({ plantId, className = "" }: PhotoUploadProp
   };
 
   return (
-    <div className={`relative ${className}`}>
-      <Input
-        type="file"
-        accept="image/*"
-        onChange={handleFileSelect}
-        disabled={isUploading}
-        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-      />
-      <div className="w-full h-full bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-forest transition-colors">
-        <div className="text-center text-gray-500">
-          {isUploading ? (
-            <>
-              <Upload className="w-8 h-8 mx-auto mb-2 animate-pulse" />
-              <p className="text-sm">Uploading...</p>
-            </>
-          ) : (
-            <>
-              <Plus className="w-8 h-8 mx-auto mb-2" />
-              <p className="text-sm">Add Photo</p>
-              <p className="text-xs">Click to upload</p>
-            </>
-          )}
+    <div className={`space-y-4 ${className}`}>
+      {/* Existing Photos */}
+      {photos.length > 0 && (
+        <div className="grid grid-cols-2 gap-4">
+          {photos.map((photo: any) => (
+            <div key={photo.id} className="relative">
+              <img
+                src={`/uploads/${photo.filename}`}
+                alt={photo.originalName}
+                className="w-full h-32 object-cover rounded-lg border border-gray-200"
+              />
+              <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
+                {new Date(photo.uploadedAt).toLocaleDateString()}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Upload New Photo */}
+      <div className="relative h-32">
+        <Input
+          type="file"
+          accept="image/*"
+          onChange={handleFileSelect}
+          disabled={isUploading}
+          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+        />
+        <div className="w-full h-full bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-forest transition-colors">
+          <div className="text-center text-gray-500">
+            {isUploading ? (
+              <>
+                <Upload className="w-8 h-8 mx-auto mb-2 animate-pulse" />
+                <p className="text-sm">Uploading...</p>
+              </>
+            ) : (
+              <>
+                <Plus className="w-8 h-8 mx-auto mb-2" />
+                <p className="text-sm">Add Photo</p>
+                <p className="text-xs">Click to upload</p>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </div>
