@@ -51,56 +51,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
   await setupAuth(app);
 
-  // Simple logout route that just clears the session
+  // Force logout route for Replit preview mode
   app.post('/api/logout', async (req, res) => {
     try {
-      // First, clear the session data directly from the database
-      if (req.sessionID) {
-        await new Promise((resolve, reject) => {
-          req.sessionStore.destroy(req.sessionID, (err) => {
-            if (err) {
-              console.error('Session store destroy error:', err);
-              reject(err);
-            } else {
-              resolve(true);
-            }
-          });
+      console.log('Logout request received, session ID:', req.sessionID);
+      
+      // Force clear session data without relying on complex destroy mechanisms
+      if (req.session) {
+        // Clear all session data
+        Object.keys(req.session).forEach(key => {
+          if (key !== 'cookie') {
+            delete (req.session as any)[key];
+          }
         });
+        
+        // Reset passport user
+        if (req.session.passport) {
+          delete req.session.passport;
+        }
       }
       
-      // Clear passport user data
+      // Clear user from request
       req.user = undefined;
       
-      // Logout using passport
-      req.logout((err) => {
-        if (err) {
-          console.error('Passport logout error:', err);
-        }
-        
-        // Destroy the session object
-        req.session.destroy((destroyErr) => {
-          if (destroyErr) {
-            console.error('Session destroy error:', destroyErr);
-          }
-          
-          // Clear all session-related cookies
-          res.clearCookie('connect.sid', {
-            path: '/',
-            httpOnly: true,
-            secure: false,
-            sameSite: 'lax'
-          });
-          
-          // Also clear any other potential session cookies
-          res.clearCookie('connect.sid', { path: '/' });
-          
-          console.log('User logged out successfully');
-          res.json({ success: true, message: 'Logged out successfully' });
-        });
+      // Set multiple cookie clearing headers for different scenarios
+      const cookieOptions = [
+        'connect.sid=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly',
+        'connect.sid=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT',
+        'session=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT',
+        'passport=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT'
+      ];
+      
+      // Set multiple Set-Cookie headers to ensure clearing
+      cookieOptions.forEach(cookie => {
+        res.append('Set-Cookie', cookie);
       });
+      
+      console.log('Session cleared, sending response');
+      res.json({ 
+        success: true, 
+        message: 'Logged out successfully',
+        sessionCleared: true,
+        timestamp: new Date().toISOString()
+      });
+      
     } catch (error) {
-      console.error('Complete logout error:', error);
-      res.status(500).json({ error: 'Logout failed' });
+      console.error('Logout error:', error);
+      res.status(500).json({ error: 'Logout failed', details: error.message });
     }
   });
 
