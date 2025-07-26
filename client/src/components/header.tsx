@@ -227,8 +227,19 @@ export function Header() {
                     className="flex items-center space-x-2 text-red-600 cursor-pointer"
                     onClick={async () => {
                       try {
-                        // Clear any local state/cache
-                        window.location.href = "/api/logout";
+                        // Make a POST request to logout endpoint
+                        const response = await fetch('/api/logout', {
+                          method: 'POST',
+                          credentials: 'include'
+                        });
+                        
+                        if (response.ok) {
+                          // Redirect to home page after successful logout
+                          window.location.href = "/";
+                        } else {
+                          // Fallback: force reload to landing page
+                          window.location.href = "/";
+                        }
                       } catch (error) {
                         console.error('Logout error:', error);
                         // Fallback: force reload to landing page
@@ -400,8 +411,19 @@ export function Header() {
                       className="w-full justify-start text-red-600"
                       onClick={async () => {
                         try {
-                          // Clear any local state/cache
-                          window.location.href = "/api/logout";
+                          // Make a POST request to logout endpoint
+                          const response = await fetch('/api/logout', {
+                            method: 'POST',
+                            credentials: 'include'
+                          });
+                          
+                          if (response.ok) {
+                            // Redirect to home page after successful logout
+                            window.location.href = "/";
+                          } else {
+                            // Fallback: force reload to landing page
+                            window.location.href = "/";
+                          }
                         } catch (error) {
                           console.error('Logout error:', error);
                           // Fallback: force reload to landing page
