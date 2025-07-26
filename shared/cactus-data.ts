@@ -48,12 +48,82 @@ export const cactusGenera: CactusGenus[] = [
           {
             name: "PC",
             type: "clone",
-            description: "Predominant Cultivar - widely distributed ornamental clone"
+            description: "Predominant Cultivar - widely distributed ornamental clone with consistent characteristics"
           },
           {
             name: "Landfill",
             type: "clone",
-            description: "Named clone with distinctive spine characteristics"
+            description: "Named clone discovered at landfill site, distinctive spine characteristics and blue-green coloration"
+          },
+          {
+            name: "Juul's Giant",
+            type: "clone",
+            description: "Large growing clone with thick stems, minimal spination, named after Dutch collector"
+          },
+          {
+            name: "Rosei 1",
+            type: "clone",
+            description: "Clone from Ritter collection, robust growth with prominent spines"
+          },
+          {
+            name: "Rosei 2",
+            type: "clone",
+            description: "Alternative Ritter collection clone, more glaucous appearance"
+          },
+          {
+            name: "SS02",
+            type: "clone",
+            description: "Sacred Succulents clone selection, vigorous grower with excellent branching"
+          },
+          {
+            name: "TPM",
+            type: "clone",
+            description: "The Plant Man clone, notable for consistent 7-rib formation"
+          },
+          {
+            name: "Pachanot",
+            type: "clone",
+            description: "Australian clone selection with distinctive V-shaped spine arrangement"
+          },
+          {
+            name: "Ogunbodede",
+            type: "clone",
+            description: "Nigerian clone with exceptional drought tolerance and compact growth"
+          },
+          {
+            name: "Johnson's Pachanoi",
+            type: "clone",
+            description: "American collector's selection with prominent areoles and short spines"
+          },
+          {
+            name: "Eileen",
+            type: "clone",
+            description: "Named female clone with consistent 6-rib structure and rapid growth"
+          },
+          {
+            name: "Honey",
+            type: "clone",
+            description: "Golden-green colored clone with sweet honeyed appearance when young"
+          },
+          {
+            name: "Sharxx Blue",
+            type: "clone",
+            description: "Blue-tinted clone from Sharxx collection, pronounced glaucous coating"
+          },
+          {
+            name: "Verne's Pachanoi",
+            type: "clone",
+            description: "Collector's selection known for minimal spination and clean appearance"
+          },
+          {
+            name: "KGC",
+            type: "clone",
+            description: "Karel's Genetic Cactus clone, selected for vigorous growth and stability"
+          },
+          {
+            name: "crested",
+            type: "mutation",
+            description: "Rare crested form mutation creating fan-shaped growth pattern"
           }
         ]
       },
@@ -66,12 +136,62 @@ export const cactusGenera: CactusGenus[] = [
           {
             name: "puquiensis",
             type: "variety",
-            description: "Shorter variety with denser spination"
+            description: "Shorter variety with denser spination from Puquio region"
           },
           {
             name: "matucanus",
             type: "variety",
-            description: "Form with distinctive blue-green coloration"
+            description: "Form with distinctive blue-green coloration from Matucana area"
+          },
+          {
+            name: "Huancayo",
+            type: "clone",
+            description: "Clone from Huancayo region, known for long golden spines and robust growth"
+          },
+          {
+            name: "Ayacucho",
+            type: "clone",
+            description: "Ayacucho province clone with distinctive reddish spine coloration"
+          },
+          {
+            name: "Tarma",
+            type: "clone",
+            description: "High altitude clone from Tarma, compact growth with dense spination"
+          },
+          {
+            name: "Larry",
+            type: "clone",
+            description: "American collector's selection with exceptionally long central spines"
+          },
+          {
+            name: "Lumberjack",
+            type: "clone",
+            description: "Heavy-spined clone resembling lumber tools, very robust appearance"
+          },
+          {
+            name: "Torch 1",
+            type: "clone",
+            description: "Classic torch form with straight upward growth and even spination"
+          },
+          {
+            name: "Torch 2",
+            type: "clone",
+            description: "Alternative torch selection with slightly curved growth habit"
+          },
+          {
+            name: "Knuthianus",
+            type: "clone",
+            description: "Named after botanist Knuth, characterized by symmetrical rib structure"
+          },
+          {
+            name: "Scopulicola x Peruvianus",
+            type: "cultivar",
+            description: "Hybrid cultivar combining traits of both parent species"
+          },
+          {
+            name: "monstrose",
+            type: "mutation",
+            description: "Irregular growth mutation creating unique sculptural forms"
           }
         ]
       },
@@ -84,17 +204,212 @@ export const cactusGenera: CactusGenus[] = [
           {
             name: "monstrose",
             type: "mutation",
-            description: "Crested or irregular growth form mutation"
+            description: "Crested or irregular growth form mutation creating twisted, sculptural growth"
+          },
+          {
+            name: "Bolivian Torch Clone A",
+            type: "clone",
+            description: "Standard bolivian form with 6-7 ribs and moderate spination"
+          },
+          {
+            name: "Bolivian Torch Clone B",
+            type: "clone",
+            description: "Heavier spined clone with pronounced central spines"
+          },
+          {
+            name: "Torres & Torres",
+            type: "clone",
+            description: "Named after Bolivian collectors, known for pure genetics and typical form"
+          },
+          {
+            name: "Santa Cruz",
+            type: "clone",
+            description: "Clone from Santa Cruz region with distinctive areole spacing"
+          },
+          {
+            name: "Cochabamba",
+            type: "clone",
+            description: "High altitude Cochabamba clone, more compact with dense spination"
+          },
+          {
+            name: "Psycho0",
+            type: "clone",
+            description: "Australian collector's selection with exceptional vigor and branching"
+          },
+          {
+            name: "TBMC",
+            type: "clone",
+            description: "The Bridgesii Monstrose Clone, stable monstrose characteristics"
+          },
+          {
+            name: "Emma",
+            type: "clone",
+            description: "Female-named clone with graceful columnar growth and minimal spines"
+          },
+          {
+            name: "Fields",
+            type: "clone",
+            description: "Field-collected clone maintaining wild characteristics and hardiness"
+          },
+          {
+            name: "Eileen's Bridgesii",
+            type: "clone",
+            description: "Collector's selection known for consistent 5-rib structure"
+          },
+          {
+            name: "crested",
+            type: "mutation",
+            description: "Fan-shaped crested mutation, rare and highly sought after"
           }
         ]
       },
-      "scopulicola",
-      "cuzcoensis",
-      "huanucoensis",
-      "macrogonus",
-      "santaensis",
-      "riomizquensis",
-      "taquimbalensis"
+      {
+        name: "scopulicola",
+        commonNames: ["Scope"],
+        description: "Distinctive blue-green columnar cactus with pronounced glaucous coating",
+        nativeRange: "Peru",
+        variants: [
+          {
+            name: "Scop",
+            type: "clone",
+            description: "Common shortened name for typical scopulicola clone"
+          },
+          {
+            name: "Super Scop",
+            type: "clone",
+            description: "Large growing selection with enhanced blue coloration"
+          },
+          {
+            name: "Huancayo Scop",
+            type: "clone",
+            description: "Regional variant from Huancayo with denser spination"
+          }
+        ]
+      },
+      {
+        name: "cuzcoensis",
+        commonNames: ["Cusco Torch"],
+        description: "High altitude species from Cusco region with compact growth",
+        nativeRange: "Peru (Cusco region)",
+        variants: [
+          {
+            name: "Cusco Clone",
+            type: "clone",
+            description: "Standard form maintaining high altitude characteristics"
+          }
+        ]
+      },
+      {
+        name: "huanucoensis",
+        commonNames: ["Huanuco"],
+        description: "Regional species with distinctive spine arrangement",
+        nativeRange: "Peru (Huanuco)",
+        variants: [
+          {
+            name: "Huanuco Standard",
+            type: "clone",
+            description: "Typical form with regional spine characteristics"
+          }
+        ]
+      },
+      {
+        name: "macrogonus",
+        commonNames: ["Fence Post Cactus"],
+        description: "Large columnar species used for living fences in native range",
+        nativeRange: "Peru, Ecuador",
+        variants: [
+          {
+            name: "Giant Macro",
+            type: "clone",
+            description: "Large form selection with exceptional trunk diameter"
+          },
+          {
+            name: "Fence Post",
+            type: "clone",
+            description: "Traditional fence post selection with straight growth"
+          }
+        ]
+      },
+      {
+        name: "santaensis",
+        commonNames: ["Santa Valley"],
+        description: "Columnar species from Santa Valley region",
+        nativeRange: "Peru (Santa Valley)",
+        variants: [
+          {
+            name: "Santa Clone",
+            type: "clone",
+            description: "Valley form with moderate spination"
+          }
+        ]
+      },
+      {
+        name: "riomizquensis",
+        commonNames: ["Rio Mizque"],
+        description: "Species from Rio Mizque region with unique characteristics",
+        nativeRange: "Bolivia",
+        variants: [
+          {
+            name: "Rio Mizque Standard",
+            type: "clone",
+            description: "Typical regional form"
+          }
+        ]
+      },
+      {
+        name: "taquimbalensis",
+        commonNames: ["Taquimbal"],
+        description: "Regional species with distinctive growth pattern",
+        nativeRange: "Peru",
+        variants: [
+          {
+            name: "Taquimbal Clone",
+            type: "clone",
+            description: "Standard form maintaining regional characteristics"
+          }
+        ]
+      },
+      {
+        name: "validus",
+        commonNames: ["Strong One"],
+        description: "Robust species known for vigorous growth and thick stems",
+        nativeRange: "Bolivia",
+        variants: [
+          {
+            name: "Validus Super",
+            type: "clone",
+            description: "Enhanced selection with exceptional vigor"
+          },
+          {
+            name: "Strong Clone",
+            type: "clone",
+            description: "Standard robust form"
+          }
+        ]
+      },
+      {
+        name: "terscheckii",
+        commonNames: ["Argentine Saguaro", "Cardon Grande"],
+        description: "Giant columnar cactus, tallest in Argentina, can reach 12+ meters",
+        nativeRange: "Northwestern Argentina",
+        variants: [
+          {
+            name: "Giant Terscheckii",
+            type: "clone",
+            description: "Selection for maximum height potential"
+          },
+          {
+            name: "Salta Clone",
+            type: "clone",
+            description: "Form from Salta province with typical characteristics"
+          },
+          {
+            name: "crested",
+            type: "mutation",
+            description: "Rare crested form of this giant species"
+          }
+        ]
+      }
     ]
   },
   {

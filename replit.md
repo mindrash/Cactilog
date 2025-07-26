@@ -47,6 +47,16 @@ The application uses a monorepo structure with shared schemas:
 
 ### Recent Changes
 
+#### July 25, 2025 - Comprehensive Trichocereus Clone & Cultivar Database Expansion
+- **Massively expanded Trichocereus genus** with comprehensive clone and cultivar information across all major species
+- **Enhanced T. pachanoi variants** with 16+ authentic clones including PC, Landfill, Juul's Giant, Rosei 1 & 2, SS02, TPM, Pachanot, Ogunbodede, Johnson's, Eileen, Honey, Sharxx Blue, Verne's, KGC, and crested mutation
+- **Detailed T. peruvianus clones** with regional variants: Huancayo, Ayacucho, Tarma, Larry, Lumberjack, Torch 1 & 2, Knuthianus, hybrid cultivars, and monstrose forms
+- **Comprehensive T. bridgesii information** including monstrose, regional clones (Torres & Torres, Santa Cruz, Cochabamba), collector selections (Psycho0, TBMC, Emma, Fields, Eileen's), and rare crested mutations
+- **Expanded species coverage** with detailed information for scopulicola, cuzcoensis, huanucoensis, macrogonus, santaensis, riomizquensis, taquimbalensis, validus, and terscheckii
+- **Added authentic clone descriptions** with collector origins, distinctive characteristics, growth patterns, and regional variations
+- **Enhanced botanical accuracy** with proper taxonomic classification, native ranges, discoverer information, and year established
+- All variants include proper type classification (variety, clone, cultivar, mutation) with detailed descriptions for identification
+
 #### July 25, 2025 - Enhanced Landing Page & Comprehensive Metadata Update
 - **Completely redesigned landing page** with compelling hero section emphasizing "Complete Platform for Cactus & Succulent Enthusiasts"
 - Created detailed feature showcase with 6 key benefits: Smart Collection Management, Growth Tracking & Analytics, Vibrant Community, Comprehensive Knowledge Base, Privacy & Control, and Trusted Vendor Directory
