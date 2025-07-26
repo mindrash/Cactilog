@@ -262,7 +262,7 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Genus *</FormLabel>
-                      {selectedType ? (
+                      {selectedFamily ? (
                         <div className="space-y-2">
                           <Select onValueChange={(value) => {
                             field.onChange(value);
@@ -284,7 +284,7 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
                             </SelectContent>
                           </Select>
                           <p className="text-xs text-muted-foreground">
-                            {availableGenera.length} genera available for {selectedType}s
+                            {availableGenera.length} genera available for {selectedFamily === "Cactaceae" ? "cactus" : "succulent"}s
                           </p>
                         </div>
                       ) : (
