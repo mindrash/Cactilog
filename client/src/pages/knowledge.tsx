@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuthOptional } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,28 +12,9 @@ import { isUnauthorizedError } from "@/lib/authUtils";
 import { cactusGenera } from "@shared/cactus-data";
 
 export default function Knowledge() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated } = useAuthOptional();
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
-
-  // Redirect to login if not authenticated
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      toast({
-        title: "Unauthorized",
-        description: "You are logged out. Logging in again...",
-        variant: "destructive",
-      });
-      setTimeout(() => {
-        window.location.href = "/api/login";
-      }, 500);
-      return;
-    }
-  }, [isAuthenticated, isLoading, toast]);
-
-  if (isLoading || !isAuthenticated) {
-    return null;
-  }
 
   // Filter genera based on search term
   const filteredGenera = cactusGenera.filter(genus =>

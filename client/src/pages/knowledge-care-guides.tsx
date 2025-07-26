@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuthOptional } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -262,30 +262,13 @@ const generalCactusGuide: CareGuide = {
 };
 
 export default function KnowledgeCareGuides() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated } = useAuthOptional();
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedGenus, setSelectedGenus] = useState("all");
   const [selectedSpecies, setSelectedSpecies] = useState("all");
 
-  // Redirect to login if not authenticated
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      toast({
-        title: "Unauthorized",
-        description: "You are logged out. Logging in again...",
-        variant: "destructive",
-      });
-      setTimeout(() => {
-        window.location.href = "/api/login";
-      }, 500);
-      return;
-    }
-  }, [isAuthenticated, isLoading, toast]);
-
-  if (isLoading || !isAuthenticated) {
-    return null;
-  }
+  // Public page - no auth required
 
   // Get all available species for filtering
   const allSpecies = cactusGenera.flatMap(genus => 
