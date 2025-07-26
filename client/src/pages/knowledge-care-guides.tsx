@@ -24,7 +24,7 @@ import {
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { SEO, seoConfigs } from "@/components/seo";
-import AmazonAffiliateProducts from "@/components/amazon-affiliate-products";
+import AmazonAffiliateBanner from "@/components/amazon-affiliate-banner";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { getFeaturedProducts } from "@shared/amazon-products";
 import { cactusGenera, type CactusSpecies } from "@shared/cactus-data";
@@ -628,10 +628,10 @@ export default function KnowledgeCareGuides() {
 
           {/* Amazon Affiliate Products Section */}
           <div className="border-t border-gray-200 pt-8">
-            <AmazonAffiliateProducts 
-              products={careProducts}
+            <AmazonAffiliateBanner 
               title="Essential Care & Growing Supplies"
-              context="Professional Tools"
+              category="soil"
+              limit={3}
             />
           </div>
         </div>

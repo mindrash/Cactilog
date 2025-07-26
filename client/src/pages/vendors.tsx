@@ -5,6 +5,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
+import AmazonAffiliateBanner from "@/components/amazon-affiliate-banner";
 import { SEO, seoConfigs } from "@/components/seo";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -461,6 +462,13 @@ export default function Vendors() {
             </p>
           </div>
         )}
+        {/* Amazon Affiliate Products */}
+        <div className="mt-12">
+          <AmazonAffiliateBanner 
+            title="Essential Growing & Gardening Supplies"
+            limit={4}
+          />
+        </div>
       </div>
 
       <Footer />

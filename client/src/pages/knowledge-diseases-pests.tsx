@@ -14,7 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs"
 import { Button } from "../components/ui/button";
 import { Alert, AlertDescription } from "../components/ui/alert";
 import { Separator } from "../components/ui/separator";
-import AmazonAffiliateProducts from "../components/amazon-affiliate-products";
+import AmazonAffiliateBanner from "../components/amazon-affiliate-banner";
 
 import { diseasesAndPests, getDiseases, getPests, type DiseasePest } from "../../../shared/diseases-pests-data";
 
@@ -252,59 +252,11 @@ export default function KnowledgeDiseasesAndPests() {
           {/* Sidebar */}
           <div className="lg:col-span-1 space-y-6">
             {/* Professional Treatment Tools */}
-            <AmazonAffiliateProducts 
-              products={[
-                {
-                  id: "neem-oil-treatment",
-                  title: "Organic Neem Oil for Plant Protection",
-                  price: "$12.99",
-                  rating: 4.3,
-                  reviewCount: 3200,
-                  category: "fertilizer",
-                  tags: ["organic", "neem-oil", "fungicide", "insecticide"],
-                  imageUrl: "https://m.media-amazon.com/images/I/81D1Rs8OvLL._AC_SY679_.jpg",
-                  description: "Organic treatment for fungal diseases, mites, and common plant pests",
-                  affiliateUrl: "https://www.amazon.com/dp/B00GRAJTEK?tag=mindrash-20&linkCode=ogi&th=1&psc=1"
-                },
-                {
-                  id: "succulent-tools-treatment",
-                  title: "Precision Plant Care Tools",
-                  price: "$18.99",
-                  rating: 4.3,
-                  reviewCount: 892,
-                  category: "tools", 
-                  tags: ["tools", "tongs", "pruning", "watering"],
-                  imageUrl: "https://m.media-amazon.com/images/I/61Blda+HRvL._AC_SY300_SX300_.jpg",
-                  description: "Complete mini garden hand tools with tongs, pruning shears for pest removal",
-                  affiliateUrl: "https://www.amazon.com/dp/B01GWSBQVA?tag=mindrash-20&linkCode=ogi&th=1&psc=1"
-                },
-                {
-                  id: "precision-tweezers",
-                  title: "Curved Tip Precision Tweezers",
-                  price: "$14.95",
-                  rating: 4.8,
-                  reviewCount: 346,
-                  category: "tools",
-                  tags: ["tweezers", "curved-tip", "stainless-steel", "precision"],
-                  imageUrl: "https://m.media-amazon.com/images/I/61VdJbibWkL._AC_SX355_.jpg",
-                  description: "Ideal tool for removing pests and debris from tight spaces without plant damage",
-                  affiliateUrl: "https://www.amazon.com/dp/B07HQLDZZD?tag=mindrash-20&linkCode=ogi&th=1&psc=1"
-                },
-                {
-                  id: "care-guide-book",
-                  title: "Succulent Care & Treatment Guide",
-                  price: "$19.95",
-                  rating: 4.6,
-                  reviewCount: 1432,
-                  category: "books",
-                  tags: ["succulent", "design", "care", "drought-tolerant"],
-                  imageUrl: "https://m.media-amazon.com/images/I/81etdhhfUOL._SY342_.jpg",
-                  description: "Comprehensive guide including disease identification and treatment protocols",
-                  affiliateUrl: "https://www.amazon.com/dp/B01D8JDJ9K?tag=mindrash-20&linkCode=ogi&th=1&psc=1"
-                }
-              ]}
-              title="Essential Treatment Tools"
-              className="w-full"
+            <AmazonAffiliateBanner 
+              title="Treatment & Care Tools"
+              category="tools"
+              limit={3}
+              compact={true}
             />
 
             {/* Quick Reference */}

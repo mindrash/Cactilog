@@ -10,7 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SpeciesImageGallery } from "@/components/species-image-gallery";
 import { VendorRecommendations } from "@/components/vendor-recommendations";
-import AmazonAffiliateProducts from "@/components/amazon-affiliate-products";
+import AmazonAffiliateBanner from "@/components/amazon-affiliate-banner";
 import { cactusGenera, type CactusSpecies } from "@shared/cactus-data";
 import { getFeaturedProducts, getProductsByTags } from "@shared/amazon-products";
 
@@ -552,11 +552,11 @@ export default function KnowledgeSpecies() {
             />
 
             {/* Amazon Affiliate Products */}
-            <AmazonAffiliateProducts 
-              products={featuredSpeciesProducts}
+            <AmazonAffiliateBanner 
               title="Essential Growing Supplies"
-              context={`${genusName} Care`}
-              className="max-w-sm"
+              category="tools"
+              limit={2}
+              compact={true}
             />
 
             {/* Quick Actions */}

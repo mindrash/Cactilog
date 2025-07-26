@@ -11,6 +11,7 @@ import Footer from "@/components/footer";
 import { SEO, seoConfigs } from "@/components/seo";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { cactusGenera } from "@shared/cactus-data";
+import AmazonAffiliateBanner from "@/components/amazon-affiliate-banner";
 
 export default function Knowledge() {
   const { isAuthenticated } = useAuthOptional();
@@ -157,6 +158,14 @@ export default function Knowledge() {
               </CardContent>
             </Card>
           )}
+        </div>
+
+        {/* Amazon Affiliate Products */}
+        <div className="mt-12">
+          <AmazonAffiliateBanner 
+            title="Growing Essentials for Plant Enthusiasts"
+            limit={3}
+          />
         </div>
 
         {/* Statistics */}

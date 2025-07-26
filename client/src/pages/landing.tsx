@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { SEO } from "@/components/seo";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
+import AmazonAffiliateBanner from "@/components/amazon-affiliate-banner";
 import type { Plant } from "@shared/schema";
 import { useState } from "react";
 import logoImage from "@/assets/cactilog-logo.png";
@@ -464,6 +465,14 @@ function Landing() {
           </>
         )}
         
+        {/* Amazon Affiliate Products */}
+        <div className="mt-16">
+          <AmazonAffiliateBanner 
+            title="Start Growing Today - Top-Rated Supplies"
+            limit={4}
+          />
+        </div>
+
         {/* Call to Action */}
         <div className="text-center mt-16 py-12 bg-gradient-to-r from-cactus-green/5 to-succulent-green/5 rounded-2xl">
           <h3 className="page-title-lg mb-4">Ready to Start Your Journey?</h3>
