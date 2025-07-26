@@ -1,0 +1,21 @@
+{
+  "name": "Cactilog - Cactus & Succulent Collection Manager",
+  "short_name": "Cactilog",
+  "description": "Complete platform for cactus & succulent enthusiasts - track your collection, share photos, and connect with the community",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#16a34a",
+  "background_color": "#f8faf8",
+  "display": "standalone",
+  "start_url": "/"
+}
