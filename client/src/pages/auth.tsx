@@ -40,20 +40,27 @@ export default function AuthPage() {
         });
         
         // Also render a proper Google button
+        console.log('Google script loaded, initializing button...');
         setTimeout(() => {
           const buttonElement = document.getElementById('google-signin-button');
+          console.log('Button element found:', buttonElement);
           if (buttonElement) {
-            window.google.accounts.id.renderButton(buttonElement, {
-              theme: 'outline',
-              size: 'large',
-              type: 'standard',
-              shape: 'rectangular',
-              text: 'continue_with',
-              logo_alignment: 'left',
-              width: '300',
-            });
+            try {
+              window.google.accounts.id.renderButton(buttonElement, {
+                theme: 'outline',
+                size: 'large',
+                type: 'standard',
+                shape: 'rectangular',
+                text: 'continue_with',
+                logo_alignment: 'left',
+                width: '300',
+              });
+              console.log('Google button rendered successfully');
+            } catch (error) {
+              console.error('Error rendering Google button:', error);
+            }
           }
-        }, 100);
+        }, 500);
       }
     };
 
@@ -92,10 +99,18 @@ export default function AuthPage() {
   };
 
   const handleGoogleButtonClick = () => {
+    console.log('Google button clicked, checking state:', {
+      hasGoogle: !!window.google,
+      hasClientId: !!googleClientId,
+      googleObject: window.google
+    });
+    
     if (window.google && googleClientId) {
+      console.log('Calling Google prompt...');
       window.google.accounts.id.prompt();
     } else {
       console.error('Google Sign-In not ready or client ID missing');
+      alert('Google Sign-In is not ready yet. Please wait a moment and try again.');
     }
   };
 
