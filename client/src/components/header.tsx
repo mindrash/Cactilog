@@ -233,15 +233,34 @@ export function Header() {
                           credentials: 'include'
                         });
                         
-                        // Always redirect regardless of response to ensure logout
-                        // Clear any client-side cache/state
-                        if (window.caches) {
-                          const cacheNames = await window.caches.keys();
-                          await Promise.all(cacheNames.map(name => window.caches.delete(name)));
+                        // Force logout regardless of server response
+                        console.log('Logout response:', response.status);
+                        
+                        // Clear all possible browser storage
+                        try {
+                          // Clear localStorage
+                          localStorage.clear();
+                          
+                          // Clear sessionStorage  
+                          sessionStorage.clear();
+                          
+                          // Clear service worker caches
+                          if (window.caches) {
+                            const cacheNames = await window.caches.keys();
+                            await Promise.all(cacheNames.map(name => window.caches.delete(name)));
+                          }
+                          
+                          // Clear cookies via document.cookie
+                          document.cookie.split(";").forEach(function(c) { 
+                            document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+                          });
+                          
+                        } catch (e) {
+                          console.error('Error clearing storage:', e);
                         }
                         
-                        // Force a complete page reload to clear all state
-                        window.location.replace("/");
+                        // Force complete reload with cache busting
+                        window.location.href = "/?t=" + Date.now();
                       } catch (error) {
                         console.error('Logout error:', error);
                         // Fallback: force reload to landing page
@@ -419,15 +438,34 @@ export function Header() {
                             credentials: 'include'
                           });
                           
-                          // Always redirect regardless of response to ensure logout
-                          // Clear any client-side cache/state
-                          if (window.caches) {
-                            const cacheNames = await window.caches.keys();
-                            await Promise.all(cacheNames.map(name => window.caches.delete(name)));
+                          // Force logout regardless of server response
+                          console.log('Mobile logout response:', response.status);
+                          
+                          // Clear all possible browser storage
+                          try {
+                            // Clear localStorage
+                            localStorage.clear();
+                            
+                            // Clear sessionStorage  
+                            sessionStorage.clear();
+                            
+                            // Clear service worker caches
+                            if (window.caches) {
+                              const cacheNames = await window.caches.keys();
+                              await Promise.all(cacheNames.map(name => window.caches.delete(name)));
+                            }
+                            
+                            // Clear cookies via document.cookie
+                            document.cookie.split(";").forEach(function(c) { 
+                              document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+                            });
+                            
+                          } catch (e) {
+                            console.error('Error clearing storage:', e);
                           }
                           
-                          // Force a complete page reload to clear all state
-                          window.location.replace("/");
+                          // Force complete reload with cache busting
+                          window.location.href = "/?t=" + Date.now();
                         } catch (error) {
                           console.error('Logout error:', error);
                           // Fallback: force reload to landing page
