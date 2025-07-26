@@ -28,6 +28,7 @@ import Contact from "@/pages/contact";
 import Privacy from "@/pages/privacy";
 import Terms from "@/pages/terms";
 import Disclaimer from "@/pages/disclaimer";
+import AuthPage from "@/pages/auth";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -37,7 +38,7 @@ function Router() {
   const [location] = useLocation();
   const publicRoutes = [
     '/', '/photos', '/users', '/knowledge', '/vendors', '/about', 
-    '/contact', '/privacy', '/terms', '/disclaimer'
+    '/contact', '/privacy', '/terms', '/disclaimer', '/auth'
   ];
   const isPublicRoute = publicRoutes.some(route => 
     location === route || 
@@ -78,6 +79,7 @@ function Router() {
           <Route path="/privacy" component={Privacy} />
           <Route path="/terms" component={Terms} />
           <Route path="/disclaimer" component={Disclaimer} />
+          <Route path="/auth" component={AuthPage} />
           <Route path="*" component={Landing} />
         </>
       ) : (
