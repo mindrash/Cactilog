@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { BookOpen, Search, ChevronRight, Leaf } from "lucide-react";
 import Header from "@/components/header";
+import Footer from "@/components/footer";
 import { SEO, seoConfigs } from "@/components/seo";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { cactusGenera } from "@shared/cactus-data";
@@ -189,6 +190,8 @@ export default function Knowledge() {
           </Card>
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }

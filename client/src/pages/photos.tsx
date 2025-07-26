@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Footer from "@/components/footer";
 import { getFeaturedProducts } from "@shared/amazon-products";
 
 interface PublicPhoto {
@@ -301,6 +302,8 @@ export default function Photos() {
           </div>
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }

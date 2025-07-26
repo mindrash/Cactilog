@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, BookOpen, Search, Leaf, Info, Camera } from "lucide-react";
 import Header from "@/components/header";
+import Footer from "@/components/footer";
 import { Link } from "wouter";
 import { SEO, seoConfigs } from "@/components/seo";
 import { isUnauthorizedError } from "@/lib/authUtils";
@@ -353,6 +354,8 @@ export default function KnowledgeGenus() {
           </div>
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }

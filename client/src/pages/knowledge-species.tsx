@@ -2,6 +2,7 @@ import { useRoute, Link } from "wouter";
 import { useState } from "react";
 import { ArrowLeft, Info, MapPin, Calendar, Droplet, Sun, Thermometer, Scissors, Eye, Camera, ExternalLink } from "lucide-react";
 import Header from "@/components/header";
+import Footer from "@/components/footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -622,6 +623,8 @@ export default function KnowledgeSpecies() {
           </div>
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }

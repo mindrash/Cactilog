@@ -22,6 +22,7 @@ import {
   Info
 } from "lucide-react";
 import Header from "@/components/header";
+import Footer from "@/components/footer";
 import { SEO, seoConfigs } from "@/components/seo";
 import AmazonAffiliateProducts from "@/components/amazon-affiliate-products";
 import { isUnauthorizedError } from "@/lib/authUtils";
@@ -635,6 +636,8 @@ export default function KnowledgeCareGuides() {
           </div>
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }
