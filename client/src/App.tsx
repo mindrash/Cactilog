@@ -1,4 +1,4 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -32,9 +32,21 @@ import NotFound from "@/pages/not-found";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
+  
+  // Get current path to determine if it's a public route
+  const [location] = useLocation();
+  const publicRoutes = [
+    '/', '/photos', '/users', '/knowledge', '/vendors', '/about', 
+    '/contact', '/privacy', '/terms', '/disclaimer'
+  ];
+  const isPublicRoute = publicRoutes.some(route => 
+    location === route || 
+    location.startsWith('/knowledge/') || 
+    location.startsWith('/users/')
+  );
 
-  // Show loading state while checking authentication
-  if (isLoading) {
+  // Only show loading for private routes
+  if (isLoading && !isPublicRoute) {
     return (
       <div className="min-h-screen bg-stone-50 flex items-center justify-center">
         <div className="text-center">
