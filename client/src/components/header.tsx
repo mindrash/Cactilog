@@ -83,6 +83,7 @@ export function Header() {
               <div>
                 <h1 className="cactilog-title font-bold">
                   <span className="cacti-green">Cacti</span><span className="log-green">log</span>
+                  <span className="beta-superscript">BETA</span>
                 </h1>
               </div>
             </Link>

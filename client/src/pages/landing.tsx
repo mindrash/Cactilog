@@ -52,6 +52,7 @@ export default function Landing() {
             <div>
               <h1 className="cactilog-title-large font-bold">
                 <span className="cacti-green">Cacti</span><span className="log-green">log</span>
+                <span className="beta-superscript-large">BETA</span>
               </h1>
               <p className="text-sm text-gray-600">Community Collection</p>
             </div>

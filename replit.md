@@ -58,6 +58,8 @@ The application uses a monorepo structure with shared schemas:
 - Photo deletion system fully functional with red trash icons appearing on hover, permanent deletion of files and database records
 - Collection now correctly sorts by "Recently Modified" as default, considering both plant updates and photo uploads
 
+#### July 26, 2025 - Beta Branding & Complete Growth Tracking System with Database Cleanup & Error Fixes
+- **Added "BETA" superscript styling** to Cactilog branding across header and landing page with professional badge design
 #### July 26, 2025 - Complete Growth Tracking System with Database Cleanup & Error Fixes
 - **Implemented comprehensive growth tracking system** with enhanced database schema including circumference, offset count, health scores, flowering status, and environmental notes
 - **Enhanced analytics engine** with meaningful insights: growth rates, fastest growing plants, genus comparisons, health trends over time, and flowering activity tracking
