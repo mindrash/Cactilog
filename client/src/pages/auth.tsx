@@ -40,18 +40,20 @@ export default function AuthPage() {
         });
         
         // Also render a proper Google button
-        const buttonElement = document.getElementById('google-signin-button');
-        if (buttonElement) {
-          window.google.accounts.id.renderButton(buttonElement, {
-            theme: 'outline',
-            size: 'large',
-            type: 'standard',
-            shape: 'rectangular',
-            text: 'continue_with',
-            logo_alignment: 'left',
-            width: '300',
-          });
-        }
+        setTimeout(() => {
+          const buttonElement = document.getElementById('google-signin-button');
+          if (buttonElement) {
+            window.google.accounts.id.renderButton(buttonElement, {
+              theme: 'outline',
+              size: 'large',
+              type: 'standard',
+              shape: 'rectangular',
+              text: 'continue_with',
+              logo_alignment: 'left',
+              width: '300',
+            });
+          }
+        }, 100);
       }
     };
 
@@ -126,7 +128,19 @@ export default function AuthPage() {
           <CardContent className="space-y-4">
             {/* Google Sign-In */}
             {googleClientId ? (
-              <div id="google-signin-button" className="w-full flex justify-center"></div>
+              <div className="space-y-2">
+                <div id="google-signin-button" className="w-full flex justify-center min-h-[44px]"></div>
+                
+                {/* Fallback manual button in case the Google button doesn't render */}
+                <Button 
+                  onClick={handleGoogleButtonClick}
+                  variant="outline" 
+                  className="w-full h-12 flex items-center justify-center gap-3 border-blue-300 hover:bg-blue-50"
+                >
+                  <Chrome className="w-5 h-5 text-blue-500" />
+                  Continue with Google
+                </Button>
+              </div>
             ) : (
               <Button 
                 variant="outline" 
