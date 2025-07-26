@@ -4,9 +4,73 @@ import { useAuth } from "@/hooks/useAuth";
 import { Redirect } from "wouter";
 import { Chrome, Github, Twitter, Facebook } from "lucide-react";
 import { FaApple, FaMicrosoft } from "react-icons/fa";
+import { useEffect, useState } from "react";
 
 export default function AuthPage() {
   const { isAuthenticated, isLoading } = useAuth();
+  const [googleClientId, setGoogleClientId] = useState<string>('');
+
+  // Get configuration from backend
+  useEffect(() => {
+    fetch('/api/auth/config')
+      .then(res => res.json())
+      .then(config => {
+        setGoogleClientId(config.googleClientId);
+      })
+      .catch(err => console.error('Failed to load auth config:', err));
+  }, []);
+
+  // Load Google Identity Services
+  useEffect(() => {
+    if (!googleClientId) return;
+
+    const script = document.createElement('script');
+    script.src = 'https://accounts.google.com/gsi/client';
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+
+    script.onload = () => {
+      if (window.google) {
+        window.google.accounts.id.initialize({
+          client_id: googleClientId,
+          callback: handleGoogleSignIn,
+        });
+      }
+    };
+
+    return () => {
+      if (document.head.contains(script)) {
+        document.head.removeChild(script);
+      }
+    };
+  }, [googleClientId]);
+
+  const handleGoogleSignIn = async (response: any) => {
+    try {
+      const result = await fetch('/api/auth/google', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ credential: response.credential }),
+      });
+
+      if (result.ok) {
+        window.location.href = '/';
+      } else {
+        console.error('Google sign-in failed');
+      }
+    } catch (error) {
+      console.error('Google sign-in error:', error);
+    }
+  };
+
+  const handleGoogleButtonClick = () => {
+    if (window.google) {
+      window.google.accounts.id.prompt();
+    }
+  };
 
   // Redirect if already authenticated
   if (!isLoading && isAuthenticated) {
@@ -37,62 +101,52 @@ export default function AuthPage() {
           <CardContent className="space-y-4">
             {/* Google */}
             <Button 
-              asChild 
+              onClick={handleGoogleButtonClick}
               variant="outline" 
               className="w-full h-12 flex items-center justify-center gap-3 border-gray-300 hover:bg-gray-50"
             >
-              <a href="/api/auth/google">
-                <Chrome className="w-5 h-5 text-blue-500" />
-                Continue with Google
-              </a>
+              <Chrome className="w-5 h-5 text-blue-500" />
+              Continue with Google
             </Button>
 
-            {/* Facebook */}
+            {/* Facebook - Coming Soon */}
             <Button 
-              asChild 
               variant="outline" 
-              className="w-full h-12 flex items-center justify-center gap-3 border-gray-300 hover:bg-gray-50"
+              disabled
+              className="w-full h-12 flex items-center justify-center gap-3 border-gray-300 bg-gray-50 cursor-not-allowed"
             >
-              <a href="/api/auth/facebook">
-                <Facebook className="w-5 h-5 text-blue-600" />
-                Continue with Facebook
-              </a>
+              <Facebook className="w-5 h-5 text-gray-400" />
+              Continue with Facebook (Coming Soon)
             </Button>
 
-            {/* Twitter */}
+            {/* Twitter - Coming Soon */}
             <Button 
-              asChild 
               variant="outline" 
-              className="w-full h-12 flex items-center justify-center gap-3 border-gray-300 hover:bg-gray-50"
+              disabled
+              className="w-full h-12 flex items-center justify-center gap-3 border-gray-300 bg-gray-50 cursor-not-allowed"
             >
-              <a href="/api/auth/twitter">
-                <Twitter className="w-5 h-5 text-sky-500" />
-                Continue with Twitter
-              </a>
+              <Twitter className="w-5 h-5 text-gray-400" />
+              Continue with Twitter (Coming Soon)
             </Button>
 
-            {/* GitHub */}
+            {/* GitHub - Coming Soon */}
             <Button 
-              asChild 
               variant="outline" 
-              className="w-full h-12 flex items-center justify-center gap-3 border-gray-300 hover:bg-gray-50"
+              disabled
+              className="w-full h-12 flex items-center justify-center gap-3 border-gray-300 bg-gray-50 cursor-not-allowed"
             >
-              <a href="/api/auth/github">
-                <Github className="w-5 h-5 text-gray-700" />
-                Continue with GitHub
-              </a>
+              <Github className="w-5 h-5 text-gray-400" />
+              Continue with GitHub (Coming Soon)
             </Button>
 
-            {/* Microsoft */}
+            {/* Microsoft - Coming Soon */}
             <Button 
-              asChild 
               variant="outline" 
-              className="w-full h-12 flex items-center justify-center gap-3 border-gray-300 hover:bg-gray-50"
+              disabled
+              className="w-full h-12 flex items-center justify-center gap-3 border-gray-300 bg-gray-50 cursor-not-allowed"
             >
-              <a href="/api/auth/microsoft">
-                <FaMicrosoft className="w-5 h-5 text-blue-500" />
-                Continue with Microsoft
-              </a>
+              <FaMicrosoft className="w-5 h-5 text-gray-400" />
+              Continue with Microsoft (Coming Soon)
             </Button>
 
             {/* Apple - Coming Soon */}
@@ -106,7 +160,7 @@ export default function AuthPage() {
             </Button>
 
             <div className="text-center text-sm text-gray-500 mt-6">
-              No account needed - just sign in with any provider you prefer
+              No account needed - just sign in with Google to get started
             </div>
 
 
