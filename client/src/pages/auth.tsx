@@ -35,7 +35,23 @@ export default function AuthPage() {
         window.google.accounts.id.initialize({
           client_id: googleClientId,
           callback: handleGoogleSignIn,
+          auto_select: false,
+          cancel_on_tap_outside: false,
         });
+        
+        // Also render a proper Google button
+        const buttonElement = document.getElementById('google-signin-button');
+        if (buttonElement) {
+          window.google.accounts.id.renderButton(buttonElement, {
+            theme: 'outline',
+            size: 'large',
+            type: 'standard',
+            shape: 'rectangular',
+            text: 'continue_with',
+            logo_alignment: 'left',
+            width: '300',
+          });
+        }
       }
     };
 
@@ -48,6 +64,8 @@ export default function AuthPage() {
 
   const handleGoogleSignIn = async (response: any) => {
     try {
+      console.log('Google sign-in response received:', response);
+      
       const result = await fetch('/api/auth/google', {
         method: 'POST',
         headers: {
@@ -57,18 +75,25 @@ export default function AuthPage() {
       });
 
       if (result.ok) {
+        const data = await result.json();
+        console.log('Authentication successful:', data);
         window.location.href = '/';
       } else {
-        console.error('Google sign-in failed');
+        const errorData = await result.json();
+        console.error('Google sign-in failed:', errorData);
+        alert('Sign-in failed. Please try again.');
       }
     } catch (error) {
       console.error('Google sign-in error:', error);
+      alert('Sign-in error. Please try again.');
     }
   };
 
   const handleGoogleButtonClick = () => {
-    if (window.google) {
+    if (window.google && googleClientId) {
       window.google.accounts.id.prompt();
+    } else {
+      console.error('Google Sign-In not ready or client ID missing');
     }
   };
 
@@ -99,15 +124,33 @@ export default function AuthPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {/* Google */}
-            <Button 
-              onClick={handleGoogleButtonClick}
-              variant="outline" 
-              className="w-full h-12 flex items-center justify-center gap-3 border-gray-300 hover:bg-gray-50"
-            >
-              <Chrome className="w-5 h-5 text-blue-500" />
-              Continue with Google
-            </Button>
+            {/* Google Sign-In */}
+            <div className="space-y-2">
+              {googleClientId ? (
+                <div id="google-signin-button" className="w-full"></div>
+              ) : (
+                <Button 
+                  variant="outline" 
+                  disabled
+                  className="w-full h-12 flex items-center justify-center gap-3 border-gray-300 bg-gray-50 cursor-not-allowed"
+                >
+                  <Chrome className="w-5 h-5 text-gray-400" />
+                  Loading Google Sign-In...
+                </Button>
+              )}
+              
+              {/* Fallback manual button */}
+              {googleClientId && (
+                <Button 
+                  onClick={handleGoogleButtonClick}
+                  variant="outline" 
+                  className="w-full h-10 flex items-center justify-center gap-2 border-blue-300 bg-blue-50 text-blue-700 hover:bg-blue-100 text-sm"
+                >
+                  <Chrome className="w-4 h-4" />
+                  Or click here to sign in with Google
+                </Button>
+              )}
+            </div>
 
             {/* Facebook - Coming Soon */}
             <Button 
