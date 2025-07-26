@@ -55,7 +55,7 @@ export default function Collection() {
   }, [isAuthenticated, isLoading, toast]);
 
   const { data: plants = [] } = useQuery<Plant[]>({
-    queryKey: ["/api/plants"],
+    queryKey: ["/api/plants", { search: searchTerm, type: familyFilter, genus: genusFilter, sortBy }],
     enabled: isAuthenticated,
   });
 
@@ -73,64 +73,8 @@ export default function Collection() {
     getProductsForFamily('Cactaceae') : 
     getFeaturedProducts('collection');
 
-  // Filter plants based on search and filters
-  const filteredPlants = plants.filter(plant => {
-    const matchesSearch = !searchTerm || 
-      plant.genus?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      plant.species?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      plant.commonName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      plant.supplier?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      plant.customId?.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesFamily = !familyFilter || plant.family === familyFilter;
-    const matchesGenus = !genusFilter || plant.genus === genusFilter;
-    
-    return matchesSearch && matchesFamily && matchesGenus;
-  });
-
-  // Sort filtered plants
-  const sortedPlants = [...filteredPlants].sort((a, b) => {
-    switch (sortBy) {
-      case "recent":
-        // Sort by most recently modified/added (updatedAt or createdAt)
-        const aDate = new Date(a.updatedAt || a.createdAt || 0);
-        const bDate = new Date(b.updatedAt || b.createdAt || 0);
-        return bDate.getTime() - aDate.getTime();
-      
-      case "oldest":
-        // Sort by oldest first
-        const aOldDate = new Date(a.createdAt || 0);
-        const bOldDate = new Date(b.createdAt || 0);
-        return aOldDate.getTime() - bOldDate.getTime();
-      
-      case "genus-alpha":
-        // Sort alphabetically by genus, then species
-        const genusCompare = (a.genus || "").localeCompare(b.genus || "");
-        if (genusCompare !== 0) return genusCompare;
-        return (a.species || "").localeCompare(b.species || "");
-      
-      case "species-alpha":
-        // Sort alphabetically by species, then genus
-        const speciesCompare = (a.species || "").localeCompare(b.species || "");
-        if (speciesCompare !== 0) return speciesCompare;
-        return (a.genus || "").localeCompare(b.genus || "");
-      
-      case "id-asc":
-        // Sort by plant ID ascending
-        return a.id - b.id;
-      
-      case "id-desc":
-        // Sort by plant ID descending
-        return b.id - a.id;
-      
-      case "custom-id":
-        // Sort by custom ID alphabetically
-        return (a.customId || "").localeCompare(b.customId || "");
-      
-      default:
-        return 0;
-    }
-  });
+  // Plants are now filtered and sorted on the backend
+  const sortedPlants = plants;
 
   return (
     <div className="min-h-screen cactus-pattern-bg-light">
