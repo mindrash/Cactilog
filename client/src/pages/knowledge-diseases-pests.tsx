@@ -254,51 +254,56 @@ export default function KnowledgeDiseasesAndPests() {
             <AmazonAffiliateProducts 
               products={[
                 {
-                  id: "B07VNRP4F4",
-                  title: "Garden Safe Neem Oil Extract Concentrate",
+                  id: "neem-oil-treatment",
+                  title: "Organic Neem Oil for Plant Protection",
                   price: "$12.99",
                   rating: 4.3,
                   reviewCount: 3200,
-                  category: "Organic Treatment",
-                  image: "neem-oil",
-                  description: "Organic fungicide, miticide, and insecticide for roses, flowers, houseplants, and more",
-                  affiliateUrl: "https://www.amazon.com/dp/B07VNRP4F4?tag=mindrash-20&linkCode=ogi&th=1&psc=1"
+                  category: "fertilizer",
+                  tags: ["organic", "neem-oil", "fungicide", "insecticide"],
+                  imageUrl: "https://m.media-amazon.com/images/I/81D1Rs8OvLL._AC_SY679_.jpg",
+                  description: "Organic treatment for fungal diseases, mites, and common plant pests",
+                  affiliateUrl: "https://www.amazon.com/dp/B00GRAJTEK?tag=mindrash-20&linkCode=ogi&th=1&psc=1"
                 },
                 {
-                  id: "B000BX1V7U",
-                  title: "Safer Brand Insect Killing Soap",
-                  price: "$8.47",
-                  rating: 4.1,
-                  reviewCount: 2100,
-                  category: "Organic Treatment", 
-                  image: "insecticidal-soap",
-                  description: "Ready-to-use organic spray for soft-bodied insects including aphids, mealybugs, and scale",
-                  affiliateUrl: "https://www.amazon.com/dp/B000BX1V7U?tag=mindrash-20&linkCode=ogi&th=1&psc=1"
+                  id: "succulent-tools-treatment",
+                  title: "Precision Plant Care Tools",
+                  price: "$18.99",
+                  rating: 4.3,
+                  reviewCount: 892,
+                  category: "tools", 
+                  tags: ["tools", "tongs", "pruning", "watering"],
+                  imageUrl: "https://m.media-amazon.com/images/I/61Blda+HRvL._AC_SY300_SX300_.jpg",
+                  description: "Complete mini garden hand tools with tongs, pruning shears for pest removal",
+                  affiliateUrl: "https://www.amazon.com/dp/B01GWSBQVA?tag=mindrash-20&linkCode=ogi&th=1&psc=1"
                 },
                 {
-                  id: "B07BNM3QF3",
-                  title: "Southern Ag Copper Fungicide",
-                  price: "$15.99",
-                  rating: 4.5,
-                  reviewCount: 850,
-                  category: "Professional Treatment",
-                  image: "copper-fungicide", 
-                  description: "Liquid copper fungicide for prevention and control of diseases on fruits, vegetables, and ornamentals",
-                  affiliateUrl: "https://www.amazon.com/dp/B07BNM3QF3?tag=mindrash-20&linkCode=ogi&th=1&psc=1"
+                  id: "precision-tweezers",
+                  title: "Curved Tip Precision Tweezers",
+                  price: "$14.95",
+                  rating: 4.8,
+                  reviewCount: 346,
+                  category: "tools",
+                  tags: ["tweezers", "curved-tip", "stainless-steel", "precision"],
+                  imageUrl: "https://m.media-amazon.com/images/I/61VdJbibWkL._AC_SX355_.jpg",
+                  description: "Ideal tool for removing pests and debris from tight spaces without plant damage",
+                  affiliateUrl: "https://www.amazon.com/dp/B07HQLDZZD?tag=mindrash-20&linkCode=ogi&th=1&psc=1"
                 },
                 {
-                  id: "B01N9O6K7L",
-                  title: "70% Isopropyl Alcohol - 32oz",
-                  price: "$6.99",
-                  rating: 4.7,
-                  reviewCount: 5600,
-                  category: "Essential Supplies",
-                  image: "isopropyl-alcohol",
-                  description: "First aid antiseptic for cleaning and sterilizing tools, immediate pest treatment",
-                  affiliateUrl: "https://www.amazon.com/dp/B01N9O6K7L?tag=mindrash-20&linkCode=ogi&th=1&psc=1"
+                  id: "care-guide-book",
+                  title: "Succulent Care & Treatment Guide",
+                  price: "$19.95",
+                  rating: 4.6,
+                  reviewCount: 1432,
+                  category: "books",
+                  tags: ["succulent", "design", "care", "drought-tolerant"],
+                  imageUrl: "https://m.media-amazon.com/images/I/81etdhhfUOL._SY342_.jpg",
+                  description: "Comprehensive guide including disease identification and treatment protocols",
+                  affiliateUrl: "https://www.amazon.com/dp/B01D8JDJ9K?tag=mindrash-20&linkCode=ogi&th=1&psc=1"
                 }
               ]}
-              title="Professional Treatment Tools"
+              title="Essential Treatment Tools"
+              className="w-full"
             />
 
             {/* Quick Reference */}
