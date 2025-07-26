@@ -509,7 +509,16 @@ export class DatabaseStorage implements IStorage {
       : [];
 
     const totalMeasurements = allGrowthRecords.length;
-    const plantsWithGrowth = new Set(allGrowthRecords.map(r => r.plantId)).size;
+    
+    // Count plants with meaningful growth data (2+ records)
+    const plantsWithMeaningfulGrowth = new Set<number>();
+    for (const plant of userPlants) {
+      const plantRecords = allGrowthRecords.filter(r => r.plantId === plant.id);
+      if (plantRecords.length >= 2) {
+        plantsWithMeaningfulGrowth.add(plant.id);
+      }
+    }
+    const plantsWithGrowth = plantsWithMeaningfulGrowth.size;
 
     // Calculate growth rates for each plant
     const plantGrowthRates: Array<{ plant: Plant; growthRate: number }> = [];
