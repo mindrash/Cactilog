@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import logoImage from "@/assets/cactilog-logo.png";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -10,12 +11,11 @@ export default function Footer() {
           {/* Brand Section */}
           <div className="md:col-span-1">
             <div className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 flex items-center justify-center">
-                <svg viewBox="0 0 24 24" className="w-8 h-8 text-green-400">
-                  <circle cx="12" cy="12" r="3" fill="currentColor"/>
-                  <path d="M12 2v6M12 16v6M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M2 12h6M16 12h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24" stroke="currentColor" strokeWidth="2"/>
-                </svg>
-              </div>
+              <img 
+                src={logoImage} 
+                alt="Cactilog Logo" 
+                className="w-8 h-8"
+              />
               <div>
                 <span className="text-xl font-bold text-white">
                   <span className="text-green-400">Cacti</span><span className="text-green-300">log</span>
