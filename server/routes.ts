@@ -734,18 +734,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Check if user is admin
-  app.get('/api/admin/status', isAuthenticated, async (req, res) => {
-    try {
-      const userId = (req.user as any)?.claims?.sub;
-      const isAdmin = await storage.isUserAdmin(userId);
-      res.json({ isAdmin });
-    } catch (error) {
-      console.error("Error checking admin status:", error);
-      res.status(500).json({ message: "Failed to check admin status" });
-    }
-  });
-
   // Check admin status - temporarily bypass authentication for debugging
   app.get('/api/admin/status', async (req: any, res) => {
     try {
