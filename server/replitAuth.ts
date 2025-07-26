@@ -150,21 +150,37 @@ export async function setupAuth(app: Express) {
   });
 
   app.get("/api/logout", (req, res) => {
-    req.logout(() => {
-      // For localhost development, use the full host with port
-      const host = req.get('host');
-      const baseUrl = host?.includes('localhost') 
-        ? `${req.protocol}://${host}` 
-        : `${req.protocol}://${req.hostname}`;
+    req.logout((err) => {
+      if (err) {
+        console.error('Logout error:', err);
+        return res.status(500).json({ error: 'Logout failed' });
+      }
       
-      console.log('Logout redirect URL:', baseUrl);
-      
-      res.redirect(
-        client.buildEndSessionUrl(config, {
+      // Destroy the session completely
+      req.session.destroy((destroyErr) => {
+        if (destroyErr) {
+          console.error('Session destroy error:', destroyErr);
+        }
+        
+        // Clear the session cookie
+        res.clearCookie('connect.sid');
+        
+        // For localhost development, use the full host with port
+        const host = req.get('host');
+        const baseUrl = host?.includes('localhost') 
+          ? `${req.protocol}://${host}` 
+          : `${req.protocol}://${req.hostname}`;
+        
+        console.log('Logout redirect URL:', baseUrl);
+        
+        // Redirect to Replit OIDC logout
+        const logoutUrl = client.buildEndSessionUrl(config, {
           client_id: process.env.REPL_ID!,
           post_logout_redirect_uri: baseUrl,
-        }).href
-      );
+        }).href;
+        
+        res.redirect(logoutUrl);
+      });
     });
   });
 }
