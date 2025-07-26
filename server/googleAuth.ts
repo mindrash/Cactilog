@@ -74,18 +74,31 @@ export async function setupAuth(app: Express) {
         return res.status(400).json({ error: 'Invalid token' });
       }
 
-      // Create or update user
-      const userData = {
-        id: `google_${payload.sub}`,
-        email: payload.email || '',
-        firstName: payload.given_name || '',
-        lastName: payload.family_name || '',
-        profileImageUrl: payload.picture || '',
-        authProvider: 'google' as const,
-      };
-
-      await storage.upsertUser(userData);
-      const user = await storage.getUser(userData.id);
+      // Check if user exists by email first
+      const existingUser = await storage.getUserByEmail(payload.email || '');
+      
+      let user;
+      if (existingUser) {
+        // Update existing user with Google info
+        const updateData = {
+          firstName: payload.given_name || existingUser.firstName,
+          lastName: payload.family_name || existingUser.lastName,
+          profileImageUrl: payload.picture || existingUser.profileImageUrl,
+          authProvider: 'google' as const,
+        };
+        user = await storage.updateUser(existingUser.id, updateData);
+      } else {
+        // Create new user
+        const userData = {
+          id: `google_${payload.sub}`,
+          email: payload.email || '',
+          firstName: payload.given_name || '',
+          lastName: payload.family_name || '',
+          profileImageUrl: payload.picture || '',
+          authProvider: 'google' as const,
+        };
+        user = await storage.upsertUser(userData);
+      }
 
       // Log the user in
       req.login(user!, (err) => {
