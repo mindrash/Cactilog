@@ -10,7 +10,9 @@ import AddPlantModal from "@/components/add-plant-modal";
 import PlantDetailModal from "@/components/plant-detail-modal";
 import ExportCollectionModal from "@/components/export-collection-modal";
 import { SEO, seoConfigs } from "@/components/seo";
+import AmazonAffiliateProducts from "@/components/amazon-affiliate-products";
 import { Plant } from "@shared/schema";
+import { getFeaturedProducts, getProductsForFamily } from "@shared/amazon-products";
 import { Search, Filter, Plus, Grid, List, Download, ArrowUpDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -62,6 +64,14 @@ export default function Collection() {
   }
 
   const uniqueGenera = Array.from(new Set(plants.map(p => p.genus))).filter(Boolean);
+  const uniqueFamilies = Array.from(new Set(plants.map(p => p.family))).filter(Boolean);
+  const hasMainlyCacti = uniqueFamilies.includes('Cactaceae');
+  
+  // Get contextual Amazon products for collection
+  const featuredProducts = getFeaturedProducts('collection');
+  const familyProducts = hasMainlyCacti ? 
+    getProductsForFamily('Cactaceae') : 
+    getFeaturedProducts('collection');
 
   // Filter plants based on search and filters
   const filteredPlants = plants.filter(plant => {
@@ -363,6 +373,17 @@ export default function Collection() {
                   "Try adjusting your search or filters to find plants." :
                   "Add a new plant to your collection to get started."}
               </p>
+            </div>
+          )}
+          
+          {/* Amazon Affiliate Products Section */}
+          {sortedPlants.length > 0 && (
+            <div className="mt-8">
+              <AmazonAffiliateProducts 
+                products={familyProducts}
+                title="Essential Collection Care Items"
+                context={hasMainlyCacti ? "Cactus Care" : "Succulent Care"}
+              />
             </div>
           )}
         </main>

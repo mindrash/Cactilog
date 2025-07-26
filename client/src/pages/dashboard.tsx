@@ -10,7 +10,9 @@ import StatsCard from "@/components/stats-card";
 import PlantCard from "@/components/plant-card";
 import AddPlantModal from "@/components/add-plant-modal";
 import { SEO, seoConfigs } from "@/components/seo";
+import AmazonAffiliateProducts from "@/components/amazon-affiliate-products";
 import { Plant } from "@shared/schema";
+import { getFeaturedProducts } from "@shared/amazon-products";
 import { Sprout, Table, Plus, TrendingUp } from "lucide-react";
 import CactusIcon from "@/components/cactus-icon";
 import { Button } from "@/components/ui/button";
@@ -56,6 +58,7 @@ export default function Dashboard() {
   }
 
   const recentPlants = plants.slice(0, 4);
+  const featuredProducts = getFeaturedProducts('home');
 
   return (
     <div className="min-h-screen cactus-pattern-bg-light">
@@ -137,6 +140,15 @@ export default function Dashboard() {
                 </Button>
               </div>
             )}
+          </div>
+
+          {/* Amazon Affiliate Products Section */}
+          <div className="mt-8">
+            <AmazonAffiliateProducts 
+              products={featuredProducts}
+              title="Top-Rated Cactus & Succulent Supplies"
+              context="Essential Tools"
+            />
           </div>
         </main>
       </div>
