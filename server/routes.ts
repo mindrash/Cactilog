@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { setupAuth, isAuthenticated } from "./standardAuth";
+import { setupAuth, isAuthenticated } from "./devAuth";
 import { vendorData } from "@shared/vendor-data";
 import { SpeciesImageService } from "./wikimedia";
 import { createInsertSchema } from "drizzle-zod";
