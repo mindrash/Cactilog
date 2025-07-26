@@ -51,6 +51,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
   await setupAuth(app);
 
+  // Simple logout route that just clears the session
+  app.post('/api/logout', (req, res) => {
+    req.logout((err) => {
+      if (err) {
+        console.error('Logout error:', err);
+        return res.status(500).json({ error: 'Logout failed' });
+      }
+      
+      // Destroy the session completely
+      req.session.destroy((destroyErr) => {
+        if (destroyErr) {
+          console.error('Session destroy error:', destroyErr);
+        }
+        
+        // Clear the session cookie
+        res.clearCookie('connect.sid');
+        
+        // Return success response
+        res.json({ success: true, message: 'Logged out successfully' });
+      });
+    });
+  });
+
   // Serve uploaded photos statically
   app.use('/uploads', (req, res, next) => {
     // Add basic security headers for images
