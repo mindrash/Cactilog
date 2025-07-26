@@ -147,11 +147,14 @@ export class DatabaseStorage implements IStorage {
         .limit(1);
 
       if (existingUser.length > 0) {
-        // Update existing user
+        // Update existing user - only update non-ID fields to avoid foreign key issues
+        const updateData = { ...userData };
+        delete updateData.id; // Don't update the ID field
+        
         const [updatedUser] = await db
           .update(users)
           .set({
-            ...userData,
+            ...updateData,
             updatedAt: new Date(),
           })
           .where(eq(users.id, existingUser[0].id))
