@@ -18,7 +18,7 @@ export default function Footer() {
               />
               <div>
                 <span className="text-xl font-bold text-white">
-                  <span className="text-green-400">Cacti</span><span className="text-green-300">log</span>
+                  <span className="text-green-400 footer-cacti-text">Cacti</span><span className="text-green-300 footer-log-text">log</span>
                 </span>
                 <span className="text-xs bg-green-600 text-yellow-200 px-1.5 py-0.5 rounded ml-1">BETA</span>
               </div>
