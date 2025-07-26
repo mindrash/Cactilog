@@ -109,21 +109,7 @@ export default function AuthPage() {
               No account needed - just sign in with any provider you prefer
             </div>
 
-            {/* Development Login - Only show in development */}
-            {import.meta.env.DEV && (
-              <div className="mt-6 pt-4 border-t border-gray-200">
-                <div className="text-center text-xs text-gray-400 mb-3">Development Only</div>
-                <Button 
-                  asChild 
-                  variant="outline" 
-                  className="w-full h-10 flex items-center justify-center gap-2 border-orange-300 bg-orange-50 text-orange-700 hover:bg-orange-100"
-                >
-                  <a href="/api/auth/dev-login">
-                    🔧 Development Login
-                  </a>
-                </Button>
-              </div>
-            )}
+
           </CardContent>
         </Card>
 
