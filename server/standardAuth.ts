@@ -70,6 +70,8 @@ export async function setupAuth(app: Express) {
         return done(error, null);
       }
     }));
+  } else {
+    console.log('Google OAuth not configured - skipping strategy registration');
   }
 
   // Facebook OAuth Strategy
@@ -160,35 +162,60 @@ export async function setupAuth(app: Express) {
   // Authentication routes for each provider
   
   // Google
-  app.get('/api/auth/google', passport.authenticate('google'));
+  app.get('/api/auth/google', (req, res, next) => {
+    if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+      return res.status(501).json({ message: 'Google authentication not configured. Please contact the administrator to set up OAuth credentials.' });
+    }
+    passport.authenticate('google')(req, res, next);
+  });
   app.get('/api/auth/google/callback', 
     passport.authenticate('google', { failureRedirect: '/' }),
     (req, res) => res.redirect('/')
   );
 
   // Facebook
-  app.get('/api/auth/facebook', passport.authenticate('facebook'));
+  app.get('/api/auth/facebook', (req, res, next) => {
+    if (!process.env.FACEBOOK_APP_ID || !process.env.FACEBOOK_APP_SECRET) {
+      return res.status(501).json({ message: 'Facebook authentication not configured. Please contact the administrator to set up OAuth credentials.' });
+    }
+    passport.authenticate('facebook')(req, res, next);
+  });
   app.get('/api/auth/facebook/callback',
     passport.authenticate('facebook', { failureRedirect: '/' }),
     (req, res) => res.redirect('/')
   );
 
   // Twitter
-  app.get('/api/auth/twitter', passport.authenticate('twitter'));
+  app.get('/api/auth/twitter', (req, res, next) => {
+    if (!process.env.TWITTER_CONSUMER_KEY || !process.env.TWITTER_CONSUMER_SECRET) {
+      return res.status(501).json({ message: 'Twitter authentication not configured. Please contact the administrator to set up OAuth credentials.' });
+    }
+    passport.authenticate('twitter')(req, res, next);
+  });
   app.get('/api/auth/twitter/callback',
     passport.authenticate('twitter', { failureRedirect: '/' }),
     (req, res) => res.redirect('/')
   );
 
   // GitHub
-  app.get('/api/auth/github', passport.authenticate('github'));
+  app.get('/api/auth/github', (req, res, next) => {
+    if (!process.env.GITHUB_CLIENT_ID || !process.env.GITHUB_CLIENT_SECRET) {
+      return res.status(501).json({ message: 'GitHub authentication not configured. Please contact the administrator to set up OAuth credentials.' });
+    }
+    passport.authenticate('github')(req, res, next);
+  });
   app.get('/api/auth/github/callback',
     passport.authenticate('github', { failureRedirect: '/' }),
     (req, res) => res.redirect('/')
   );
 
   // Microsoft
-  app.get('/api/auth/microsoft', passport.authenticate('microsoft'));
+  app.get('/api/auth/microsoft', (req, res, next) => {
+    if (!process.env.MICROSOFT_CLIENT_ID || !process.env.MICROSOFT_CLIENT_SECRET) {
+      return res.status(501).json({ message: 'Microsoft authentication not configured. Please contact the administrator to set up OAuth credentials.' });
+    }
+    passport.authenticate('microsoft')(req, res, next);
+  });
   app.get('/api/auth/microsoft/callback',
     passport.authenticate('microsoft', { failureRedirect: '/' }),
     (req, res) => res.redirect('/')
