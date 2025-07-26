@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+
 import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
-import { Button } from "@/components/ui/button";
+
 import { Input } from "@/components/ui/input";
-import { Plus, Upload, X } from "lucide-react";
+import { Plus, Upload } from "lucide-react";
 
 interface PhotoUploadProps {
   plantId: number;
@@ -21,6 +21,8 @@ export default function PhotoUpload({ plantId, className = "" }: PhotoUploadProp
   const { data: photos = [] } = useQuery({
     queryKey: ["/api/plants", plantId, "photos"],
   });
+
+  const photosArray = Array.isArray(photos) ? photos : [];
 
   const uploadMutation = useMutation({
     mutationFn: async (file: File) => {
@@ -101,9 +103,9 @@ export default function PhotoUpload({ plantId, className = "" }: PhotoUploadProp
   return (
     <div className={`space-y-4 ${className}`}>
       {/* Existing Photos */}
-      {photos.length > 0 && (
+      {photosArray.length > 0 && (
         <div className="grid grid-cols-2 gap-4">
-          {photos.map((photo: any) => (
+          {photosArray.map((photo: any) => (
             <div key={photo.id} className="relative">
               <img
                 src={`/uploads/${photo.filename}`}
