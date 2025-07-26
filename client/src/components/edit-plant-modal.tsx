@@ -83,7 +83,7 @@ export default function EditPlantModal({ plant, open, onOpenChange }: EditPlantM
 
   const updatePlantMutation = useMutation({
     mutationFn: async (data: InsertPlant) => {
-      const response = await apiRequest("PATCH", `/api/plants/${plant.id}`, data);
+      const response = await apiRequest(`/api/plants/${plant.id}`, "PATCH", data);
       return response.json();
     },
     onSuccess: (updatedPlant) => {
