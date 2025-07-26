@@ -10,6 +10,7 @@ import Dashboard from "@/pages/dashboard";
 import Collection from "@/pages/collection";
 import GrowthTracking from "@/pages/growth-tracking";
 import Photos from "@/pages/photos";
+import RecommendedSocials from "@/pages/recommended-socials";
 import Users from "@/pages/users";
 import UserProfile from "@/pages/user-profile";
 import Knowledge from "@/pages/knowledge";
@@ -37,7 +38,7 @@ function Router() {
   // Get current path to determine if it's a public route
   const [location] = useLocation();
   const publicRoutes = [
-    '/', '/photos', '/users', '/knowledge', '/vendors', '/about', 
+    '/', '/photos', '/users', '/knowledge', '/vendors', '/recommended-socials', '/about', 
     '/contact', '/privacy', '/terms', '/disclaimer', '/auth'
   ];
   const isPublicRoute = publicRoutes.some(route => 
@@ -64,6 +65,7 @@ function Router() {
         <>
           <Route path="/" component={Landing} />
           <Route path="/photos" component={Photos} />
+          <Route path="/recommended-socials" component={RecommendedSocials} />
           <Route path="/users" component={Users} />
           <Route path="/users/:userId" component={UserProfile} />
           <Route path="/knowledge" component={Knowledge} />
@@ -89,6 +91,7 @@ function Router() {
           <Route path="/collection" component={Collection} />
           <Route path="/growth-tracking" component={GrowthTracking} />
           <Route path="/photos" component={Photos} />
+          <Route path="/recommended-socials" component={RecommendedSocials} />
           <Route path="/users" component={Users} />
           <Route path="/users/:userId" component={UserProfile} />
           <Route path="/knowledge" component={Knowledge} />
