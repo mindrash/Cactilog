@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { useState } from "react";
-import { Plus, Menu, User, LogOut, ChevronDown, Home, BarChart3, FolderOpen, TrendingUp, Camera, Users, Settings, Sprout, BookOpen, Search, Shield, Leaf, Store } from "lucide-react";
+import { Plus, Menu, User, LogOut, LogIn, ChevronDown, Home, BarChart3, FolderOpen, TrendingUp, Camera, Users, Settings, Sprout, BookOpen, Search, Shield, Leaf, Store } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -44,7 +44,7 @@ const navigationGroups = {
 };
 
 export function Header() {
-  const { user } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
   const [location] = useLocation();
   const [showAddPlant, setShowAddPlant] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -90,21 +90,66 @@ export function Header() {
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center space-x-1">
-              {/* Home */}
-              {navigationGroups.main.map((item) => (
-                <Link key={item.href} href={item.href}>
-                  <Button
-                    variant={isActive(item.href) ? "default" : "ghost"}
-                    className={isActive(item.href) ? "bg-cactus-green hover:bg-cactus-green/90" : ""}
-                  >
-                    <item.icon className="w-4 h-4 mr-2" />
-                    {item.label}
-                  </Button>
-                </Link>
-              ))}
+              {/* Public Navigation - shown when not authenticated */}
+              {!isAuthenticated && !isLoading && (
+                <>
+                  {/* Community Link */}
+                  <Link href="/users">
+                    <Button
+                      variant={isActive("/users") ? "default" : "ghost"}
+                      className={isActive("/users") ? "bg-cactus-green hover:bg-cactus-green/90" : ""}
+                    >
+                      <Users className="w-4 h-4 mr-2" />
+                      Community
+                    </Button>
+                  </Link>
 
-              {/* My Collection Dropdown */}
-              <DropdownMenu>
+                  {/* Knowledge Base Dropdown */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant={isGroupActive(navigationGroups.knowledge) ? "default" : "ghost"}
+                        className={isGroupActive(navigationGroups.knowledge) ? "bg-cactus-green hover:bg-cactus-green/90" : ""}
+                      >
+                        <BookOpen className="w-4 h-4 mr-2" />
+                        Knowledge Base
+                        <ChevronDown className="w-4 h-4 ml-2" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" className="w-56">
+                      <DropdownMenuLabel>Knowledge Base</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      {navigationGroups.knowledge.map((item) => (
+                        <Link key={item.href} href={item.href}>
+                          <DropdownMenuItem className="cursor-pointer">
+                            <item.icon className="w-4 h-4 mr-2" />
+                            {item.label}
+                          </DropdownMenuItem>
+                        </Link>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </>
+              )}
+
+              {/* Authenticated Navigation - shown when logged in */}
+              {isAuthenticated && (
+                <>
+                  {/* Home */}
+                  {navigationGroups.main.map((item) => (
+                    <Link key={item.href} href={item.href}>
+                      <Button
+                        variant={isActive(item.href) ? "default" : "ghost"}
+                        className={isActive(item.href) ? "bg-cactus-green hover:bg-cactus-green/90" : ""}
+                      >
+                        <item.icon className="w-4 h-4 mr-2" />
+                        {item.label}
+                      </Button>
+                    </Link>
+                  ))}
+
+                  {/* My Collection Dropdown */}
+                  <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant={isGroupActive(navigationGroups.myCollection) ? "default" : "ghost"}
@@ -177,22 +222,37 @@ export function Header() {
                         {item.label}
                       </DropdownMenuItem>
                     </Link>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </>
+              )}
             </nav>
 
             {/* Desktop Actions */}
             <div className="hidden lg:flex items-center space-x-3">
-              <Button
-                onClick={() => setShowAddPlant(true)}
-                className="bg-cactus-green hover:bg-cactus-green/90"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Add Plant
-              </Button>
+              {/* Public Sign In Button */}
+              {!isAuthenticated && !isLoading && (
+                <Button asChild className="bg-cactus-green hover:bg-cactus-green/90">
+                  <a href="/api/login">
+                    <LogIn className="w-4 h-4 mr-2" />
+                    Sign In
+                  </a>
+                </Button>
+              )}
 
-              {/* User Menu */}
+              {/* Authenticated Actions */}
+              {isAuthenticated && (
+                <>
+                  <Button
+                    onClick={() => setShowAddPlant(true)}
+                    className="bg-cactus-green hover:bg-cactus-green/90"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Plant
+                  </Button>
+
+                  {/* User Menu */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="flex items-center space-x-2">
@@ -271,19 +331,33 @@ export function Header() {
                     <LogOut className="w-4 h-4" />
                     <span>Sign Out</span>
                   </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                </>
+              )}
             </div>
 
             {/* Mobile Menu */}
             <div className="lg:hidden flex items-center space-x-2">
-              <Button
-                size="sm"
-                onClick={() => setShowAddPlant(true)}
-                className="bg-cactus-green hover:bg-cactus-green/90"
-              >
-                <Plus className="w-4 h-4" />
-              </Button>
+              {/* Public Mobile Sign In */}
+              {!isAuthenticated && !isLoading && (
+                <Button size="sm" asChild className="bg-cactus-green hover:bg-cactus-green/90">
+                  <a href="/api/login">
+                    <LogIn className="w-4 h-4" />
+                  </a>
+                </Button>
+              )}
+
+              {/* Authenticated Mobile Add Plant */}
+              {isAuthenticated && (
+                <Button
+                  size="sm"
+                  onClick={() => setShowAddPlant(true)}
+                  className="bg-cactus-green hover:bg-cactus-green/90"
+                >
+                  <Plus className="w-4 h-4" />
+                </Button>
+              )}
 
               <Sheet open={showMobileMenu} onOpenChange={setShowMobileMenu}>
                 <SheetTrigger asChild>
