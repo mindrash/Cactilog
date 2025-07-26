@@ -23,6 +23,11 @@ import Import from "@/pages/import";
 import Settings from "@/pages/settings";
 import Vendors from "@/pages/vendors";
 import AdminDashboard from "@/pages/admin-dashboard";
+import About from "@/pages/about";
+import Contact from "@/pages/contact";
+import Privacy from "@/pages/privacy";
+import Terms from "@/pages/terms";
+import Disclaimer from "@/pages/disclaimer";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -45,6 +50,11 @@ function Router() {
       {!isAuthenticated ? (
         <>
           <Route path="/" component={Landing} />
+          <Route path="/about" component={About} />
+          <Route path="/contact" component={Contact} />
+          <Route path="/privacy" component={Privacy} />
+          <Route path="/terms" component={Terms} />
+          <Route path="/disclaimer" component={Disclaimer} />
           <Route path="*" component={Landing} />
         </>
       ) : (
@@ -67,6 +77,11 @@ function Router() {
           <Route path="/import" component={Import} />
           <Route path="/settings" component={Settings} />
           <Route path="/admin" component={AdminDashboard} />
+          <Route path="/about" component={About} />
+          <Route path="/contact" component={Contact} />
+          <Route path="/privacy" component={Privacy} />
+          <Route path="/terms" component={Terms} />
+          <Route path="/disclaimer" component={Disclaimer} />
         </>
       )}
       <Route component={NotFound} />

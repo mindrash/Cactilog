@@ -5,6 +5,7 @@ import PlantCard from "@/components/plant-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { SEO } from "@/components/seo";
+import Footer from "@/components/footer";
 import type { Plant } from "@shared/schema";
 import { useState } from "react";
 import logoImage from "@/assets/cactilog-logo.png";
@@ -284,6 +285,7 @@ export default function Landing() {
           </div>
         </div>
       </section>
+      <Footer />
     </div>
   );
 }
