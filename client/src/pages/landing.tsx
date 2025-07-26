@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight, LogIn, Camera, TrendingUp, Users, BookOpen, Shield, Heart } from "lucide-react";
 import CactusIcon from "@/components/cactus-icon";
-import PlantCard from "@/components/plant-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { SEO } from "@/components/seo";
 import Footer from "@/components/footer";
 import type { Plant } from "@shared/schema";
@@ -22,7 +22,55 @@ interface PublicFeedResponse {
   };
 }
 
-export default function Landing() {
+// Simple plant card for landing page that doesn't need authentication
+function LandingPlantCard({ plant }: { plant: Plant }) {
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return "";
+    return new Date(dateString).toLocaleDateString();
+  };
+
+  return (
+    <Card className="border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
+      <div className="w-full h-40 sm:h-48 bg-gray-100 flex items-center justify-center border-b border-gray-200 relative overflow-hidden">
+        <div className="text-center text-gray-500">
+          <Camera className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2" />
+          <p className="text-xs sm:text-sm">Community Plant</p>
+        </div>
+      </div>
+      <CardContent className="p-3 sm:p-4">
+        {/* Custom ID */}
+        <div className="mb-2">
+          <span className="text-xs font-mono text-gray-500 bg-gray-100 px-2 py-1 rounded">
+            {plant.customId || `#${plant.id}`}
+          </span>
+        </div>
+        
+        {/* Family badge */}
+        <div className="flex items-center mb-2">
+          <Badge 
+            variant={plant.family === 'Cactaceae' ? 'default' : 'secondary'}
+            className={`text-xs ${plant.family === 'Cactaceae' ? 'bg-cactus-green/10 text-cactus-green' : 'bg-desert-sage/10 text-desert-sage'}`}
+          >
+            {plant.family}
+          </Badge>
+        </div>
+        
+        <h4 className="font-semibold text-gray-900 mb-1 text-sm sm:text-base line-clamp-2">
+          {plant.commonName || `${plant.genus} ${plant.species || ""}`}
+        </h4>
+        <p className="text-xs sm:text-sm text-gray-600 mb-2 line-clamp-1">
+          <em>{plant.genus}</em> {plant.species && <span>{plant.species}</span>}
+        </p>
+        <div className="flex items-center justify-between text-xs text-gray-500">
+          <span className="truncate flex-1 mr-2">{plant.supplier || "Community"}</span>
+          <span className="shrink-0">{formatDate(plant.acquisitionDate)}</span>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function Landing() {
   const [currentPage, setCurrentPage] = useState(1);
   
   const { data, isLoading } = useQuery<PublicFeedResponse>({
@@ -223,7 +271,7 @@ export default function Landing() {
             {/* Plant Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
               {data?.plants?.map((plant) => (
-                <PlantCard key={plant.id} plant={plant} />
+                <LandingPlantCard key={plant.id} plant={plant} />
               ))}
             </div>
 
@@ -289,3 +337,5 @@ export default function Landing() {
     </div>
   );
 }
+
+export default Landing;

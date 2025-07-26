@@ -7,17 +7,21 @@ import { Camera } from "lucide-react";
 import PlantDetailModal from "./plant-detail-modal";
 import PrivacyBadge from "./privacy-badge";
 import { PlantLikeButton } from "./plant-like-button";
+import { useAuth } from "@/hooks/useAuth";
 
 interface PlantCardProps {
   plant: Plant;
+  showPhotos?: boolean;
 }
 
-export default function PlantCard({ plant }: PlantCardProps) {
+export default function PlantCard({ plant, showPhotos = true }: PlantCardProps) {
   const [showDetailModal, setShowDetailModal] = useState(false);
+  const { isAuthenticated } = useAuth();
 
-  // Fetch photos for this plant
+  // Only fetch photos if authenticated and showPhotos is true
   const { data: photos = [] } = useQuery({
     queryKey: ["/api/plants", plant.id, "photos"],
+    enabled: isAuthenticated && showPhotos,
   });
 
   const photosArray = Array.isArray(photos) ? photos : [];
@@ -94,14 +98,16 @@ export default function PlantCard({ plant }: PlantCardProps) {
             <span className="shrink-0">{formatDate(plant.acquisitionDate)}</span>
           </div>
           
-          {/* Like Button */}
-          <div className="flex justify-end mt-3 pt-3 border-t border-gray-100">
-            <PlantLikeButton 
-              plantId={plant.id} 
-              className="text-xs"
-              showCount={true}
-            />
-          </div>
+          {/* Like Button - only show for authenticated users */}
+          {isAuthenticated && (
+            <div className="flex justify-end mt-3 pt-3 border-t border-gray-100">
+              <PlantLikeButton 
+                plantId={plant.id} 
+                className="text-xs"
+                showCount={true}
+              />
+            </div>
+          )}
         </CardContent>
       </Card>
 
