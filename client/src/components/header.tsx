@@ -232,7 +232,7 @@ export function Header() {
             {/* Desktop Actions */}
             <div className="hidden lg:flex items-center space-x-3">
               {/* Public Sign In Button */}
-              {!isAuthenticated && !isLoading && (
+              {!isAuthenticated && (
                 <Button asChild className="bg-cactus-green hover:bg-cactus-green/90">
                   <a href="/api/login">
                     <LogIn className="w-4 h-4 mr-2" />
@@ -340,7 +340,7 @@ export function Header() {
             {/* Mobile Menu */}
             <div className="lg:hidden flex items-center space-x-2">
               {/* Public Mobile Sign In */}
-              {!isAuthenticated && !isLoading && (
+              {!isAuthenticated && (
                 <Button size="sm" asChild className="bg-cactus-green hover:bg-cactus-green/90">
                   <a href="/api/login">
                     <LogIn className="w-4 h-4" />
