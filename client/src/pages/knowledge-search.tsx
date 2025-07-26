@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuthOptional } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -13,26 +13,11 @@ import { isUnauthorizedError } from "@/lib/authUtils";
 import { cactusGenera } from "@shared/cactus-data";
 
 export default function KnowledgeSearch() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated } = useAuthOptional();
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedGenus, setSelectedGenus] = useState("all");
   const [selectedType, setSelectedType] = useState("all");
-
-  // Redirect to login if not authenticated
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      toast({
-        title: "Unauthorized",
-        description: "You are logged out. Logging in again...",
-        variant: "destructive",
-      });
-      setTimeout(() => {
-        window.location.href = "/api/login";
-      }, 500);
-      return;
-    }
-  }, [isAuthenticated, isLoading, toast]);
 
   // Create flat list of all species with their genus info
   const allSpecies = useMemo(() => {
@@ -69,9 +54,7 @@ export default function KnowledgeSearch() {
     setSelectedType("all");
   };
 
-  if (isLoading || !isAuthenticated) {
-    return null;
-  }
+  // Public page - no auth required
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-lime-wash/20 to-pine-mist/30 cactus-pattern-bg">
