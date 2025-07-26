@@ -104,14 +104,15 @@ export default function Home() {
 
         {/* Community Feed Section */}
         <div className="mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <div>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+            <div className="flex-1">
               <h2 className="section-title">Community Feed</h2>
-              <p className="text-gray-600">Latest plants shared by our community</p>
+              <p className="text-gray-600 hidden sm:block">Latest plants shared by our community</p>
+              <p className="text-gray-500 text-sm sm:hidden">Latest community plants</p>
             </div>
-            <div className="flex items-center space-x-2">
-              <Users className="h-5 w-5 text-gray-400" />
-              <span className="text-sm text-gray-600">
+            <div className="flex items-center space-x-2 shrink-0">
+              <Users className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
+              <span className="text-xs sm:text-sm text-gray-600 whitespace-nowrap">
                 Page {pagination?.page || 1} of {pagination?.totalPages || 1}
               </span>
             </div>
