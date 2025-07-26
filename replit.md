@@ -47,6 +47,15 @@ The application uses a monorepo structure with shared schemas:
 
 ### Recent Changes
 
+#### July 26, 2025 - Amazon Affiliate Integration & Personal Associate ID Configuration
+- **Implemented comprehensive Amazon affiliate product system** across all major pages with contextual product recommendations
+- **Configured personal Associate ID (mindrash-20)** for commission tracking on all affiliate links
+- **Added Amazon product displays on key pages**: Collection page (family-based products), Dashboard (top-rated supplies), Species pages (growing supplies sidebar), Home page (community picks), Care guides (professional tools)
+- **Curated relevant product categories** including soil mixes, pots, tools, fertilizers, books, grow lights, and watering equipment
+- **Smart contextual recommendations** showing different products based on page context and plant families
+- **Professional affiliate link structure** with proper Amazon tracking for commission attribution
+- All affiliate links now properly configured with "mindrash-20" Associate ID for revenue generation
+
 #### July 26, 2025 - Photo Gallery Display Fix & App Debugging
 - **Fixed photo gallery to display actual images** instead of placeholder cards on the Community Photo Gallery page
 - Updated photo gallery component to load images from `/uploads/` static route with proper error handling and fallback
