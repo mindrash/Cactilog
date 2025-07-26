@@ -389,22 +389,22 @@ export class DatabaseStorage implements IStorage {
     const plantsWithGrowth = await Promise.all(
       userPlants.map(async (plant) => {
         // Get growth records for this plant
-        const growthRecords = await db
+        const plantGrowthRecords = await db
           .select()
           .from(growthRecords)
           .where(eq(growthRecords.plantId, plant.id))
           .orderBy(desc(growthRecords.date));
 
-        const growthCount = growthRecords.length;
-        const latestGrowth = growthRecords[0] || undefined;
+        const growthCount = plantGrowthRecords.length;
+        const latestGrowth = plantGrowthRecords[0] || undefined;
 
         let growthRate: number | undefined;
         let daysSinceLastMeasurement: number | undefined;
 
-        if (growthRecords.length >= 2) {
+        if (plantGrowthRecords.length >= 2) {
           // Calculate growth rate from first to most recent measurement
-          const earliest = growthRecords[growthRecords.length - 1];
-          const latest = growthRecords[0];
+          const earliest = plantGrowthRecords[plantGrowthRecords.length - 1];
+          const latest = plantGrowthRecords[0];
           
           if (earliest.heightInches && latest.heightInches) {
             const heightChange = parseFloat(latest.heightInches) - parseFloat(earliest.heightInches);
@@ -567,6 +567,50 @@ export class DatabaseStorage implements IStorage {
       healthTrends,
       floweringActivity,
     };
+  }
+
+  async getPlantGrowthRecordsAuth(plantId: number, userId: string): Promise<GrowthRecord[]> {
+    // First verify the plant belongs to the user
+    const plant = await db
+      .select()
+      .from(plants)
+      .where(and(eq(plants.id, plantId), eq(plants.userId, userId)))
+      .limit(1);
+
+    if (plant.length === 0) {
+      throw new Error("Plant not found or unauthorized");
+    }
+
+    return await db
+      .select()
+      .from(growthRecords)
+      .where(eq(growthRecords.plantId, plantId))
+      .orderBy(desc(growthRecords.date));
+  }
+
+  async createGrowthRecordNew(plantId: number, data: any): Promise<GrowthRecord> {
+    const [record] = await db
+      .insert(growthRecords)
+      .values({
+        plantId,
+        date: data.date,
+        heightInches: data.heightInches || null,
+        widthInches: data.widthInches || null,
+        circumferenceInches: data.circumferenceInches || null,
+        offsetCount: data.offsetCount || null,
+        healthScore: data.healthScore || null,
+        floweringStatus: data.floweringStatus || null,
+        observations: data.observations || null,
+      })
+      .returning();
+
+    // Update plant's updatedAt timestamp
+    await db
+      .update(plants)
+      .set({ updatedAt: new Date() })
+      .where(eq(plants.id, plantId));
+
+    return record;
   }
 
   // Photo operations
