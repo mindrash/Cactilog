@@ -138,18 +138,49 @@ export class DatabaseStorage implements IStorage {
   }
 
   async upsertUser(userData: UpsertUser): Promise<User> {
-    const [user] = await db
-      .insert(users)
-      .values(userData)
-      .onConflictDoUpdate({
-        target: users.id,
-        set: {
-          ...userData,
-          updatedAt: new Date(),
-        },
-      })
-      .returning();
-    return user;
+    try {
+      // First try to find existing user by email or id
+      const existingUser = await db
+        .select()
+        .from(users)
+        .where(userData.email ? eq(users.email, userData.email) : eq(users.id, userData.id!))
+        .limit(1);
+
+      if (existingUser.length > 0) {
+        // Update existing user
+        const [updatedUser] = await db
+          .update(users)
+          .set({
+            ...userData,
+            updatedAt: new Date(),
+          })
+          .where(eq(users.id, existingUser[0].id))
+          .returning();
+        return updatedUser;
+      } else {
+        // Insert new user
+        const [newUser] = await db
+          .insert(users)
+          .values(userData)
+          .returning();
+        return newUser;
+      }
+    } catch (error) {
+      console.error('Error in upsertUser:', error);
+      // If there's still a conflict, try to find and return the existing user
+      if (error instanceof Error && error.message.includes('duplicate key')) {
+        const existingUser = await db
+          .select()
+          .from(users)
+          .where(userData.email ? eq(users.email, userData.email) : eq(users.id, userData.id!))
+          .limit(1);
+        
+        if (existingUser.length > 0) {
+          return existingUser[0];
+        }
+      }
+      throw error;
+    }
   }
 
   async updateUserDisplayName(userId: string, displayName: string): Promise<User> {
