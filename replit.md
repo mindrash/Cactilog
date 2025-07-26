@@ -47,6 +47,17 @@ The application uses a monorepo structure with shared schemas:
 
 ### Recent Changes
 
+#### July 26, 2025 - Photo Management & Collection Sorting Enhancements
+- **Implemented complete photo deletion functionality** with hover-to-show delete buttons and proper cleanup of both database records and physical files
+- **Fixed collection sorting system** to properly prioritize recently modified/added items including photo uploads as modification events
+- **Enhanced backend sorting logic** with comprehensive options: Recently Modified (default), Oldest First, Genus A-Z, Species A-Z, Custom ID A-Z, Plant ID ascending/descending
+- **Moved filtering and sorting from frontend to backend** for better performance and accurate photo activity tracking
+- **Added photo upload activity tracking** - uploading photos now updates plant's updatedAt field and moves items to top of collection
+- **Cleaned up orphaned photo database records** for missing files that were causing placeholder displays in photo gallery
+- **Enhanced photo gallery error handling** with detailed console logging and improved placeholder messaging for debugging
+- Photo deletion system fully functional with red trash icons appearing on hover, permanent deletion of files and database records
+- Collection now correctly sorts by "Recently Modified" as default, considering both plant updates and photo uploads
+
 #### July 26, 2025 - Amazon Affiliate Integration & Personal Associate ID Configuration
 - **Implemented comprehensive Amazon affiliate product system** across all major pages with contextual product recommendations
 - **Configured personal Associate ID (mindrash-20)** for commission tracking on all affiliate links
