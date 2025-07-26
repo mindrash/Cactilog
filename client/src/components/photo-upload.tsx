@@ -5,7 +5,8 @@ import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
 
 import { Input } from "@/components/ui/input";
-import { Plus, Upload } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Plus, Upload, Trash2 } from "lucide-react";
 
 interface PhotoUploadProps {
   plantId: number;
@@ -72,6 +73,46 @@ export default function PhotoUpload({ plantId, className = "" }: PhotoUploadProp
     },
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: async (photoId: number) => {
+      const response = await fetch(`/api/plants/${plantId}/photos/${photoId}`, {
+        method: 'DELETE',
+      });
+      
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(`${response.status}: ${error}`);
+      }
+      
+      return response;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/plants", plantId, "photos"] });
+      toast({
+        title: "Photo Deleted",
+        description: "Photo has been removed successfully.",
+      });
+    },
+    onError: (error) => {
+      if (isUnauthorizedError(error)) {
+        toast({
+          title: "Unauthorized",
+          description: "You are logged out. Logging in again...",
+          variant: "destructive",
+        });
+        setTimeout(() => {
+          window.location.href = "/api/login";
+        }, 500);
+        return;
+      }
+      toast({
+        title: "Delete Failed",
+        description: "Failed to delete photo. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -106,7 +147,7 @@ export default function PhotoUpload({ plantId, className = "" }: PhotoUploadProp
       {photosArray.length > 0 && (
         <div className="grid grid-cols-2 gap-4">
           {photosArray.map((photo: any) => (
-            <div key={photo.id} className="relative">
+            <div key={photo.id} className="relative group">
               <img
                 src={`/uploads/${photo.filename}`}
                 alt={photo.originalName}
@@ -115,6 +156,19 @@ export default function PhotoUpload({ plantId, className = "" }: PhotoUploadProp
               <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
                 {new Date(photo.uploadedAt).toLocaleDateString()}
               </div>
+              <Button
+                variant="destructive"
+                size="sm"
+                className="absolute top-2 right-2 h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  deleteMutation.mutate(photo.id);
+                }}
+                disabled={deleteMutation.isPending}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
             </div>
           ))}
         </div>

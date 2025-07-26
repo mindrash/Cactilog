@@ -334,9 +334,9 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deletePlantPhoto(id: number, userId: string): Promise<boolean> {
-    // Verify photo belongs to user's plant
+    // Get the full photo record to access the file path
     const [photo] = await db
-      .select({ plantId: plantPhotos.plantId })
+      .select()
       .from(plantPhotos)
       .where(eq(plantPhotos.id, id));
     
@@ -345,7 +345,26 @@ export class DatabaseStorage implements IStorage {
     const plant = await this.getPlant(photo.plantId, userId);
     if (!plant) return false;
     
+    // Delete from database first
     const result = await db.delete(plantPhotos).where(eq(plantPhotos.id, id));
+    
+    // If database deletion successful, try to delete the physical file
+    if (result.rowCount! > 0) {
+      try {
+        const fs = require('fs');
+        const path = require('path');
+        
+        // Delete the file if it exists
+        if (photo.filePath && fs.existsSync(photo.filePath)) {
+          fs.unlinkSync(photo.filePath);
+        }
+      } catch (error) {
+        console.error("Error deleting photo file:", error);
+        // Don't fail the entire operation if file deletion fails
+        // The database record is already deleted
+      }
+    }
+    
     return result.rowCount! > 0;
   }
 
