@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
+import AddGrowthModal from "@/components/add-growth-modal";
 import type { Plant, GrowthRecord } from "@shared/schema";
 
 interface PlantWithLatestGrowth extends Plant {
@@ -67,9 +68,9 @@ export default function GrowthTracking() {
   }
 
   const filteredPlants = plants?.filter(plant => 
-    plant.customId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (plant.customId || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
     plant.genus.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    plant.species.toLowerCase().includes(searchTerm.toLowerCase())
+    (plant.species || '').toLowerCase().includes(searchTerm.toLowerCase())
   ) || [];
 
   const sortedPlants = [...filteredPlants].sort((a, b) => {
@@ -79,7 +80,7 @@ export default function GrowthTracking() {
       case "most-records":
         return b.growthCount - a.growthCount;
       case "name":
-        return a.customId.localeCompare(b.customId);
+        return (a.customId || `${a.genus} ${a.species || ''}`).localeCompare(b.customId || `${b.genus} ${b.species || ''}`);
       default:
         return 0;
     }
@@ -442,10 +443,10 @@ export default function GrowthTracking() {
                       <div className="flex justify-between items-start mb-4">
                         <div>
                           <h3 className="subsection-title mb-1">
-                            {plant.customId}
+                            {plant.customId || `${plant.genus} ${plant.species || ''}`}
                           </h3>
                           <p className="text-sm text-gray-600 italic">
-                            {plant.genus} {plant.species}
+                            {plant.genus} {plant.species || ''}
                           </p>
                         </div>
                         <Badge variant={plant.growthCount > 0 ? "default" : "secondary"}>
@@ -499,10 +500,12 @@ export default function GrowthTracking() {
                       )}
                       
                       <div className="flex gap-2 pt-4">
-                        <Button size="sm" variant="outline" className="flex-1">
-                          <Plus className="h-4 w-4 mr-1" />
-                          Add Record
-                        </Button>
+                        <AddGrowthModal plant={plant}>
+                          <Button size="sm" variant="outline" className="flex-1">
+                            <Plus className="h-4 w-4 mr-1" />
+                            Add Record
+                          </Button>
+                        </AddGrowthModal>
                         <Button size="sm" variant="outline">
                           <Eye className="h-4 w-4" />
                         </Button>
