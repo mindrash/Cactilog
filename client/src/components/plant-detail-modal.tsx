@@ -238,11 +238,15 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
           )}
         </div>
 
-        <AddGrowthModal
-          plantId={plant.id}
-          open={showAddGrowthModal}
-          onOpenChange={setShowAddGrowthModal}
-        />
+        {showAddGrowthModal && (
+          <AddGrowthModal plant={plant}>
+            <Dialog open={showAddGrowthModal} onOpenChange={setShowAddGrowthModal}>
+              <DialogContent>
+                {/* This will be handled by AddGrowthModal internally */}
+              </DialogContent>
+            </Dialog>
+          </AddGrowthModal>
+        )}
 
         <EditPlantModal
           plant={plant}
