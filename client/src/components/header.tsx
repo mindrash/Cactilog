@@ -225,7 +225,16 @@ export function Header() {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     className="flex items-center space-x-2 text-red-600 cursor-pointer"
-                    onClick={() => window.location.href = "/api/logout"}
+                    onClick={async () => {
+                      try {
+                        // Clear any local state/cache
+                        window.location.href = "/api/logout";
+                      } catch (error) {
+                        console.error('Logout error:', error);
+                        // Fallback: force reload to landing page
+                        window.location.href = "/";
+                      }
+                    }}
                   >
                     <LogOut className="w-4 h-4" />
                     <span>Sign Out</span>
@@ -389,7 +398,16 @@ export function Header() {
                     <Button
                       variant="ghost"
                       className="w-full justify-start text-red-600"
-                      onClick={() => window.location.href = "/api/logout"}
+                      onClick={async () => {
+                        try {
+                          // Clear any local state/cache
+                          window.location.href = "/api/logout";
+                        } catch (error) {
+                          console.error('Logout error:', error);
+                          // Fallback: force reload to landing page
+                          window.location.href = "/";
+                        }
+                      }}
                     >
                       <LogOut className="w-4 h-4 mr-2" />
                       Sign Out
