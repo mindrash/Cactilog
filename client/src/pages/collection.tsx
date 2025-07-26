@@ -55,7 +55,20 @@ export default function Collection() {
   }, [isAuthenticated, isLoading, toast]);
 
   const { data: plants = [] } = useQuery<Plant[]>({
-    queryKey: ["/api/plants", { search: searchTerm, type: familyFilter, genus: genusFilter, sortBy }],
+    queryKey: ["/api/plants", searchTerm, familyFilter, genusFilter, sortBy],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      if (searchTerm) params.append('search', searchTerm);
+      if (familyFilter) params.append('type', familyFilter);
+      if (genusFilter) params.append('genus', genusFilter);
+      if (sortBy) params.append('sortBy', sortBy);
+      
+      const response = await fetch(`/api/plants?${params.toString()}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch plants');
+      }
+      return response.json();
+    },
     enabled: isAuthenticated,
   });
 
