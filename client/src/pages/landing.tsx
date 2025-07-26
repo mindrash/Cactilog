@@ -5,11 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { SEO } from "@/components/seo";
-import { Header } from "@/components/header";
+import Header from "@/components/header";
 import Footer from "@/components/footer";
 import type { Plant } from "@shared/schema";
 import { useState } from "react";
 import logoImage from "@/assets/cactilog-logo.png";
+import { amazonProducts, getFeaturedProducts } from "@shared/amazon-products";
 
 interface PublicFeedResponse {
   plants: Plant[];
@@ -84,6 +85,9 @@ function Landing() {
       return response.json();
     },
   });
+
+  // Get featured products for the landing page
+  const featuredProducts = getFeaturedProducts('home');
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-lime-wash/20 to-pine-mist/30 cactus-pattern-bg">
@@ -188,13 +192,13 @@ function Landing() {
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="max-w-6xl mx-auto px-4 py-12 text-center">
-        <div className="mb-8">
-          <h2 className="page-title-xl mb-6">
+      {/* Compact Hero Section */}
+      <section className="max-w-6xl mx-auto px-4 py-6 text-center">
+        <div className="mb-6">
+          <h2 className="page-title-xl mb-4">
             The Complete Platform for Cactus & Succulent Enthusiasts
           </h2>
-          <p className="text-lg text-gray-700 max-w-3xl mx-auto mb-8">
+          <p className="text-lg text-gray-700 max-w-3xl mx-auto mb-6">
             Join thousands of collectors tracking their plants, sharing discoveries, and growing their knowledge. 
             From beginners to experts, Cactilog helps you nurture your passion for cacti and succulents.
           </p>
@@ -209,96 +213,154 @@ function Landing() {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="max-w-6xl mx-auto px-4 py-12">
-        <div className="text-center mb-12">
-          <h3 className="page-title-lg mb-4">Why Join Cactilog?</h3>
+      {/* Featured Products Above Fold */}
+      <section className="max-w-6xl mx-auto px-4 py-6 bg-white/50 rounded-lg mx-4 mb-6">
+        <div className="text-center mb-4">
+          <h3 className="section-title mb-2">Essential Supplies for Plant Enthusiasts</h3>
+          <p className="text-sm text-gray-600">Carefully selected products to help your collection thrive</p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {featuredProducts.slice(0, 3).map((product) => (
+            <Card key={product.id} className="hover:shadow-md transition-shadow">
+              <CardContent className="p-4">
+                <div className="flex items-start space-x-3">
+                  <img 
+                    src={product.imageUrl} 
+                    alt={product.title}
+                    className="w-16 h-16 object-cover rounded-lg flex-shrink-0"
+                    onError={(e) => {
+                      e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0zMiAyNEMyOC42ODYzIDI0IDI2IDI2LjY4NjMgMjYgMzBDMjYgMzMuMzEzNyAyOC42ODYzIDM2IDMyIDM2QzM1LjMxMzcgMzYgMzggMzMuMzEzNyAzOCAzMEMzOCAyNi42ODYzIDM1LjMxMzcgMjQgMzIgMjRaIiBmaWxsPSIjOUI5QjlCIi8+Cjwvc3ZnPgo=';
+                    }}
+                  />
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-medium text-sm text-gray-900 line-clamp-2 mb-1">
+                      {product.title}
+                    </h4>
+                    <p className="text-xs text-gray-600 mb-2 line-clamp-2">
+                      {product.description}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-semibold text-cactus-green">
+                        {product.price}
+                      </span>
+                      <a 
+                        href={product.affiliateUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs bg-cactus-green text-white px-2 py-1 rounded hover:bg-cactus-green/90 transition-colors"
+                      >
+                        Shop Now
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+        
+        <div className="text-center mt-4">
+          <a 
+            href="/vendors" 
+            onClick={(e) => { e.preventDefault(); window.location.href = '/vendors'; }}
+            className="text-sm text-cactus-green hover:text-cactus-green/80 underline"
+          >
+            View All Trusted Vendors & Products →
+          </a>
+        </div>
+      </section>
+
+      {/* Compact Features Section */}
+      <section className="max-w-6xl mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+          <h3 className="page-title-lg mb-3">Why Join Cactilog?</h3>
           <p className="text-gray-600 max-w-2xl mx-auto">
             Everything you need to document, track, and share your plant journey
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {/* Collection Management */}
-          <Card className="text-center p-6 hover:shadow-lg transition-shadow">
-            <CardContent className="pt-6">
-              <div className="w-16 h-16 bg-cactus-green/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Camera className="w-8 h-8 text-cactus-green" />
+          <Card className="text-center p-4 hover:shadow-lg transition-shadow">
+            <CardContent className="pt-4">
+              <div className="w-12 h-12 bg-cactus-green/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Camera className="w-6 h-6 text-cactus-green" />
               </div>
-              <h4 className="section-title mb-3">Smart Collection Management</h4>
+              <h4 className="section-title mb-2">Smart Collection Management</h4>
               <p className="text-gray-600 text-sm">
                 Document your plants with photos, custom IDs, and detailed botanical information. 
-                Track acquisition dates, suppliers, and personal notes for every specimen.
+                Track acquisition dates, suppliers, and personal notes.
               </p>
             </CardContent>
           </Card>
 
           {/* Growth Tracking */}
-          <Card className="text-center p-6 hover:shadow-lg transition-shadow">
-            <CardContent className="pt-6">
-              <div className="w-16 h-16 bg-succulent-green/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <TrendingUp className="w-8 h-8 text-succulent-green" />
+          <Card className="text-center p-4 hover:shadow-lg transition-shadow">
+            <CardContent className="pt-4">
+              <div className="w-12 h-12 bg-succulent-green/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                <TrendingUp className="w-6 h-6 text-succulent-green" />
               </div>
-              <h4 className="section-title mb-3">Growth Tracking & Analytics</h4>
+              <h4 className="section-title mb-2">Growth Tracking & Analytics</h4>
               <p className="text-gray-600 text-sm">
                 Monitor your plants' progress with measurements, photos, and observations over time. 
-                View growth charts and trends to optimize your care routine.
+                View growth charts and trends.
               </p>
             </CardContent>
           </Card>
 
           {/* Community */}
-          <Card className="text-center p-6 hover:shadow-lg transition-shadow">
-            <CardContent className="pt-6">
-              <div className="w-16 h-16 bg-pine-green/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Users className="w-8 h-8 text-pine-green" />
+          <Card className="text-center p-4 hover:shadow-lg transition-shadow">
+            <CardContent className="pt-4">
+              <div className="w-12 h-12 bg-pine-green/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Users className="w-6 h-6 text-pine-green" />
               </div>
-              <h4 className="section-title mb-3">Vibrant Community</h4>
+              <h4 className="section-title mb-2">Vibrant Community</h4>
               <p className="text-gray-600 text-sm">
                 Connect with fellow enthusiasts, share your collection publicly, and discover 
-                amazing plants from collectors worldwide. Like and appreciate others' specimens.
+                amazing plants from collectors worldwide.
               </p>
             </CardContent>
           </Card>
 
           {/* Knowledge Base */}
-          <Card className="text-center p-6 hover:shadow-lg transition-shadow">
-            <CardContent className="pt-6">
-              <div className="w-16 h-16 bg-sage-green/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <BookOpen className="w-8 h-8 text-sage-green" />
+          <Card className="text-center p-4 hover:shadow-lg transition-shadow">
+            <CardContent className="pt-4">
+              <div className="w-12 h-12 bg-sage-green/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                <BookOpen className="w-6 h-6 text-sage-green" />
               </div>
-              <h4 className="section-title mb-3">Comprehensive Knowledge Base</h4>
+              <h4 className="section-title mb-2">Knowledge Base</h4>
               <p className="text-gray-600 text-sm">
-                Access detailed information on 1,200+ species across 60+ genera. Learn care guides, 
-                botanical classification, and discover new species to add to your collection.
+                Access detailed information on 1,200+ species across 60+ genera. Learn care guides 
+                and discover new species.
               </p>
             </CardContent>
           </Card>
 
           {/* Privacy & Control */}
-          <Card className="text-center p-6 hover:shadow-lg transition-shadow">
-            <CardContent className="pt-6">
-              <div className="w-16 h-16 bg-forest-green/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Shield className="w-8 h-8 text-forest-green" />
+          <Card className="text-center p-4 hover:shadow-lg transition-shadow">
+            <CardContent className="pt-4">
+              <div className="w-12 h-12 bg-forest-green/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Shield className="w-6 h-6 text-forest-green" />
               </div>
-              <h4 className="section-title mb-3">Privacy & Control</h4>
+              <h4 className="section-title mb-2">Privacy & Control</h4>
               <p className="text-gray-600 text-sm">
-                Keep your collection private or share selectively. Control which plants are public, 
-                set custom display names, and manage your privacy settings with granular control.
+                Keep your collection private or share selectively. Control which plants are public 
+                with granular privacy settings.
               </p>
             </CardContent>
           </Card>
 
           {/* Trusted Vendors */}
-          <Card className="text-center p-6 hover:shadow-lg transition-shadow">
-            <CardContent className="pt-6">
-              <div className="w-16 h-16 bg-earth-brown/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Heart className="w-8 h-8 text-earth-brown" />
+          <Card className="text-center p-4 hover:shadow-lg transition-shadow">
+            <CardContent className="pt-4">
+              <div className="w-12 h-12 bg-earth-brown/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Heart className="w-6 h-6 text-earth-brown" />
               </div>
-              <h4 className="section-title mb-3">Trusted Vendor Directory</h4>
+              <h4 className="section-title mb-2">Trusted Vendors</h4>
               <p className="text-gray-600 text-sm">
                 Discover reputable suppliers for plants, seeds, pots, and cultivation gear. 
-                All vendors are carefully curated for quality and reliability.
+                All vendors carefully curated for quality.
               </p>
             </CardContent>
           </Card>
@@ -306,9 +368,9 @@ function Landing() {
       </section>
 
       {/* Community Showcase */}
-      <section className="max-w-6xl mx-auto px-4 py-12">
-        <div className="text-center mb-8">
-          <h3 className="page-title-lg mb-4">
+      <section className="max-w-6xl mx-auto px-4 py-8">
+        <div className="text-center mb-6">
+          <h3 className="page-title-lg mb-3">
             Latest from Our Community
           </h3>
           <p className="text-gray-600 max-w-2xl mx-auto">

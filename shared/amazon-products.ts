@@ -173,15 +173,16 @@ export function getFeaturedProducts(context: 'collection' | 'species' | 'care' |
         ['books', 'tools', 'fertilizer'].includes(p.category)
       ).slice(0, 2);
     
+    case 'home':
+      // Featured products for the landing page
+      return amazonProducts.filter(p => 
+        ['soil', 'pots', 'tools'].includes(p.category)
+      ).slice(0, 6);
+      
     case 'care':
       return amazonProducts.filter(p => 
-        ['fertilizer', 'lights', 'watering'].includes(p.category)
-      ).slice(0, 4);
-    
-    case 'home':
-      return amazonProducts
-        .sort((a, b) => b.rating - a.rating)
-        .slice(0, 4);
+        ['fertilizer', 'watering', 'books'].includes(p.category)
+      ).slice(0, 3);
     
     default:
       return amazonProducts.slice(0, 3);
