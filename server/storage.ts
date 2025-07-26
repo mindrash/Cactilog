@@ -322,12 +322,28 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updatePlant(id: number, userId: string, updates: Partial<InsertPlant>): Promise<Plant | undefined> {
-    const [updatedPlant] = await db
-      .update(plants)
-      .set({ ...updates, updatedAt: new Date() })
-      .where(and(eq(plants.id, id), eq(plants.userId, userId)))
-      .returning();
-    return updatedPlant;
+    console.log("STORAGE updatePlant - DEBUG INFO:");
+    console.log("  Plant ID:", id);
+    console.log("  User ID:", userId);
+    console.log("  Updates:", JSON.stringify(updates, null, 2));
+    
+    try {
+      const [updatedPlant] = await db
+        .update(plants)
+        .set({ ...updates, updatedAt: new Date() })
+        .where(and(eq(plants.id, id), eq(plants.userId, userId)))
+        .returning();
+      
+      console.log("  Database update result:", updatedPlant ? "SUCCESS" : "NO_ROWS_AFFECTED");
+      if (updatedPlant) {
+        console.log("  Updated plant:", JSON.stringify(updatedPlant, null, 2));
+      }
+      
+      return updatedPlant;
+    } catch (dbError) {
+      console.error("  Database error in updatePlant:", dbError);
+      throw dbError;
+    }
   }
 
   async deletePlant(id: number, userId: string): Promise<boolean> {
