@@ -54,6 +54,21 @@ export interface IStorage {
   createGrowthRecord(record: InsertGrowthRecord): Promise<GrowthRecord>;
   updateGrowthRecord(id: number, userId: string, updates: Partial<InsertGrowthRecord>): Promise<GrowthRecord | undefined>;
   deleteGrowthRecord(id: number, userId: string): Promise<boolean>;
+  getGrowthOverview(userId: string): Promise<Array<Plant & { 
+    latestGrowth?: GrowthRecord; 
+    growthCount: number;
+    growthRate?: number;
+    daysSinceLastMeasurement?: number;
+  }>>;
+  getGrowthAnalytics(userId: string): Promise<{
+    totalMeasurements: number;
+    plantsWithGrowth: number;
+    averageGrowthRate: number;
+    fastestGrowing: Array<{ plant: Plant; growthRate: number }>;
+    genusGrowthComparison: Array<{ genus: string; averageGrowthRate: number; count: number }>;
+    healthTrends: Array<{ month: string; averageHealth: number }>;
+    floweringActivity: Array<{ genus: string; floweringCount: number; totalCount: number }>;
+  }>;
   
   // Photo operations
   getPlantPhotos(plantId: number, userId: string): Promise<PlantPhoto[]>;
@@ -357,6 +372,201 @@ export class DatabaseStorage implements IStorage {
     );
 
     return plantsWithGrowth;
+  }
+
+  async getGrowthOverview(userId: string): Promise<Array<Plant & { 
+    latestGrowth?: GrowthRecord; 
+    growthCount: number;
+    growthRate?: number;
+    daysSinceLastMeasurement?: number;
+  }>> {
+    const userPlants = await db
+      .select()
+      .from(plants)
+      .where(eq(plants.userId, userId))
+      .orderBy(desc(plants.updatedAt));
+
+    const plantsWithGrowth = await Promise.all(
+      userPlants.map(async (plant) => {
+        // Get growth records for this plant
+        const growthRecords = await db
+          .select()
+          .from(growthRecords)
+          .where(eq(growthRecords.plantId, plant.id))
+          .orderBy(desc(growthRecords.date));
+
+        const growthCount = growthRecords.length;
+        const latestGrowth = growthRecords[0] || undefined;
+
+        let growthRate: number | undefined;
+        let daysSinceLastMeasurement: number | undefined;
+
+        if (growthRecords.length >= 2) {
+          // Calculate growth rate from first to most recent measurement
+          const earliest = growthRecords[growthRecords.length - 1];
+          const latest = growthRecords[0];
+          
+          if (earliest.heightInches && latest.heightInches) {
+            const heightChange = parseFloat(latest.heightInches) - parseFloat(earliest.heightInches);
+            const daysBetween = Math.abs((new Date(latest.date).getTime() - new Date(earliest.date).getTime()) / (1000 * 60 * 60 * 24));
+            growthRate = heightChange / (daysBetween / 30); // Growth per month
+          }
+        }
+
+        if (latestGrowth) {
+          const lastMeasurement = new Date(latestGrowth.date);
+          daysSinceLastMeasurement = Math.floor((Date.now() - lastMeasurement.getTime()) / (1000 * 60 * 60 * 24));
+        }
+
+        return {
+          ...plant,
+          latestGrowth,
+          growthCount,
+          growthRate,
+          daysSinceLastMeasurement,
+        };
+      })
+    );
+
+    return plantsWithGrowth;
+  }
+
+  async getGrowthAnalytics(userId: string): Promise<{
+    totalMeasurements: number;
+    plantsWithGrowth: number;
+    averageGrowthRate: number;
+    fastestGrowing: Array<{ plant: Plant; growthRate: number }>;
+    genusGrowthComparison: Array<{ genus: string; averageGrowthRate: number; count: number }>;
+    healthTrends: Array<{ month: string; averageHealth: number }>;
+    floweringActivity: Array<{ genus: string; floweringCount: number; totalCount: number }>;
+  }> {
+    const userPlants = await db
+      .select()
+      .from(plants)
+      .where(eq(plants.userId, userId));
+
+    const plantIds = userPlants.map(p => p.id);
+    
+    const allGrowthRecords = plantIds.length > 0 
+      ? await db
+          .select()
+          .from(growthRecords)
+          .where(or(...plantIds.map(id => eq(growthRecords.plantId, id))))
+          .orderBy(desc(growthRecords.date))
+      : [];
+
+    const totalMeasurements = allGrowthRecords.length;
+    const plantsWithGrowth = new Set(allGrowthRecords.map(r => r.plantId)).size;
+
+    // Calculate growth rates for each plant
+    const plantGrowthRates: Array<{ plant: Plant; growthRate: number }> = [];
+    for (const plant of userPlants) {
+      const plantRecords = allGrowthRecords
+        .filter(r => r.plantId === plant.id)
+        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+      if (plantRecords.length >= 2) {
+        const earliest = plantRecords[0];
+        const latest = plantRecords[plantRecords.length - 1];
+        
+        if (earliest.heightInches && latest.heightInches) {
+          const heightChange = parseFloat(latest.heightInches) - parseFloat(earliest.heightInches);
+          const daysBetween = Math.abs((new Date(latest.date).getTime() - new Date(earliest.date).getTime()) / (1000 * 60 * 60 * 24));
+          const growthRate = heightChange / (daysBetween / 30); // Growth per month
+          
+          if (growthRate > 0) {
+            plantGrowthRates.push({ plant, growthRate });
+          }
+        }
+      }
+    }
+
+    const averageGrowthRate = plantGrowthRates.length > 0 
+      ? plantGrowthRates.reduce((sum, p) => sum + p.growthRate, 0) / plantGrowthRates.length 
+      : 0;
+
+    const fastestGrowing = plantGrowthRates
+      .sort((a, b) => b.growthRate - a.growthRate)
+      .slice(0, 5);
+
+    // Genus growth comparison
+    const genusGroups: { [genus: string]: number[] } = {};
+    plantGrowthRates.forEach(({ plant, growthRate }) => {
+      if (!genusGroups[plant.genus]) {
+        genusGroups[plant.genus] = [];
+      }
+      genusGroups[plant.genus].push(growthRate);
+    });
+
+    const genusGrowthComparison = Object.entries(genusGroups).map(([genus, rates]) => ({
+      genus,
+      averageGrowthRate: rates.reduce((sum, rate) => sum + rate, 0) / rates.length,
+      count: rates.length,
+    })).sort((a, b) => b.averageGrowthRate - a.averageGrowthRate);
+
+    // Health trends by month
+    const healthTrends: Array<{ month: string; averageHealth: number }> = [];
+    const healthRecords = allGrowthRecords.filter(r => r.healthScore !== null);
+    
+    if (healthRecords.length > 0) {
+      const monthlyHealth: { [month: string]: number[] } = {};
+      
+      healthRecords.forEach(record => {
+        const month = new Date(record.date).toLocaleString('default', { month: 'short', year: 'numeric' });
+        if (!monthlyHealth[month]) {
+          monthlyHealth[month] = [];
+        }
+        monthlyHealth[month].push(record.healthScore!);
+      });
+
+      Object.entries(monthlyHealth).forEach(([month, scores]) => {
+        const averageHealth = scores.reduce((sum, score) => sum + score, 0) / scores.length;
+        healthTrends.push({ month, averageHealth });
+      });
+
+      // Sort by date
+      healthTrends.sort((a, b) => new Date(a.month).getTime() - new Date(b.month).getTime());
+    }
+
+    // Flowering activity by genus
+    const floweringActivity: Array<{ genus: string; floweringCount: number; totalCount: number }> = [];
+    const genusFlowering: { [genus: string]: { flowering: number; total: number } } = {};
+
+    userPlants.forEach(plant => {
+      if (!genusFlowering[plant.genus]) {
+        genusFlowering[plant.genus] = { flowering: 0, total: 0 };
+      }
+      genusFlowering[plant.genus].total++;
+    });
+
+    allGrowthRecords.forEach(record => {
+      if (record.floweringStatus && record.floweringStatus !== 'none') {
+        const plant = userPlants.find(p => p.id === record.plantId);
+        if (plant && genusFlowering[plant.genus]) {
+          genusFlowering[plant.genus].flowering++;
+        }
+      }
+    });
+
+    Object.entries(genusFlowering).forEach(([genus, { flowering, total }]) => {
+      if (total > 0) {
+        floweringActivity.push({
+          genus,
+          floweringCount: flowering,
+          totalCount: total,
+        });
+      }
+    });
+
+    return {
+      totalMeasurements,
+      plantsWithGrowth,
+      averageGrowthRate,
+      fastestGrowing,
+      genusGrowthComparison,
+      healthTrends,
+      floweringActivity,
+    };
   }
 
   // Photo operations
