@@ -47,6 +47,18 @@ The application uses a monorepo structure with shared schemas:
 
 ### Recent Changes
 
+#### July 25, 2025 - Vendor Purchase Links Integration for Species Pages
+- **Added VendorRecommendations component** providing trusted vendor links directly on each species page
+- **Intelligent vendor filtering** prioritizing seed specialists for Trichocereus species due to legal considerations
+- **Comprehensive vendor database integration** featuring Mesa Garden, SeedsCactus.com, CSSA Seed Depot, Planet Desert, California Cactus Center, and The Cactus King
+- **Smart recommendations system** showing reputation badges (premium, luxury, reliable), price ranges, and specialties (seeds, plants, supplies)
+- **Species-specific purchasing guidance** with vendor reasoning and purchase notes for authentic specimens
+- **Direct external links** to vendor websites with "Visit Store" buttons for immediate purchasing
+- **Legal compliance messaging** encouraging seed purchases for genetic diversity and authenticity verification
+- **Integrated with existing vendor directory** linking to full vendor list for comprehensive supplier browsing
+- **Responsive sidebar placement** showing 3 top recommendations per species with detailed vendor information
+- Purchase links now available on all species pages in the Knowledge Base sidebar
+
 #### July 25, 2025 - Comprehensive Trichocereus Clone & Cultivar Database with Detailed Medicinal History
 - **Massively expanded Trichocereus genus** with comprehensive clone and cultivar information across all major species
 - **Added detailed medicinal and cultural history** spanning 3,000+ years of traditional use in Andean cultures including Chavín, Moche, Nazca civilizations
