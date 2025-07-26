@@ -11,7 +11,7 @@ import PlantDetailModal from "@/components/plant-detail-modal";
 import ExportCollectionModal from "@/components/export-collection-modal";
 import { SEO, seoConfigs } from "@/components/seo";
 import { Plant } from "@shared/schema";
-import { Search, Filter, Plus, Grid, List, Download } from "lucide-react";
+import { Search, Filter, Plus, Grid, List, Download, ArrowUpDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -31,6 +31,7 @@ export default function Collection() {
   const [searchTerm, setSearchTerm] = useState("");
   const [familyFilter, setFamilyFilter] = useState("");
   const [genusFilter, setGenusFilter] = useState("");
+  const [sortBy, setSortBy] = useState("recent");
   const [showAddModal, setShowAddModal] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
@@ -77,6 +78,50 @@ export default function Collection() {
     return matchesSearch && matchesFamily && matchesGenus;
   });
 
+  // Sort filtered plants
+  const sortedPlants = [...filteredPlants].sort((a, b) => {
+    switch (sortBy) {
+      case "recent":
+        // Sort by most recently modified/added (updatedAt or createdAt)
+        const aDate = new Date(a.updatedAt || a.createdAt || 0);
+        const bDate = new Date(b.updatedAt || b.createdAt || 0);
+        return bDate.getTime() - aDate.getTime();
+      
+      case "oldest":
+        // Sort by oldest first
+        const aOldDate = new Date(a.createdAt || 0);
+        const bOldDate = new Date(b.createdAt || 0);
+        return aOldDate.getTime() - bOldDate.getTime();
+      
+      case "genus-alpha":
+        // Sort alphabetically by genus, then species
+        const genusCompare = (a.genus || "").localeCompare(b.genus || "");
+        if (genusCompare !== 0) return genusCompare;
+        return (a.species || "").localeCompare(b.species || "");
+      
+      case "species-alpha":
+        // Sort alphabetically by species, then genus
+        const speciesCompare = (a.species || "").localeCompare(b.species || "");
+        if (speciesCompare !== 0) return speciesCompare;
+        return (a.genus || "").localeCompare(b.genus || "");
+      
+      case "id-asc":
+        // Sort by plant ID ascending
+        return a.id - b.id;
+      
+      case "id-desc":
+        // Sort by plant ID descending
+        return b.id - a.id;
+      
+      case "custom-id":
+        // Sort by custom ID alphabetically
+        return (a.customId || "").localeCompare(b.customId || "");
+      
+      default:
+        return 0;
+    }
+  });
+
   return (
     <div className="min-h-screen cactus-pattern-bg-light">
       <SEO {...seoConfigs.collection} />
@@ -116,7 +161,7 @@ export default function Collection() {
                 
                 {/* Filters Row - Responsive Layout */}
                 <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
-                  {/* First Row: Filters */}
+                  {/* First Row: Filters and Sort */}
                   <div className="flex flex-col sm:flex-row gap-3 flex-1">
                     <Select value={familyFilter || "all"} onValueChange={(value) => setFamilyFilter(value === "all" ? "" : value)}>
                       <SelectTrigger className="w-full sm:w-[140px]">
@@ -152,6 +197,24 @@ export default function Collection() {
                         ))}
                       </SelectContent>
                     </Select>
+                    
+                    <Select value={sortBy} onValueChange={setSortBy}>
+                      <SelectTrigger className="w-full sm:w-[160px]">
+                        <div className="flex items-center gap-2">
+                          <ArrowUpDown className="w-4 h-4" />
+                          <SelectValue placeholder="Sort by..." />
+                        </div>
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="recent">Recently Modified</SelectItem>
+                        <SelectItem value="oldest">Oldest First</SelectItem>
+                        <SelectItem value="genus-alpha">Genus A-Z</SelectItem>
+                        <SelectItem value="species-alpha">Species A-Z</SelectItem>
+                        <SelectItem value="custom-id">Custom ID A-Z</SelectItem>
+                        <SelectItem value="id-asc">Plant ID (Low-High)</SelectItem>
+                        <SelectItem value="id-desc">Plant ID (High-Low)</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   
                   {/* Second Row: Action Buttons */}
@@ -167,7 +230,7 @@ export default function Collection() {
                         variant="outline" 
                         className="flex-1 sm:flex-initial px-3"
                         onClick={() => setShowExportModal(true)}
-                        disabled={filteredPlants.length === 0}
+                        disabled={sortedPlants.length === 0}
                       >
                         <Download className="w-4 h-4 mr-2" />
                         <span className="hidden sm:inline">Export</span>
@@ -201,10 +264,10 @@ export default function Collection() {
           </div>
 
           {/* Plant Display */}
-          {filteredPlants.length > 0 ? (
+          {sortedPlants.length > 0 ? (
             viewMode === "grid" ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
-                {filteredPlants.map((plant) => (
+                {sortedPlants.map((plant) => (
                   <PlantCard key={plant.id} plant={plant} />
                 ))}
               </div>
@@ -222,7 +285,7 @@ export default function Collection() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredPlants.map((plant) => (
+                    {sortedPlants.map((plant) => (
                       <TableRow 
                         key={plant.id} 
                         className="hover:bg-gray-50 cursor-pointer"
