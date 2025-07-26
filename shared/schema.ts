@@ -88,6 +88,11 @@ export const growthRecords = pgTable("growth_records", {
   heightInches: decimal("height_inches", { precision: 5, scale: 2 }),
   widthInches: decimal("width_inches", { precision: 5, scale: 2 }),
   weightOz: decimal("weight_oz", { precision: 6, scale: 2 }),
+  circumferenceInches: decimal("circumference_inches", { precision: 5, scale: 2 }),
+  offsetCount: integer("offset_count").default(0), // Number of pups/offsets
+  healthScore: integer("health_score"), // 1-10 subjective health rating
+  floweringStatus: varchar("flowering_status"), // none, budding, flowering, fruiting
+  environmentalNotes: text("environmental_notes"), // Temperature, light, watering changes
   observations: text("observations"),
   createdAt: timestamp("created_at").defaultNow(),
 });
@@ -206,6 +211,18 @@ export const insertPlantSchema = createInsertSchema(plants).omit({
 export const insertGrowthRecordSchema = createInsertSchema(growthRecords).omit({
   id: true,
   createdAt: true,
+}).extend({
+  date: z.string().min(1, "Date is required"),
+  plantId: z.number().min(1, "Plant ID is required"),
+  heightInches: z.string().optional().nullable(),
+  widthInches: z.string().optional().nullable(),
+  weightOz: z.string().optional().nullable(),
+  circumferenceInches: z.string().optional().nullable(),
+  offsetCount: z.number().min(0).optional().nullable(),
+  healthScore: z.number().min(1).max(10).optional().nullable(),
+  floweringStatus: z.enum(["none", "budding", "flowering", "fruiting"]).optional().nullable(),
+  environmentalNotes: z.string().optional().nullable(),
+  observations: z.string().optional().nullable(),
 });
 
 export const insertPlantPhotoSchema = createInsertSchema(plantPhotos).omit({
