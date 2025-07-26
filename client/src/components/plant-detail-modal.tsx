@@ -80,7 +80,7 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
         <DialogHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between pr-8">
             <div>
               <DialogTitle>
                 {plant.commonName || `${plant.genus} ${plant.species || ""}`}
@@ -89,13 +89,13 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                 <em>{plant.genus}</em> {plant.species && <span>{plant.species}</span>}
               </p>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-3 mr-2">
               <Button 
                 variant="outline" 
                 size="sm"
                 onClick={() => setShowEditModal(true)}
               >
-                <Edit className="w-4 h-4" />
+                <Edit className="w-4 h-4 mr-1" />
                 Edit
               </Button>
               <Button 
@@ -103,6 +103,7 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                 size="sm"
                 onClick={() => deletePlantMutation.mutate()}
                 disabled={deletePlantMutation.isPending}
+                className="text-red-600 hover:text-red-700 hover:border-red-300"
               >
                 <Trash2 className="w-4 h-4" />
               </Button>
