@@ -306,21 +306,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user.id;
       const plantId = parseInt(req.params.id);
       
+      console.log("PATCH /api/plants/:id - DEBUG INFO:");
+      console.log("  Plant ID:", plantId);
+      console.log("  User ID:", userId);
+      console.log("  Request body:", JSON.stringify(req.body, null, 2));
+      
       if (isNaN(plantId)) {
+        console.log("  ERROR: Invalid plant ID");
         return res.status(400).json({ message: "Invalid plant ID" });
       }
       
+      console.log("  Validating data with insertPlantSchema.partial()...");
       const validatedData = insertPlantSchema.partial().parse(req.body);
+      console.log("  Validated data:", JSON.stringify(validatedData, null, 2));
+      
+      console.log("  Calling storage.updatePlant...");
       const plant = await storage.updatePlant(plantId, userId, validatedData);
+      console.log("  Update result:", plant ? "SUCCESS" : "NOT_FOUND");
       
       if (!plant) {
+        console.log("  ERROR: Plant not found or user mismatch");
         return res.status(404).json({ message: "Plant not found" });
       }
       
+      console.log("  Returning updated plant:", JSON.stringify(plant, null, 2));
       res.json(plant);
     } catch (error) {
-      console.error("Error updating plant:", error);
+      console.error("ERROR updating plant:", error);
       if (error instanceof z.ZodError) {
+        console.error("  Zod validation errors:", JSON.stringify(error.errors, null, 2));
         return res.status(400).json({ message: "Invalid plant data", errors: error.errors });
       }
       res.status(500).json({ message: "Failed to update plant" });
