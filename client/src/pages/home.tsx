@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import PlantCard from "@/components/plant-card";
 import Header from "@/components/header";
+import Footer from "@/components/footer";
 import { SEO, seoConfigs } from "@/components/seo";
 import AmazonAffiliateProducts from "@/components/amazon-affiliate-products";
 import type { Plant } from "@shared/schema";
@@ -196,6 +197,7 @@ export default function Home() {
           />
         </div>
       </div>
+      <Footer />
     </div>
   );
 }
