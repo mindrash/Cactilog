@@ -42,7 +42,7 @@ export default function AmazonAffiliateProducts({
         )}
       </div>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3">
         {products.map((product) => (
           <Card key={product.id} className="bg-white border-orange-100 hover:shadow-md transition-shadow">
             <CardContent className="p-3">
@@ -51,15 +51,15 @@ export default function AmazonAffiliateProducts({
                   <img 
                     src={product.imageUrl} 
                     alt={product.title}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover rounded-lg"
                     onError={(e) => {
                       const target = e.currentTarget as HTMLImageElement;
                       const fallback = target.nextElementSibling as HTMLSpanElement;
                       target.style.display = 'none';
-                      fallback.style.display = 'flex';
+                      if (fallback) fallback.style.display = 'flex';
                     }}
                   />
-                  <span className="text-2xl hidden">🌵</span>
+                  <span className="text-2xl hidden items-center justify-center w-full h-full">🌵</span>
                 </div>
                 
                 <div className="flex-1 min-w-0">
