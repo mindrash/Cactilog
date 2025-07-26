@@ -34,6 +34,7 @@ const navigationGroups = {
     { href: "/knowledge", label: "Browse Genera", icon: BookOpen },
     { href: "/knowledge/search", label: "Species Search", icon: Search },
     { href: "/knowledge/care-guides", icon: Leaf, label: "Care Guides" },
+    { href: "/knowledge/diseases-pests", icon: Shield, label: "Diseases & Pests" },
     { href: "/vendors", label: "Trusted Vendors", icon: Store },
   ],
   account: [

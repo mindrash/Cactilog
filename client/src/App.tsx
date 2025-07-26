@@ -18,6 +18,7 @@ import KnowledgeGenus from "@/pages/knowledge-genus";
 import KnowledgeSpecies from "@/pages/knowledge-species";
 import KnowledgeVariant from "@/pages/knowledge-variant";
 import KnowledgeCareGuides from "@/pages/knowledge-care-guides";
+import KnowledgeDiseasesAndPests from "@/pages/knowledge-diseases-pests";
 import Import from "@/pages/import";
 import Settings from "@/pages/settings";
 import Vendors from "@/pages/vendors";
@@ -61,6 +62,7 @@ function Router() {
           <Route path="/knowledge/species/:genusName/:speciesName" component={KnowledgeSpecies} />
           <Route path="/knowledge/variant/:genusName/:speciesName/:variantName" component={KnowledgeVariant} />
           <Route path="/knowledge/care-guides" component={KnowledgeCareGuides} />
+          <Route path="/knowledge/diseases-pests" component={KnowledgeDiseasesAndPests} />
           <Route path="/vendors" component={Vendors} />
           <Route path="/import" component={Import} />
           <Route path="/settings" component={Settings} />
