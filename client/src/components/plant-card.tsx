@@ -2,6 +2,7 @@ import { Plant } from "@shared/schema";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Camera } from "lucide-react";
 import PlantDetailModal from "./plant-detail-modal";
 import PrivacyBadge from "./privacy-badge";
@@ -14,7 +15,13 @@ interface PlantCardProps {
 export default function PlantCard({ plant }: PlantCardProps) {
   const [showDetailModal, setShowDetailModal] = useState(false);
 
-  // No default image - users upload their own photos
+  // Fetch photos for this plant
+  const { data: photos = [] } = useQuery({
+    queryKey: ["/api/plants", plant.id, "photos"],
+  });
+
+  const photosArray = Array.isArray(photos) ? photos : [];
+  const primaryPhoto = photosArray[0]; // Use first photo as primary
 
   const formatDate = (dateString: string | null) => {
     if (!dateString) return "";
@@ -35,12 +42,25 @@ export default function PlantCard({ plant }: PlantCardProps) {
         className="border border-gray-100 overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
         onClick={handleCardClick}
       >
-        <div className="w-full h-40 sm:h-48 bg-gray-100 flex items-center justify-center border-b border-gray-200">
-          <div className="text-center text-gray-500">
-            <Camera className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2" />
-            <p className="text-xs sm:text-sm">No photo yet</p>
-            <p className="text-xs hidden sm:block">Click to view details</p>
-          </div>
+        <div className="w-full h-40 sm:h-48 bg-gray-100 flex items-center justify-center border-b border-gray-200 relative overflow-hidden">
+          {primaryPhoto ? (
+            <img
+              src={`/uploads/${primaryPhoto.filename}`}
+              alt={primaryPhoto.originalName || plant.commonName || `${plant.genus} ${plant.species || ""}`}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="text-center text-gray-500">
+              <Camera className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2" />
+              <p className="text-xs sm:text-sm">No photo yet</p>
+              <p className="text-xs hidden sm:block">Click to view details</p>
+            </div>
+          )}
+          {photosArray.length > 1 && (
+            <div className="absolute top-2 right-2 bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded">
+              +{photosArray.length - 1}
+            </div>
+          )}
         </div>
         <CardContent className="p-3 sm:p-4">
           {/* Custom ID on its own line */}
