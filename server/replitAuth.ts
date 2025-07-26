@@ -85,7 +85,7 @@ export async function setupAuth(app: Express) {
     updateUserSession(user, tokens);
     // Try to detect provider from request context or claims
     const claims = tokens.claims();
-    const provider = claims?.login_hint || "google"; // Default to Google
+    const provider = String(claims?.login_hint || "google"); // Default to Google
     await upsertUser(claims, provider);
     verified(null, user);
   };
@@ -132,10 +132,7 @@ export async function setupAuth(app: Express) {
   providers.forEach(provider => {
     app.get(`/api/login/${provider.name}`, (req, res, next) => {
       passport.authenticate(`replitauth:${req.hostname}`, {
-        prompt: "login consent",
         scope: ["openid", "email", "profile", "offline_access"],
-        // Pass provider hint to Replit Auth
-        login_hint: provider.name,
       })(req, res, next);
     });
   });
@@ -154,10 +151,18 @@ export async function setupAuth(app: Express) {
 
   app.get("/api/logout", (req, res) => {
     req.logout(() => {
+      // For localhost development, use the full host with port
+      const host = req.get('host');
+      const baseUrl = host?.includes('localhost') 
+        ? `${req.protocol}://${host}` 
+        : `${req.protocol}://${req.hostname}`;
+      
+      console.log('Logout redirect URL:', baseUrl);
+      
       res.redirect(
         client.buildEndSessionUrl(config, {
           client_id: process.env.REPL_ID!,
-          post_logout_redirect_uri: `${req.protocol}://${req.hostname}`,
+          post_logout_redirect_uri: baseUrl,
         }).href
       );
     });
