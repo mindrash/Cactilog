@@ -31,6 +31,8 @@ import {
 import { db } from "./db";
 import { eq, desc, and, ilike, or, count, sql } from "drizzle-orm";
 import { validateDisplayName, sanitizeDisplayName } from "./contentFilter";
+import fs from "fs";
+import path from "path";
 
 export interface IStorage {
   // User operations - mandatory for Replit Auth
@@ -784,8 +786,6 @@ export class DatabaseStorage implements IStorage {
     if (!plant) return false;
 
     // BACKUP PROTECTION: Create backup before deletion
-    const fs = require('fs');
-    const path = require('path');
     const backupDir = '/home/runner/workspace/photo-backups';
     
     try {
