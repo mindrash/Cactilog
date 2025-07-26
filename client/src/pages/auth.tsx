@@ -125,32 +125,18 @@ export default function AuthPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Google Sign-In */}
-            <div className="space-y-2">
-              {googleClientId ? (
-                <div id="google-signin-button" className="w-full"></div>
-              ) : (
-                <Button 
-                  variant="outline" 
-                  disabled
-                  className="w-full h-12 flex items-center justify-center gap-3 border-gray-300 bg-gray-50 cursor-not-allowed"
-                >
-                  <Chrome className="w-5 h-5 text-gray-400" />
-                  Loading Google Sign-In...
-                </Button>
-              )}
-              
-              {/* Fallback manual button */}
-              {googleClientId && (
-                <Button 
-                  onClick={handleGoogleButtonClick}
-                  variant="outline" 
-                  className="w-full h-10 flex items-center justify-center gap-2 border-blue-300 bg-blue-50 text-blue-700 hover:bg-blue-100 text-sm"
-                >
-                  <Chrome className="w-4 h-4" />
-                  Or click here to sign in with Google
-                </Button>
-              )}
-            </div>
+            {googleClientId ? (
+              <div id="google-signin-button" className="w-full flex justify-center"></div>
+            ) : (
+              <Button 
+                variant="outline" 
+                disabled
+                className="w-full h-12 flex items-center justify-center gap-3 border-gray-300 bg-gray-50 cursor-not-allowed"
+              >
+                <Chrome className="w-5 h-5 text-gray-400" />
+                Loading Google Sign-In...
+              </Button>
+            )}
 
             {/* Facebook - Coming Soon */}
             <Button 
