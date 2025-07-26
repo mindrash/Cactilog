@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { useState } from "react";
-import { Plus, Menu, User, LogOut, LogIn, ChevronDown, Home, BarChart3, FolderOpen, TrendingUp, Camera, Users, Settings, Sprout, BookOpen, Search, Shield, Leaf, Store } from "lucide-react";
+import { Plus, Menu, User, LogOut, LogIn, ChevronDown, Home, BarChart3, FolderOpen, TrendingUp, Camera, Users, Settings, Sprout, BookOpen, Search, Shield, Leaf, Store, Share2 } from "lucide-react";
 import { useAuthOptional } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -29,6 +29,8 @@ const navigationGroups = {
   ],
   community: [
     { href: "/users", label: "Community Collections", icon: Users },
+    { href: "/photos", label: "Photo Gallery", icon: Camera },
+    { href: "/recommended-socials", label: "Recommended Socials", icon: Share2 },
   ],
   knowledge: [
     { href: "/knowledge", label: "Browse Genera", icon: BookOpen },
