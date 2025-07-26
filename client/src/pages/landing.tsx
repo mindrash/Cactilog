@@ -154,7 +154,7 @@ function Landing() {
             {/* Desktop Sign In */}
             <div className="hidden lg:flex items-center space-x-3">
               <Button asChild className="bg-cactus-green hover:bg-cactus-green/90">
-                <a href="/api/login">
+                <a href="/auth">
                   <LogIn className="w-4 h-4 mr-2" />
                   Sign In
                 </a>

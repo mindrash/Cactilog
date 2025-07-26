@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { setupAuth, isAuthenticated } from "./replitAuth";
+import { setupAuth, isAuthenticated } from "./standardAuth";
 import { vendorData } from "@shared/vendor-data";
 import { SpeciesImageService } from "./wikimedia";
 import { createInsertSchema } from "drizzle-zod";
@@ -66,8 +66,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
         
         // Reset passport user
-        if (req.session.passport) {
-          delete req.session.passport;
+        if ((req.session as any).passport) {
+          delete (req.session as any).passport;
         }
       }
       
@@ -97,7 +97,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
     } catch (error) {
       console.error('Logout error:', error);
-      res.status(500).json({ error: 'Logout failed', details: error.message });
+      res.status(500).json({ error: 'Logout failed', details: (error as Error).message });
     }
   });
 
