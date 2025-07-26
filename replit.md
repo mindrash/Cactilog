@@ -47,11 +47,17 @@ The application uses a monorepo structure with shared schemas:
 
 ### Recent Changes
 
-#### July 25, 2025 - Comprehensive Trichocereus Clone & Cultivar Database Expansion
+#### July 25, 2025 - Comprehensive Trichocereus Clone & Cultivar Database with Detailed Medicinal History
 - **Massively expanded Trichocereus genus** with comprehensive clone and cultivar information across all major species
+- **Added detailed medicinal and cultural history** spanning 3,000+ years of traditional use in Andean cultures including Chavín, Moche, Nazca civilizations
+- **Comprehensive archaeological documentation** from 1200 BCE showing ceremonial use, making these among the oldest documented plant medicines in the Americas
+- **Traditional preparation methods** including historical brewing techniques for creating 'cimora' or 'achuma' concentrated preparations
+- **Cultural context and colonial impact** detailing Spanish suppression attempts and persistence of traditional knowledge in remote communities
 - **Enhanced T. pachanoi variants** with 16+ authentic clones including PC, Landfill, Juul's Giant, Rosei 1 & 2, SS02, TPM, Pachanot, Ogunbodede, Johnson's, Eileen, Honey, Sharxx Blue, Verne's, KGC, and crested mutation
 - **Detailed T. peruvianus clones** with regional variants: Huancayo, Ayacucho, Tarma, Larry, Lumberjack, Torch 1 & 2, Knuthianus, hybrid cultivars, and monstrose forms
 - **Comprehensive T. bridgesii information** including monstrose, regional clones (Torres & Torres, Santa Cruz, Cochabamba), collector selections (Psycho0, TBMC, Emma, Fields, Eileen's), and rare crested mutations
+- **Species-specific medicinal applications** including traditional uses for nervous conditions, physical ailments, and spiritual healing practices
+- **Contemporary research validation** documenting potential therapeutic benefits for depression, PTSD, and substance abuse through clinical studies
 - **Expanded species coverage** with detailed information for scopulicola, cuzcoensis, huanucoensis, macrogonus, santaensis, riomizquensis, taquimbalensis, validus, and terscheckii
 - **Added authentic clone descriptions** with collector origins, distinctive characteristics, growth patterns, and regional variations
 - **Enhanced botanical accuracy** with proper taxonomic classification, native ranges, discoverer information, and year established
