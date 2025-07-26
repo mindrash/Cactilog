@@ -1,7 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { useState } from "react";
 import { Plus, Menu, User, LogOut, LogIn, ChevronDown, Home, BarChart3, FolderOpen, TrendingUp, Camera, Users, Settings, Sprout, BookOpen, Search, Shield, Leaf, Store } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuthOptional } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import {
@@ -44,7 +44,7 @@ const navigationGroups = {
 };
 
 export function Header() {
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { user, isAuthenticated } = useAuthOptional();
   const [location] = useLocation();
   const [showAddPlant, setShowAddPlant] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -91,7 +91,7 @@ export function Header() {
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center space-x-1">
               {/* Public Navigation - shown when not authenticated */}
-              {!isAuthenticated && !isLoading && (
+              {!isAuthenticated && (
                 <>
                   {/* Community Link */}
                   <Link href="/users">

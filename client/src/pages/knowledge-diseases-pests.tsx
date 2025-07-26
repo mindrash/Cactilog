@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { Search, AlertTriangle, Bug, Activity, ShieldAlert, Microscope, Heart, Users, Calendar, ArrowRight, ExternalLink } from "lucide-react";
 
-import { Header } from "../components/header";
+import Header from "../components/header";
 import { SEO } from "../components/seo";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
 import { Input } from "../components/ui/input";
