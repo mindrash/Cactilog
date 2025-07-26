@@ -27,7 +27,7 @@ export default function Users() {
   const [sortBy, setSortBy] = useState<'latest' | 'likes' | 'cacti'>('latest');
 
   const { data: users = [], isLoading: usersLoading } = useQuery<UserWithStats[]>({
-    queryKey: ["/api/users/public", sortBy],
+    queryKey: [`/api/users/public?sortBy=${sortBy}`],
   });
 
   const getInitials = (user: UserWithStats) => {
