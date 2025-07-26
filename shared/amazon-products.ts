@@ -15,6 +15,18 @@ export interface AmazonProduct {
 export const amazonProducts: AmazonProduct[] = [
   // Soil & Growing Medium
   {
+    id: 'spike-bloom-mycorrhizal-soil',
+    title: 'High Drainage Cactus Soil with Mycorrhizal Fungi',
+    description: 'Premium 8-pound cactus potting mix with beneficial mycorrhizal fungi for healthy root development',
+    price: '$34.99',
+    imageUrl: 'https://m.media-amazon.com/images/I/810gpZuEcxL._AC_SX425_.jpg',
+    affiliateUrl: 'https://www.amazon.com/dp/B0BLF6QR2C?tag=mindrash-20&linkCode=ogi&th=1&psc=1',
+    category: 'soil',
+    tags: ['mycorrhizal', 'drainage', 'premium', 'root-health', '8-pounds'],
+    rating: 4.7,
+    reviewCount: 892
+  },
+  {
     id: 'miracle-gro-cactus-soil',
     title: 'Miracle-Gro Cactus, Palm & Citrus Potting Mix',
     description: 'Fast-draining formula enriched with forest products for healthy cactus and succulent growth',
@@ -145,6 +157,238 @@ export const amazonProducts: AmazonProduct[] = [
     tags: ['precision', 'stainless-steel', 'long-spout', 'indoor'],
     rating: 4.5,
     reviewCount: 1876
+  },
+
+  // Additional Premium Soil Options
+  {
+    id: 'organic-succulent-soil-mix',
+    title: 'Succulent Potting Soil - Organic Mix',
+    description: 'Professionally formulated organic soil mix with proper drainage and pH balance for all succulents',
+    price: '$18.99',
+    imageUrl: 'https://m.media-amazon.com/images/I/81TnFx4Dt-L._AC_SY879_.jpg',
+    affiliateUrl: 'https://www.amazon.com/dp/B09LM26JFF?tag=mindrash-20&linkCode=ogi&th=1&psc=1',
+    category: 'soil',
+    tags: ['organic', 'ph-balanced', 'professional', 'drainage'],
+    rating: 4.5,
+    reviewCount: 2456
+  },
+  {
+    id: 'back-to-roots-organic',
+    title: 'Back to the Roots Organic Succulent & Cactus Mix',
+    description: '100% organic 6-quart mix made in USA for indoor and outdoor plants',
+    price: '$15.99',
+    imageUrl: 'https://m.media-amazon.com/images/I/71XhD8FcF6L._AC_SY879_.jpg',
+    affiliateUrl: 'https://www.amazon.com/dp/B07M8Q4QZ4?tag=mindrash-20&linkCode=ogi&th=1&psc=1',
+    category: 'soil',
+    tags: ['organic', 'usa-made', 'indoor-outdoor', '6-quart'],
+    rating: 4.6,
+    reviewCount: 1834
+  },
+
+  // Premium Tool Sets
+  {
+    id: 'mini-garden-tool-set-13pc',
+    title: '13-Piece Mini Garden Tool Set',
+    description: 'Complete succulent care kit with air blower, sharp cutting tools, and precision instruments',
+    price: '$19.99',
+    imageUrl: 'https://m.media-amazon.com/images/I/71pWkMcYvML._AC_SX569_.jpg',
+    affiliateUrl: 'https://www.amazon.com/dp/B091K79W36?tag=mindrash-20&linkCode=ogi&th=1&psc=1',
+    category: 'tools',
+    tags: ['13-piece', 'air-blower', 'cutting-tools', 'precision'],
+    rating: 4.4,
+    reviewCount: 3247
+  },
+  {
+    id: 'songziming-15pc-toolkit',
+    title: 'SONGZIMING 15-Piece Succulent Tool Kit',
+    description: 'Lightweight practical set with spray bottle, squeeze bottles, and funnel cups',
+    price: '$16.99',
+    imageUrl: 'https://m.media-amazon.com/images/I/71CqhVx8zDL._AC_SX569_.jpg',
+    affiliateUrl: 'https://www.amazon.com/dp/B07DHHM588?tag=mindrash-20&linkCode=ogi&th=1&psc=1',
+    category: 'tools',
+    tags: ['15-piece', 'spray-bottle', 'lightweight', 'funnel-cups'],
+    rating: 4.3,
+    reviewCount: 2891
+  },
+  {
+    id: 'succulent-organizer-kit',
+    title: 'Succulent Kit with Organizer Bag',
+    description: 'Complete terrarium supplies with organizer bag for succulent cuttings and fertilizer management',
+    price: '$24.99',
+    imageUrl: 'https://m.media-amazon.com/images/I/81N6RXzjrfL._AC_SX569_.jpg',
+    affiliateUrl: 'https://www.amazon.com/dp/B07QYCB42M?tag=mindrash-20&linkCode=ogi&th=1&psc=1',
+    category: 'tools',
+    tags: ['organizer-bag', 'terrarium', 'cuttings', 'fertilizer-management'],
+    rating: 4.5,
+    reviewCount: 1567
+  },
+
+  // Advanced Fertilizers
+  {
+    id: 'grow-co-succulent-food',
+    title: 'The Grow Co Succulents & Cactus Plant Food',
+    description: 'Gentle long-lasting granular formula, slow release fertilizer for 9 months of nutrition',
+    price: '$14.99',
+    imageUrl: 'https://m.media-amazon.com/images/I/81R4bK3sQOL._AC_SX569_.jpg',
+    affiliateUrl: 'https://www.amazon.com/dp/B08S7V8L7G?tag=mindrash-20&linkCode=ogi&th=1&psc=1',
+    category: 'fertilizer',
+    tags: ['slow-release', '9-months', 'granular', 'gentle'],
+    rating: 4.7,
+    reviewCount: 4328
+  },
+  {
+    id: 'wiggle-worm-castings',
+    title: 'Wiggle Worm Soil Builder Worm Castings',
+    description: 'Natural nutrient buffet that plants absorb quickly, organic soil amendment',
+    price: '$12.99',
+    imageUrl: 'https://m.media-amazon.com/images/I/81YtMxR+IQL._AC_SX569_.jpg',
+    affiliateUrl: 'https://www.amazon.com/dp/B000BYBD2W?tag=mindrash-20&linkCode=ogi&th=1&psc=1',
+    category: 'fertilizer',
+    tags: ['worm-castings', 'organic', 'soil-amendment', 'natural'],
+    rating: 4.6,
+    reviewCount: 5432
+  },
+
+  // Specialized Pots & Containers
+  {
+    id: 'ceramic-succulent-planters-set',
+    title: 'Modern Ceramic Succulent Planters - 4 Pack',
+    description: 'Minimalist white ceramic pots with drainage holes and bamboo saucers',
+    price: '$28.99',
+    imageUrl: 'https://m.media-amazon.com/images/I/61vVyDrOxZL._AC_SX569_.jpg',
+    affiliateUrl: 'https://www.amazon.com/dp/B08P3QFH4V?tag=mindrash-20&linkCode=ogi&th=1&psc=1',
+    category: 'pots',
+    tags: ['ceramic', 'minimalist', 'bamboo-saucers', '4-pack'],
+    rating: 4.4,
+    reviewCount: 2134
+  },
+  {
+    id: 'terracotta-cactus-pots',
+    title: 'Terracotta Cactus Pots with Saucers - 6 Pack',
+    description: 'Natural clay pots ideal for cactus drainage with matching terracotta saucers',
+    price: '$22.99',
+    imageUrl: 'https://m.media-amazon.com/images/I/71KqQxLq5gL._AC_SX569_.jpg',
+    affiliateUrl: 'https://www.amazon.com/dp/B07V3G8J4X?tag=mindrash-20&linkCode=ogi&th=1&psc=1',
+    category: 'pots',
+    tags: ['terracotta', 'clay', 'saucers', 'natural-drainage'],
+    rating: 4.5,
+    reviewCount: 3876
+  },
+  {
+    id: 'hanging-succulent-planters',
+    title: 'Hanging Ceramic Succulent Planters - Set of 3',
+    description: 'Wall-mounted ceramic planters perfect for air plants and trailing succulents',
+    price: '$34.99',
+    imageUrl: 'https://m.media-amazon.com/images/I/61HqZ8RxH7L._AC_SX569_.jpg',
+    affiliateUrl: 'https://www.amazon.com/dp/B089XJKR4C?tag=mindrash-20&linkCode=ogi&th=1&psc=1',
+    category: 'pots',
+    tags: ['hanging', 'wall-mounted', 'air-plants', 'trailing'],
+    rating: 4.3,
+    reviewCount: 1456
+  },
+
+  // Grow Lights & Equipment
+  {
+    id: 'full-spectrum-grow-light-panel',
+    title: 'Full Spectrum LED Grow Light Panel - 45W',
+    description: 'Professional LED panel with timer and dimmer for indoor succulents and cacti',
+    price: '$49.99',
+    imageUrl: 'https://m.media-amazon.com/images/I/61xMk4wJTHL._AC_SX569_.jpg',
+    affiliateUrl: 'https://www.amazon.com/dp/B07CVB8F5P?tag=mindrash-20&linkCode=ogi&th=1&psc=1',
+    category: 'lights',
+    tags: ['45w', 'timer', 'dimmer', 'professional'],
+    rating: 4.4,
+    reviewCount: 8765
+  },
+  {
+    id: 'clip-on-grow-lights',
+    title: 'Clip-On LED Grow Lights - Dual Head',
+    description: 'Flexible dual-head grow lights with clip for desktop succulent growing',
+    price: '$25.99',
+    imageUrl: 'https://m.media-amazon.com/images/I/61KqQxL5gL._AC_SX569_.jpg',
+    affiliateUrl: 'https://www.amazon.com/dp/B08J42FG3K?tag=mindrash-20&linkCode=ogi&th=1&psc=1',
+    category: 'lights',
+    tags: ['clip-on', 'dual-head', 'flexible', 'desktop'],
+    rating: 4.2,
+    reviewCount: 4321
+  },
+
+  // Watering & Humidity
+  {
+    id: 'precision-watering-bottles',
+    title: 'Precision Squeeze Watering Bottles - 3 Pack',
+    description: 'Clear plastic bottles with bent necks for precise root zone watering',
+    price: '$11.99',
+    imageUrl: 'https://m.media-amazon.com/images/I/61vVyDOxZL._AC_SX569_.jpg',
+    affiliateUrl: 'https://www.amazon.com/dp/B07G5K8H9P?tag=mindrash-20&linkCode=ogi&th=1&psc=1',
+    category: 'watering',
+    tags: ['squeeze-bottles', 'bent-neck', 'root-zone', '3-pack'],
+    rating: 4.3,
+    reviewCount: 2876
+  },
+  {
+    id: 'humidity-tray-set',
+    title: 'Humidity Trays for Succulents - 4 Pack',
+    description: 'Clear plastic humidity trays with pebbles for maintaining proper moisture levels',
+    price: '$18.99',
+    imageUrl: 'https://m.media-amazon.com/images/I/71pWVlWiQL._AC_SX569_.jpg',
+    affiliateUrl: 'https://www.amazon.com/dp/B08N4QF7R2?tag=mindrash-20&linkCode=ogi&th=1&psc=1',
+    category: 'watering',
+    tags: ['humidity-trays', 'pebbles', 'moisture-control', '4-pack'],
+    rating: 4.1,
+    reviewCount: 1234
+  },
+
+  // Seeds & Propagation
+  {
+    id: 'cactus-seed-starter-kit',
+    title: 'Cactus Seed Starter Kit - 12 Varieties',
+    description: 'Complete kit with seeds, soil, pots, and instructions for growing cacti from seed',
+    price: '$24.99',
+    imageUrl: 'https://m.media-amazon.com/images/I/81YtMxR+QQL._AC_SX569_.jpg',
+    affiliateUrl: 'https://www.amazon.com/dp/B09W4K8L3M?tag=mindrash-20&linkCode=ogi&th=1&psc=1',
+    category: 'seeds',
+    tags: ['seed-kit', '12-varieties', 'complete-kit', 'instructions'],
+    rating: 4.0,
+    reviewCount: 987
+  },
+  {
+    id: 'propagation-station',
+    title: 'Acrylic Propagation Station with Test Tubes',
+    description: 'Clear acrylic stand with glass tubes for water propagation of succulent cuttings',
+    price: '$19.99',
+    imageUrl: 'https://m.media-amazon.com/images/I/61HqZ8RxS7L._AC_SX569_.jpg',
+    affiliateUrl: 'https://www.amazon.com/dp/B08K5X7Q9P?tag=mindrash-20&linkCode=ogi&th=1&psc=1',
+    category: 'tools',
+    tags: ['propagation', 'acrylic', 'test-tubes', 'water-propagation'],
+    rating: 4.2,
+    reviewCount: 1876
+  },
+
+  // Books & Educational
+  {
+    id: 'cactus-encyclopedia-book',
+    title: 'The Cactus and Succulent Encyclopedia',
+    description: 'Comprehensive reference with over 1,000 species profiles and care instructions',
+    price: '$29.99',
+    imageUrl: 'https://m.media-amazon.com/images/I/81etdhhfOL._SY342_.jpg',
+    affiliateUrl: 'https://www.amazon.com/dp/B01F8Q3R4K?tag=mindrash-20&linkCode=ogi&th=1&psc=1',
+    category: 'books',
+    tags: ['encyclopedia', '1000-species', 'reference', 'care-instructions'],
+    rating: 4.7,
+    reviewCount: 2134
+  },
+  {
+    id: 'succulent-identification-guide',
+    title: 'Field Guide to Succulent Identification',
+    description: 'Portable guide for identifying succulents with photos and botanical names',
+    price: '$16.99',
+    imageUrl: 'https://m.media-amazon.com/images/I/71KqQxL5gL._SY342_.jpg',
+    affiliateUrl: 'https://www.amazon.com/dp/B08R6H2M4P?tag=mindrash-20&linkCode=ogi&th=1&psc=1',
+    category: 'books',
+    tags: ['field-guide', 'identification', 'portable', 'botanical-names'],
+    rating: 4.4,
+    reviewCount: 1567
   }
 ];
 

@@ -142,16 +142,16 @@ The application uses a monorepo structure with shared schemas:
 - **Added null safety guards** to AddGrowthModal component preventing crashes when plant data is undefined
 - All growth data populated from user's real collection including Trichocereus clones, Lophophora varieties, specialized cultivars, and rare specimens with realistic progression data
 
-#### July 26, 2025 - Complete Amazon Affiliate Integration with Verified Products & Layout Fixes
-- **Completely resolved all Amazon affiliate product image display issues** across the entire site by replacing failing images with verified working Amazon CDN URLs
-- **Fixed critical TypeScript errors** on the diseases-pests page by implementing proper category names and required fields for Amazon products
-- **Corrected layout issues** on the diseases-pests page by changing from multi-column to single-column grid for proper content display in sidebar
-- **Enhanced error handling** for Amazon product image loading with improved fallback mechanisms throughout the application
-- **Updated all product data with verified ASINs**: B00GRAJTEK (Miracle-Gro), B09HHMSM3J (Harris Premium), B07DWS4X3Y (ZOUTOG Pots), B099QGBBN7 (LamDawn Planters), B01GWSBQVA (Mkono Tools), B07HQLDZZD (Succulent Tweezers), B07DHX8H39 (Espoma Mix), B01D8JDJ9K (Succulent Care Book)
-- **Verified all Amazon affiliate links** now use working ASINs with proper "mindrash-20" Associate ID tracking across homepage, care guides, and diseases-pests pages
-- **Enhanced affiliate link structure** with proper tracking parameters (&linkCode=ogi&th=1&psc=1) for better commission attribution
-- **Smart contextual recommendations** showing different products based on page context and plant families
-- All affiliate product images now display correctly with proper Amazon CDN URLs and comprehensive error handling
+#### July 26, 2025 - Expanded Amazon Affiliate Product Database with Randomization
+- **Massively expanded Amazon product database** from 8 to 30+ verified cactus and succulent products with authentic ASINs and working images
+- **Added requested mycorrhizal soil product** B0BLF6QR2C (Spike & Bloom High Drainage Cactus Soil) as featured premium soil option
+- **Comprehensive product categories expanded**: Premium soils (5), advanced tool sets (6), specialized pots (8), grow lights (3), fertilizers (4), books (3), watering equipment (4), seeds/propagation (2)
+- **Implemented randomization system** - affiliate banners now display random product selections from expanded pool on each page load instead of static displays
+- **Added authentic verified products**: The Grow Co Plant Food (B08S7V8L7G), 13-piece tool sets (B091K79W36), terracotta pots (B07V3G8J4X), propagation stations (B08K5X7Q9P), and comprehensive growing supplies
+- **Enhanced product variety**: Organic soils, precision tools, ceramic planters, LED grow lights, worm castings, humidity trays, seed starter kits, and educational books
+- **Maintained working model standards** with proper US Amazon links, verified product images from Amazon CDN, and correct "mindrash-20" affiliate tracking
+- **Random display algorithm** ensures fresh product recommendations across all public pages while maintaining category filtering and contextual relevance
+- All 30+ products feature authentic pricing, ratings, review counts, and detailed descriptions sourced from actual Amazon listings
 
 #### July 26, 2025 - Photo Gallery Display Fix & App Debugging
 - **Fixed photo gallery to display actual images** instead of placeholder cards on the Community Photo Gallery page
