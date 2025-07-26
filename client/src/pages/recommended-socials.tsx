@@ -3,6 +3,7 @@ import { SEO } from "@/components/seo";
 import Sidebar from "@/components/sidebar";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
+import AmazonAffiliateBanner from "@/components/amazon-affiliate-banner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -524,6 +525,14 @@ export default function RecommendedSocials() {
                   </p>
                 </div>
               )}
+
+              {/* Amazon Affiliate Products */}
+              <div className="mt-12">
+                <AmazonAffiliateBanner 
+                  title="Growing & Content Creation Tools"
+                  limit={3}
+                />
+              </div>
 
               {/* Footer Note */}
               <div className="mt-12 p-6 bg-white rounded-lg border border-gray-200">

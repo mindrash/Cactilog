@@ -11,6 +11,7 @@ import Header from "@/components/header";
 import { Link } from "wouter";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { cactusGenera } from "@shared/cactus-data";
+import AmazonAffiliateBanner from "@/components/amazon-affiliate-banner";
 
 export default function KnowledgeSearch() {
   const { isAuthenticated } = useAuthOptional();
@@ -201,10 +202,10 @@ export default function KnowledgeSearch() {
                       </div>
 
                       <div className="pt-2">
-                        <Link href={`/knowledge/genus/${item.genus.toLowerCase()}`}>
+                        <Link href={`/knowledge/species/${item.genus.toLowerCase()}/${typeof item.species === 'string' ? item.species.toLowerCase() : item.species.name.toLowerCase()}`}>
                           <Button variant="outline" size="sm" className="w-full">
                             <BookOpen className="w-4 h-4 mr-2" />
-                            View Genus Details
+                            View Species Details
                           </Button>
                         </Link>
                       </div>
@@ -229,6 +230,14 @@ export default function KnowledgeSearch() {
               </CardContent>
             </Card>
           )}
+        </div>
+
+        {/* Amazon Affiliate Products */}
+        <div className="mt-8">
+          <AmazonAffiliateBanner 
+            title="Essential Growing Supplies"
+            limit={4}
+          />
         </div>
 
         {/* Search Tips */}
