@@ -18,12 +18,16 @@
 
 .cactilog-title {
   font-family: 'Bagel Fat One', cursive;
-  font-size: 1.625rem;
+  font-size: 2.25rem; /* Increased from 1.625rem to text-4xl */
+  -webkit-text-stroke: 1px hsl(45, 95%, 55%); /* Yellow stroke */
+  text-stroke: 1px hsl(45, 95%, 55%);
 }
 
 .cactilog-title-large {
   font-family: 'Bagel Fat One', cursive;
-  font-size: 1.875rem;
+  font-size: 2.5rem; /* Increased from 1.875rem to text-5xl */
+  -webkit-text-stroke: 1.5px hsl(45, 95%, 55%); /* Thicker yellow stroke for larger text */
+  text-stroke: 1.5px hsl(45, 95%, 55%);
 }
 
 .cacti-green {
