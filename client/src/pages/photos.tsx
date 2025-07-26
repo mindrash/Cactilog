@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getFeaturedProducts } from "@shared/amazon-products";
 
 interface PublicPhoto {
   photo: {
@@ -42,6 +43,9 @@ export default function Photos() {
   const { data: photos, isLoading: photosLoading } = useQuery<PublicPhoto[]>({
     queryKey: ["/api/photos/public"],
   });
+
+  // Get featured products for photo gallery
+  const featuredProducts = getFeaturedProducts('collection');
 
   // Public page - no auth check needed
 
@@ -238,6 +242,64 @@ export default function Photos() {
             ))}
           </div>
         )}
+
+        {/* Amazon Affiliate Products */}
+        <div className="mt-8 bg-white/50 rounded-lg p-6">
+          <div className="text-center mb-4">
+            <h3 className="section-title mb-2">Photography & Plant Care Essentials</h3>
+            <p className="text-sm text-gray-600">Tools to help showcase and care for your plants</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {featuredProducts.map((product) => (
+              <Card key={product.id} className="hover:shadow-md transition-shadow">
+                <CardContent className="p-4">
+                  <div className="flex items-start space-x-3">
+                    <img 
+                      src={product.imageUrl} 
+                      alt={product.title}
+                      className="w-16 h-16 object-cover rounded-lg flex-shrink-0"
+                      onError={(e) => {
+                        e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHZpZXdCb3g9IjAgMCA2NCA2NCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0zMiAyNEMyOC42ODYzIDI0IDI2IDI2LjY4NjMgMjYgMzBDMjYgMzMuMzEzNyAyOC42ODYzIDM2IDMyIDM2QzM1LjMxMzcgMzYgMzggMzMuMzEzNyAzOCAzMEMzOCAyNi42ODYzIDM1LjMxMzcgMjQgMzIgMjRaIiBmaWxsPSIjOUI5QjlCIi8+Cjwvc3ZnPgo=';
+                      }}
+                    />
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-medium text-sm text-gray-900 line-clamp-2 mb-1">
+                        {product.title}
+                      </h4>
+                      <p className="text-xs text-gray-600 mb-2 line-clamp-2">
+                        {product.description}
+                      </p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-semibold text-cactus-green">
+                          {product.price}
+                        </span>
+                        <a 
+                          href={product.affiliateUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs bg-cactus-green text-white px-2 py-1 rounded hover:bg-cactus-green/90 transition-colors"
+                        >
+                          Shop Now
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          
+          <div className="text-center mt-4">
+            <a 
+              href="/vendors" 
+              onClick={(e) => { e.preventDefault(); window.location.href = '/vendors'; }}
+              className="text-sm text-cactus-green hover:text-cactus-green/80 underline"
+            >
+              View All Trusted Vendors & Products →
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   );
