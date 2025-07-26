@@ -43,7 +43,7 @@ const navigationGroups = {
   ],
 };
 
-export function Header() {
+function Header() {
   const { user, isAuthenticated } = useAuthOptional();
   const [location] = useLocation();
   const [showAddPlant, setShowAddPlant] = useState(false);
