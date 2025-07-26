@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
   { name: "My Cacti", href: "/collection", icon: Sprout },
-  { name: "Growth Tracking", href: "/growth", icon: TrendingUp },
+  { name: "Growth Tracking", href: "/growth-tracking", icon: TrendingUp },
   { name: "Photo Gallery", href: "/photos", icon: Camera },
   { name: "Import Data", href: "/import", icon: Upload },
   { name: "Settings", href: "/settings", icon: Settings },

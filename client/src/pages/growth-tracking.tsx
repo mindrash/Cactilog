@@ -6,6 +6,8 @@ import { Link } from "wouter";
 import { Plus, TrendingUp, Calendar, Ruler, Eye, Search, BarChart3, Activity, Flower, Heart } from "lucide-react";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
+import Sidebar from "@/components/sidebar";
+import { SEO, seoConfigs } from "@/components/seo";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -90,9 +92,12 @@ export default function GrowthTracking() {
   const colors = ["#10b981", "#059669", "#047857", "#065f46", "#064e3b"];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-lime-wash/20 to-pine-mist/30 cactus-pattern-bg">
+    <div className="min-h-screen cactus-pattern-bg-light">
+      <SEO {...seoConfigs.growthTracking} />
       <Header />
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="flex">
+        <Sidebar />
+        <main className="flex-1 p-6">
         {/* Header */}
         <div className="mb-8">
           <h1 className="page-title-xl mb-2">Growth Tracking</h1>
@@ -525,8 +530,8 @@ export default function GrowthTracking() {
             )}
           </TabsContent>
         </Tabs>
+        </main>
       </div>
-
       <Footer />
     </div>
   );
