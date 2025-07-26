@@ -52,26 +52,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
   await setupAuth(app);
 
   // Simple logout route that just clears the session
-  app.post('/api/logout', (req, res) => {
-    req.logout((err) => {
-      if (err) {
-        console.error('Logout error:', err);
-        return res.status(500).json({ error: 'Logout failed' });
+  app.post('/api/logout', async (req, res) => {
+    try {
+      // First, clear the session data directly from the database
+      if (req.sessionID) {
+        await new Promise((resolve, reject) => {
+          req.sessionStore.destroy(req.sessionID, (err) => {
+            if (err) {
+              console.error('Session store destroy error:', err);
+              reject(err);
+            } else {
+              resolve(true);
+            }
+          });
+        });
       }
       
-      // Destroy the session completely
-      req.session.destroy((destroyErr) => {
-        if (destroyErr) {
-          console.error('Session destroy error:', destroyErr);
+      // Clear passport user data
+      req.user = undefined;
+      
+      // Logout using passport
+      req.logout((err) => {
+        if (err) {
+          console.error('Passport logout error:', err);
         }
         
-        // Clear the session cookie
-        res.clearCookie('connect.sid');
-        
-        // Return success response
-        res.json({ success: true, message: 'Logged out successfully' });
+        // Destroy the session object
+        req.session.destroy((destroyErr) => {
+          if (destroyErr) {
+            console.error('Session destroy error:', destroyErr);
+          }
+          
+          // Clear all session-related cookies
+          res.clearCookie('connect.sid', {
+            path: '/',
+            httpOnly: true,
+            secure: false,
+            sameSite: 'lax'
+          });
+          
+          // Also clear any other potential session cookies
+          res.clearCookie('connect.sid', { path: '/' });
+          
+          console.log('User logged out successfully');
+          res.json({ success: true, message: 'Logged out successfully' });
+        });
       });
-    });
+    } catch (error) {
+      console.error('Complete logout error:', error);
+      res.status(500).json({ error: 'Logout failed' });
+    }
   });
 
   // Serve uploaded photos statically
