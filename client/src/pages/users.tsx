@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Header from "@/components/header";
+import Footer from "@/components/footer";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import type { User } from "@shared/schema";
 import { getFeaturedProducts } from "@shared/amazon-products";
@@ -294,6 +295,8 @@ export default function Users() {
           </div>
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }

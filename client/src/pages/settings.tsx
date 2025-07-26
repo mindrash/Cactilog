@@ -11,6 +11,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { SEO, seoConfigs } from "@/components/seo";
 import { Eye, EyeOff, Settings as SettingsIcon, Camera, User, Save } from "lucide-react";
 import Header from "@/components/header";
+import Footer from "@/components/footer";
 import { isUnauthorizedError } from "@/lib/authUtils";
 
 export default function Settings() {
@@ -382,6 +383,8 @@ export default function Settings() {
           </Card>
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }

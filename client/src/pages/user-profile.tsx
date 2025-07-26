@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import PlantCard from "@/components/plant-card";
+import Footer from "@/components/footer";
 import Header from "@/components/header";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import type { User, Plant } from "@shared/schema";
@@ -258,6 +259,8 @@ export default function UserProfile() {
           </div>
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }

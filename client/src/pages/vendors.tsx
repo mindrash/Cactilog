@@ -4,6 +4,7 @@ import { useAuthOptional } from "@/hooks/useAuth";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/header";
+import Footer from "@/components/footer";
 import { SEO, seoConfigs } from "@/components/seo";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -461,6 +462,8 @@ export default function Vendors() {
           </div>
         )}
       </div>
+
+      <Footer />
     </div>
   );
 }

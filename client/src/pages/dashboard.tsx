@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import Header from "@/components/header";
+import Footer from "@/components/footer";
 import Sidebar from "@/components/sidebar";
 import StatsCard from "@/components/stats-card";
 import PlantCard from "@/components/plant-card";
@@ -154,6 +155,8 @@ export default function Dashboard() {
       </div>
 
       <AddPlantModal open={showAddModal} onOpenChange={setShowAddModal} />
+
+      <Footer />
     </div>
   );
 }
