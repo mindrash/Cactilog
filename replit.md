@@ -47,6 +47,14 @@ The application uses a monorepo structure with shared schemas:
 
 ### Recent Changes
 
+#### July 26, 2025 - Photo Gallery Display Fix & App Debugging
+- **Fixed photo gallery to display actual images** instead of placeholder cards on the Community Photo Gallery page
+- Updated photo gallery component to load images from `/uploads/` static route with proper error handling and fallback
+- **Resolved critical TypeScript errors** that were preventing app startup, specifically fixed plant.type references to use plant.family instead
+- Fixed plant detail modal to use botanical family system instead of deprecated type field
+- **App now fully functional** with proper photo display, error-free TypeScript compilation, and working static file serving
+- Photos display correctly throughout the application including community gallery, plant cards, and detail modals
+
 #### July 26, 2025 - Complete Photo Upload System Implementation
 - **Implemented comprehensive photo upload functionality** with actual file processing using multer package for backend file handling
 - Added FormData-based frontend uploads that send real image files instead of placeholder metadata
