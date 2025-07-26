@@ -18,10 +18,10 @@ export default function PlantCard({ plant, showPhotos = true }: PlantCardProps) 
   const [showDetailModal, setShowDetailModal] = useState(false);
   const { isAuthenticated } = useAuth();
 
-  // Only fetch photos if authenticated and showPhotos is true
+  // Fetch photos if showPhotos is true (public plants should show photos even if not authenticated)
   const { data: photos = [] } = useQuery({
     queryKey: ["/api/plants", plant.id, "photos"],
-    enabled: isAuthenticated && showPhotos,
+    enabled: showPhotos,
   });
 
   const photosArray = Array.isArray(photos) ? photos : [];
