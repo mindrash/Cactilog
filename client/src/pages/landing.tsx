@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { ChevronLeft, ChevronRight, LogIn, Camera, TrendingUp, Users, BookOpen, Shield, Heart, Store } from "lucide-react";
+import { ChevronLeft, ChevronRight, ChevronDown, LogIn, Camera, TrendingUp, Users, BookOpen, Shield, Heart, Store, Menu, X } from "lucide-react";
 import CactusIcon from "@/components/cactus-icon";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -111,19 +111,35 @@ function Landing() {
 
             {/* Desktop Public Navigation */}
             <nav className="hidden lg:flex items-center space-x-1">
-              <Button asChild variant="ghost">
-                <a href="/users">
+              <div className="relative group">
+                <Button variant="ghost" className="flex items-center">
                   <Users className="w-4 h-4 mr-2" />
                   Community
-                </a>
-              </Button>
+                  <ChevronDown className="w-3 h-3 ml-1" />
+                </Button>
+                <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-md shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                  <div className="py-1">
+                    <a href="/users" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Collections Directory</a>
+                    <a href="/photos" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Photo Gallery</a>
+                  </div>
+                </div>
+              </div>
               
-              <Button asChild variant="ghost">
-                <a href="/knowledge">
+              <div className="relative group">
+                <Button variant="ghost" className="flex items-center">
                   <BookOpen className="w-4 h-4 mr-2" />
                   Knowledge Base
-                </a>
-              </Button>
+                  <ChevronDown className="w-3 h-3 ml-1" />
+                </Button>
+                <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-md shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                  <div className="py-1">
+                    <a href="/knowledge" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Browse Genera</a>
+                    <a href="/knowledge/search" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Species Search</a>
+                    <a href="/knowledge/care-guides" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Care Guides</a>
+                    <a href="/knowledge/diseases-pests" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Diseases & Pests</a>
+                  </div>
+                </div>
+              </div>
               
               <Button asChild variant="ghost">
                 <a href="/vendors">
@@ -143,8 +159,27 @@ function Landing() {
               </Button>
             </div>
 
-            {/* Mobile Sign In */}
+            {/* Mobile Navigation */}
             <div className="lg:hidden flex items-center space-x-2">
+              <div className="relative group">
+                <Button size="sm" variant="ghost">
+                  <Menu className="w-4 h-4" />
+                </Button>
+                <div className="absolute top-full right-0 mt-1 w-56 bg-white rounded-md shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                  <div className="py-2">
+                    <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">Community</div>
+                    <a href="/users" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Collections Directory</a>
+                    <a href="/photos" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Photo Gallery</a>
+                    <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide mt-2">Knowledge Base</div>
+                    <a href="/knowledge" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Browse Genera</a>
+                    <a href="/knowledge/search" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Species Search</a>
+                    <a href="/knowledge/care-guides" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Care Guides</a>
+                    <a href="/knowledge/diseases-pests" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Diseases & Pests</a>
+                    <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide mt-2">Other</div>
+                    <a href="/vendors" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Trusted Vendors</a>
+                  </div>
+                </div>
+              </div>
               <Button size="sm" asChild className="bg-cactus-green hover:bg-cactus-green/90">
                 <a href="/api/login">
                   <LogIn className="w-4 h-4" />
