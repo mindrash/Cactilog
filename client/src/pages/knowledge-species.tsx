@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SpeciesImageGallery } from "@/components/species-image-gallery";
+import { VendorRecommendations } from "@/components/vendor-recommendations";
 import { cactusGenera, type CactusSpecies } from "@shared/cactus-data";
 
 export default function KnowledgeSpecies() {
@@ -531,6 +532,13 @@ export default function KnowledgeSpecies() {
 
           {/* Sidebar */}
           <div className="space-y-6">
+            {/* Vendor Purchase Links */}
+            <VendorRecommendations 
+              genus={genusName} 
+              species={speciesName}
+              maxRecommendations={3}
+            />
+
             {/* Quick Actions */}
             <Card>
               <CardHeader>
