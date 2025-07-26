@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "wouter";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuthOptional } from "@/hooks/useAuth";
 import { ArrowLeft, Eye, EyeOff, Sprout, Calendar, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,36 +23,19 @@ interface UserWithStats extends User {
 export default function UserProfile() {
   const { userId } = useParams<{ userId: string }>();
   const { toast } = useToast();
-  const { isAuthenticated, isLoading } = useAuth();
-
-  // Redirect to login if not authenticated
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      toast({
-        title: "Unauthorized",
-        description: "You are logged out. Logging in again...",
-        variant: "destructive",
-      });
-      setTimeout(() => {
-        window.location.href = "/api/login";
-      }, 500);
-      return;
-    }
-  }, [isAuthenticated, isLoading, toast]);
+  const { isAuthenticated, isLoading } = useAuthOptional();
 
   const { data: user, isLoading: userLoading } = useQuery<UserWithStats>({
     queryKey: ["/api/users", userId],
-    enabled: isAuthenticated && !!userId,
+    enabled: !!userId,
   });
 
   const { data: plants = [], isLoading: plantsLoading } = useQuery<Plant[]>({
     queryKey: ["/api/users", userId, "plants"],
-    enabled: isAuthenticated && !!userId && user?.collectionPublic === "public",
+    enabled: !!userId && user?.collectionPublic === "public",
   });
 
-  if (isLoading || !isAuthenticated) {
-    return null;
-  }
+  // No need to block on authentication for public profile pages
 
   if (userLoading) {
     return (
@@ -210,7 +193,7 @@ export default function UserProfile() {
                 <div className="text-sm text-gray-600 space-y-2">
                   <div className="flex items-center justify-center">
                     <Calendar className="w-4 h-4 mr-2" />
-                    Joined {user.createdAt ? formatDate(user.createdAt) : 'Unknown'}
+                    Joined {user.createdAt ? formatDate(user.createdAt.toString()) : 'Unknown'}
                   </div>
                 </div>
               </CardContent>
