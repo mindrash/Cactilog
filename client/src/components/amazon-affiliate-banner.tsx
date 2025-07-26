@@ -22,10 +22,17 @@ export default function AmazonAffiliateBanner({
     filteredProducts = amazonProducts.filter(product => product.category === category);
   }
   
-  // Get random selection or top products
-  const selectedProducts = filteredProducts
-    .sort((a, b) => b.rating - a.rating) // Sort by rating
-    .slice(0, limit);
+  // Get random selection from filtered products
+  const shuffleArray = (array: typeof filteredProducts) => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
+  const selectedProducts = shuffleArray(filteredProducts).slice(0, limit);
 
   if (selectedProducts.length === 0) {
     return null;
