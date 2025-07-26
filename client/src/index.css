@@ -19,17 +19,35 @@
 .cactilog-title {
   font-family: 'Bagel Fat One', cursive;
   font-size: 2.25rem; /* Increased from 1.625rem to text-4xl */
-  -webkit-text-stroke: 0.5px hsl(45, 95%, 55%); /* Thinner yellow stroke */
-  text-stroke: 0.5px hsl(45, 95%, 55%);
   position: relative;
+  text-shadow: 
+    /* Create dotted effect with multiple small shadows */
+    1px 0px 0 hsl(45, 95%, 55%),
+    -1px 0px 0 hsl(45, 95%, 55%),
+    0px 1px 0 hsl(45, 95%, 55%),
+    0px -1px 0 hsl(45, 95%, 55%),
+    2px 2px 0 transparent,
+    -2px 2px 0 transparent,
+    2px -2px 0 transparent,
+    -2px -2px 0 transparent;
+  filter: drop-shadow(0 0 1px hsl(45, 95%, 55%));
 }
 
 .cactilog-title-large {
   font-family: 'Bagel Fat One', cursive;
   font-size: 2.5rem; /* Increased from 1.875rem to text-5xl */
-  -webkit-text-stroke: 0.75px hsl(45, 95%, 55%); /* Reduced yellow stroke for larger text */
-  text-stroke: 0.75px hsl(45, 95%, 55%);
   position: relative;
+  text-shadow: 
+    /* Create dotted effect with multiple small shadows */
+    1.5px 0px 0 hsl(45, 95%, 55%),
+    -1.5px 0px 0 hsl(45, 95%, 55%),
+    0px 1.5px 0 hsl(45, 95%, 55%),
+    0px -1.5px 0 hsl(45, 95%, 55%),
+    3px 3px 0 transparent,
+    -3px 3px 0 transparent,
+    3px -3px 0 transparent,
+    -3px -3px 0 transparent;
+  filter: drop-shadow(0 0 1px hsl(45, 95%, 55%));
 }
 
 .beta-superscript {
