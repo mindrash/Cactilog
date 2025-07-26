@@ -601,7 +601,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/users/:userId', isAuthenticated, async (req, res) => {
+  app.get('/api/users/:userId', async (req, res) => {
     try {
       const { userId } = req.params;
       const user = await storage.getUserWithStats(userId);
@@ -617,7 +617,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get('/api/users/:userId/plants', isAuthenticated, async (req, res) => {
+  app.get('/api/users/:userId/plants', async (req, res) => {
     try {
       const { userId } = req.params;
       
