@@ -53,8 +53,10 @@ export default function AmazonAffiliateProducts({
                     alt={product.title}
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                      e.currentTarget.nextElementSibling!.style.display = 'flex';
+                      const target = e.currentTarget as HTMLImageElement;
+                      const fallback = target.nextElementSibling as HTMLSpanElement;
+                      target.style.display = 'none';
+                      fallback.style.display = 'flex';
                     }}
                   />
                   <span className="text-2xl hidden">🌵</span>
