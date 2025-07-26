@@ -744,6 +744,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Check admin status
+  app.get('/api/admin/status', isAuthenticated, async (req, res) => {
+    try {
+      const userId = (req.user as any)?.claims?.sub;
+      const userEmail = (req.user as any)?.claims?.email;
+      
+      // Auto-initialize Tom as admin if not already done
+      if (userEmail === 'tomlawson@gmail.com') {
+        const existingAdmin = await storage.getAdminUserByEmail(userEmail);
+        if (!existingAdmin) {
+          await storage.createAdminUser({
+            userId,
+            email: userEmail,
+            role: 'super_admin',
+            permissions: {
+              manage_images: true,
+              review_reports: true,
+              manage_users: true,
+              manage_admins: true
+            }
+          });
+          console.log('✓ Tom Lawson auto-initialized as super admin');
+        }
+      }
+      
+      const isAdmin = await storage.isUserAdmin(userId);
+      res.json({ isAdmin });
+    } catch (error) {
+      console.error("Error checking admin status:", error);
+      res.status(500).json({ message: "Failed to check admin status" });
+    }
+  });
+
   // Initialize Tom as admin on first login
   app.post('/api/admin/initialize', isAuthenticated, async (req, res) => {
     try {
