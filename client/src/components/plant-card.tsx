@@ -35,16 +35,16 @@ export default function PlantCard({ plant }: PlantCardProps) {
         className="border border-gray-100 overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
         onClick={handleCardClick}
       >
-        <div className="w-full h-48 bg-gray-100 flex items-center justify-center border-b border-gray-200">
+        <div className="w-full h-40 sm:h-48 bg-gray-100 flex items-center justify-center border-b border-gray-200">
           <div className="text-center text-gray-500">
-            <Camera className="w-8 h-8 mx-auto mb-2" />
-            <p className="text-sm">No photo yet</p>
-            <p className="text-xs">Click to view details</p>
+            <Camera className="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2" />
+            <p className="text-xs sm:text-sm">No photo yet</p>
+            <p className="text-xs hidden sm:block">Click to view details</p>
           </div>
         </div>
-        <CardContent className="p-4">
+        <CardContent className="p-3 sm:p-4">
           {/* Custom ID on its own line */}
-          <div className="mb-3">
+          <div className="mb-2">
             <span className="text-xs font-mono text-gray-500 bg-gray-100 px-2 py-1 rounded">
               {plant.customId || `#${plant.id}`}
             </span>
@@ -52,26 +52,26 @@ export default function PlantCard({ plant }: PlantCardProps) {
           
           {/* Badges row */}
           <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 sm:gap-2">
               <PrivacyBadge isPublic={plant.isPublic || "public"} />
               <Badge 
                 variant={plant.family === 'Cactaceae' ? 'default' : 'secondary'}
-                className={plant.family === 'Cactaceae' ? 'bg-cactus-green/10 text-cactus-green' : 'bg-desert-sage/10 text-desert-sage'}
+                className={`text-xs ${plant.family === 'Cactaceae' ? 'bg-cactus-green/10 text-cactus-green' : 'bg-desert-sage/10 text-desert-sage'}`}
               >
                 {plant.family}
               </Badge>
             </div>
           </div>
           
-          <h4 className="font-semibold text-gray-900 mb-1">
+          <h4 className="font-semibold text-gray-900 mb-1 text-sm sm:text-base line-clamp-2">
             {plant.commonName || `${plant.genus} ${plant.species || ""}`}
           </h4>
-          <p className="text-sm text-gray-600 mb-2">
+          <p className="text-xs sm:text-sm text-gray-600 mb-2 line-clamp-1">
             <em>{plant.genus}</em> {plant.species && <span>{plant.species}</span>}
           </p>
           <div className="flex items-center justify-between text-xs text-gray-500">
-            <span>{plant.supplier || "Unknown"}</span>
-            <span>{formatDate(plant.acquisitionDate)}</span>
+            <span className="truncate flex-1 mr-2">{plant.supplier || "Unknown"}</span>
+            <span className="shrink-0">{formatDate(plant.acquisitionDate)}</span>
           </div>
           
           {/* Like Button */}

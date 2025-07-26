@@ -47,6 +47,18 @@ The application uses a monorepo structure with shared schemas:
 
 ### Recent Changes
 
+#### July 25, 2025 - Mobile Responsiveness Optimization for Collection Page  
+- **Fixed mobile layout issues** with comprehensive responsive design improvements across the collection page
+- **Optimized header layout** with stacked mobile layout for title and Add Plant button, responsive text sizing
+- **Redesigned search and filters section** with mobile-first approach: full-width search bar, stacked filter controls
+- **Improved filter responsiveness** with full-width dropdowns on mobile, condensed button text, and better touch targets
+- **Enhanced grid layout** optimized for mobile (1 column) with better spacing and gap adjustments
+- **Optimized table view for mobile** with hidden columns on smaller screens, horizontal scrolling, and compact cell layouts
+- **Mobile-friendly table cells** showing essential info with truncated text, responsive badges, and consolidated data display
+- **Improved PlantCard mobile design** with smaller image heights, compact padding, responsive text sizing, and better line clamping
+- **Touch-friendly interface** with proper button sizing, improved spacing, and optimized interaction areas
+- Collection page now provides excellent mobile experience with all functionality preserved
+
 #### July 25, 2025 - Vendor Purchase Links Integration for Species Pages
 - **Added VendorRecommendations component** providing trusted vendor links directly on each species page
 - **Intelligent vendor filtering** prioritizing seed specialists for Trichocereus species due to legal considerations
