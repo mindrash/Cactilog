@@ -167,6 +167,7 @@ export class DatabaseStorage implements IStorage {
     search?: string;
     type?: string;
     genus?: string;
+    sortBy?: string;
   }): Promise<Plant[]> {
     let whereConditions = [eq(plants.userId, userId)];
     
@@ -191,9 +192,52 @@ export class DatabaseStorage implements IStorage {
       whereConditions.push(eq(plants.genus, filters.genus));
     }
     
-    return await db.select().from(plants)
+    // Enhanced sorting to include photo activity and proper last modified
+    const query = db
+      .select({
+        id: plants.id,
+        userId: plants.userId,
+        customId: plants.customId,
+        family: plants.family,
+        genus: plants.genus,
+        species: plants.species,
+        cultivar: plants.cultivar,
+        mutation: plants.mutation,
+        commonName: plants.commonName,
+        supplier: plants.supplier,
+        acquisitionDate: plants.acquisitionDate,
+        initialType: plants.initialType,
+        isPublic: plants.isPublic,
+        notes: plants.notes,
+        createdAt: plants.createdAt,
+        updatedAt: plants.updatedAt,
+        lastActivity: sql<Date>`GREATEST(${plants.updatedAt}, COALESCE(MAX(${plantPhotos.uploadedAt}), ${plants.updatedAt}))`.as('lastActivity')
+      })
+      .from(plants)
+      .leftJoin(plantPhotos, eq(plants.id, plantPhotos.plantId))
       .where(and(...whereConditions))
-      .orderBy(desc(plants.createdAt));
+      .groupBy(plants.id);
+    
+    // Apply sorting based on the sortBy parameter
+    const sortBy = filters?.sortBy || 'recent';
+    
+    switch (sortBy) {
+      case 'genus-alpha':
+        return await query.orderBy(plants.genus, plants.species);
+      case 'species-alpha':
+        return await query.orderBy(plants.species, plants.genus);
+      case 'oldest':
+        return await query.orderBy(plants.createdAt);
+      case 'custom-id':
+        return await query.orderBy(plants.customId);
+      case 'id-asc':
+        return await query.orderBy(plants.id);
+      case 'id-desc':
+        return await query.orderBy(desc(plants.id));
+      case 'recent':
+      default:
+        return await query.orderBy(desc(sql`GREATEST(${plants.updatedAt}, COALESCE(MAX(${plantPhotos.uploadedAt}), ${plants.updatedAt}))`));
+    }
   }
 
   async getPlant(id: number, userId: string): Promise<Plant | undefined> {
@@ -330,6 +374,13 @@ export class DatabaseStorage implements IStorage {
 
   async createPlantPhoto(photo: InsertPlantPhoto): Promise<PlantPhoto> {
     const [newPhoto] = await db.insert(plantPhotos).values(photo).returning();
+    
+    // Update the plant's updatedAt field to reflect that it was modified
+    await db
+      .update(plants)
+      .set({ updatedAt: new Date() })
+      .where(eq(plants.id, photo.plantId));
+    
     return newPhoto;
   }
 

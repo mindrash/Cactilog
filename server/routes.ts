@@ -155,11 +155,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       // Temporary fix: Use development user ID since authentication is broken
       const userId = "45392487"; // Tom's user ID from logs
-      const { search, type, genus } = req.query;
+      const { search, type, genus, sortBy } = req.query;
       const plants = await storage.getPlants(userId, {
         search: search as string,
         type: type as string,
         genus: genus as string,
+        sortBy: sortBy as string,
       });
       res.json(plants);
     } catch (error) {
