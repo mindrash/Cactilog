@@ -417,12 +417,32 @@ export class DatabaseStorage implements IStorage {
     plants: Plant[];
     total: number;
   }> {
-    // Get public plants with pagination
+    // Get public plants with pagination, ordered by most recent activity (either plant creation or latest photo upload)
     const publicPlants = await db
-      .select()
+      .select({
+        id: plants.id,
+        userId: plants.userId,
+        customId: plants.customId,
+        family: plants.family,
+        genus: plants.genus,
+        species: plants.species,
+        cultivar: plants.cultivar,
+        mutation: plants.mutation,
+        commonName: plants.commonName,
+        supplier: plants.supplier,
+        acquisitionDate: plants.acquisitionDate,
+        initialType: plants.initialType,
+        isPublic: plants.isPublic,
+        notes: plants.notes,
+        createdAt: plants.createdAt,
+        updatedAt: plants.updatedAt,
+        lastActivity: sql<Date>`GREATEST(${plants.createdAt}, COALESCE(MAX(${plantPhotos.uploadedAt}), ${plants.createdAt}))`.as('lastActivity')
+      })
       .from(plants)
+      .leftJoin(plantPhotos, eq(plants.id, plantPhotos.plantId))
       .where(eq(plants.isPublic, "public"))
-      .orderBy(desc(plants.createdAt))
+      .groupBy(plants.id)
+      .orderBy(desc(sql`GREATEST(${plants.createdAt}, COALESCE(MAX(${plantPhotos.uploadedAt}), ${plants.createdAt}))`))
       .limit(limit)
       .offset(offset);
 
