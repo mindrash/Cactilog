@@ -138,7 +138,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Auth routes
   app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const user = await storage.getUser(userId);
       res.json(user);
     } catch (error) {
@@ -150,7 +150,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put('/api/auth/user/display-name', isAuthenticated, async (req: any, res) => {
     try {
 
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const { displayName } = req.body;
       
       if (typeof displayName !== 'string') {
@@ -171,8 +171,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Dashboard stats
   app.get('/api/dashboard/stats', isAuthenticated, async (req: any, res) => {
     try {
-
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const stats = await storage.getDashboardStats(userId);
       res.json(stats);
     } catch (error) {
@@ -184,8 +183,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Plant routes
   app.get('/api/plants', isAuthenticated, async (req: any, res) => {
     try {
-
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const { search, type, genus, sortBy } = req.query;
       const plants = await storage.getPlants(userId, {
         search: search as string,
@@ -203,8 +201,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Growth tracking routes
   app.get('/api/plants/growth-overview', isAuthenticated, async (req: any, res) => {
     try {
-
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const overview = await storage.getGrowthOverview(userId);
       res.json(overview);
     } catch (error) {
@@ -215,8 +212,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/growth/analytics', isAuthenticated, async (req: any, res) => {
     try {
-
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const analytics = await storage.getGrowthAnalytics(userId);
       res.json(analytics);
     } catch (error) {
@@ -229,7 +225,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/plants/:id/growth', isAuthenticated, async (req: any, res) => {
     try {
 
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const plantId = parseInt(req.params.id);
       
       if (isNaN(plantId)) {
@@ -247,7 +243,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/plants/:id/growth', isAuthenticated, async (req: any, res) => {
     try {
 
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const plantId = parseInt(req.params.id);
       
       if (isNaN(plantId)) {
@@ -270,7 +266,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/plants/:id', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const plantId = parseInt(req.params.id);
       
       if (isNaN(plantId)) {
@@ -292,7 +288,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post('/api/plants', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const validatedData = insertPlantSchema.parse(req.body);
       const plant = await storage.createPlant({ ...validatedData, userId });
       res.status(201).json(plant);
@@ -307,7 +303,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.patch('/api/plants/:id', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const plantId = parseInt(req.params.id);
       
       if (isNaN(plantId)) {
@@ -333,7 +329,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete('/api/plants/:id', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const plantId = parseInt(req.params.id);
       
       if (isNaN(plantId)) {
@@ -357,7 +353,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/plants/growth-overview', isAuthenticated, async (req: any, res) => {
     try {
 
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const plantsWithGrowth = await storage.getPlantsWithGrowthSummary(userId);
       res.json(plantsWithGrowth);
     } catch (error) {
@@ -369,7 +365,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Growth record routes
   app.get('/api/plants/:plantId/growth', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const plantId = parseInt(req.params.plantId);
       
       if (isNaN(plantId)) {
@@ -386,7 +382,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post('/api/plants/:plantId/growth', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const plantId = parseInt(req.params.plantId);
       
       if (isNaN(plantId)) {
@@ -416,7 +412,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.patch('/api/growth/:id', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const recordId = parseInt(req.params.id);
       const validatedData = insertGrowthRecordSchema.partial().parse(req.body);
       const record = await storage.updateGrowthRecord(recordId, userId, validatedData);
@@ -437,7 +433,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete('/api/growth/:id', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const recordId = parseInt(req.params.id);
       const deleted = await storage.deleteGrowthRecord(recordId, userId);
       
@@ -467,7 +463,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/plants/:plantId/photos', isAuthenticated, async (req: any, res) => {
     try {
 
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const plantId = parseInt(req.params.plantId);
       const photos = await storage.getPlantPhotos(plantId, userId);
       res.json(photos);
@@ -480,7 +476,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/plants/:plantId/photos', isAuthenticated, upload.single('photo'), async (req: any, res) => {
     try {
 
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const plantId = parseInt(req.params.plantId);
       
       if (isNaN(plantId)) {
@@ -530,7 +526,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.delete('/api/plants/:plantId/photos/:photoId', isAuthenticated, async (req: any, res) => {
     try {
 
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const plantId = parseInt(req.params.plantId);
       const photoId = parseInt(req.params.photoId);
       
@@ -559,7 +555,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Seed routes
   app.get('/api/seeds', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const seeds = await storage.getSeeds(userId);
       res.json(seeds);
     } catch (error) {
@@ -570,7 +566,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post('/api/seeds', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const validatedData = insertSeedSchema.parse(req.body);
       const seed = await storage.createSeed({ ...validatedData, userId });
       res.status(201).json(seed);
@@ -642,7 +638,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.patch('/api/users/collection-visibility', isAuthenticated, async (req: any, res) => {
     try {
 
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const { visibility } = req.body;
       
       if (!['public', 'private'].includes(visibility)) {
@@ -660,7 +656,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.patch('/api/users/knowledge-base-contribution', async (req: any, res) => {
     try {
 
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const { contribute } = req.body;
       
       if (typeof contribute !== 'boolean') {
@@ -819,7 +815,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/admin/reports', async (req: any, res) => {
     try {
       // Temporary fix: Use Tom's known user ID
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const isAdmin = await storage.isUserAdmin(userId);
       
       if (!isAdmin) {
@@ -839,7 +835,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.patch('/api/admin/reports/:reportId', async (req: any, res) => {
     try {
       // Temporary fix: Use Tom's known user ID
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const isAdmin = await storage.isUserAdmin(userId);
       
       if (!isAdmin) {
@@ -867,7 +863,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/admin/status', async (req: any, res) => {
     try {
       // Temporary fix: Use Tom's known user ID and email from logs
-      const userId = req.user.claims.sub; // Tom's user ID from auth/user endpoint
+      const userId = req.user.id; // Tom's user ID from auth/user endpoint
       const userEmail = "tomlawson@gmail.com";
       
       console.log(`Admin status check for user: ${userId}, email: ${userEmail}`);
@@ -903,8 +899,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Initialize Tom as admin on first login
   app.post('/api/admin/initialize', isAuthenticated, async (req, res) => {
     try {
-      const userId = (req.user as any)?.claims?.sub;
-      const userEmail = (req.user as any)?.claims?.email;
+      const userId = (req.user as any)?.id;
+      const userEmail = (req.user as any)?.email;
       
       if (userEmail === 'tomlawson@gmail.com') {
         const existingAdmin = await storage.getAdminUserByEmail(userEmail);
@@ -945,7 +941,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post('/api/vendors/seed', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const isAdmin = await storage.isUserAdmin(userId);
       
       if (!isAdmin) {
