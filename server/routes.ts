@@ -552,6 +552,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // EMERGENCY PHOTO RECOVERY ENDPOINT
+  app.post('/api/emergency/photo-recovery', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      console.log(`EMERGENCY PHOTO RECOVERY requested by user: ${userId}`);
+      
+      const result = await storage.emergencyPhotoRecovery();
+      
+      res.json({
+        success: true,
+        message: `Emergency photo recovery completed`,
+        restored: result.restored,
+        errors: result.errors,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error("Error in emergency photo recovery:", error);
+      res.status(500).json({ 
+        success: false,
+        message: "Emergency photo recovery failed",
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
   // Seed routes
   app.get('/api/seeds', isAuthenticated, async (req: any, res) => {
     try {

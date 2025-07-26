@@ -689,6 +689,9 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createPlantPhoto(photo: InsertPlantPhoto): Promise<PlantPhoto> {
+    // LOG ALL PHOTO UPLOADS for recovery purposes
+    console.log(`CREATING PHOTO RECORD: Plant ${photo.plantId}, File: ${photo.filename}, Path: ${photo.filePath}`);
+    
     const [newPhoto] = await db.insert(plantPhotos).values(photo).returning();
     
     // Update the plant's updatedAt field to reflect that it was modified
@@ -697,10 +700,62 @@ export class DatabaseStorage implements IStorage {
       .set({ updatedAt: new Date() })
       .where(eq(plants.id, photo.plantId));
     
+    console.log(`PHOTO RECORD CREATED: ID ${newPhoto.id} for Plant ${photo.plantId}`);
     return newPhoto;
   }
 
+  // EMERGENCY PHOTO RECOVERY FUNCTION
+  async emergencyPhotoRecovery(): Promise<{ restored: number; errors: string[] }> {
+    const fs = require('fs');
+    const path = require('path');
+    const uploadsDir = '/home/runner/workspace/uploads';
+    const errors: string[] = [];
+    let restored = 0;
+
+    console.log("STARTING EMERGENCY PHOTO RECOVERY");
+    
+    if (!fs.existsSync(uploadsDir)) {
+      errors.push("Uploads directory does not exist");
+      return { restored, errors };
+    }
+
+    // Get all existing photo records
+    const existingPhotos = await db.select().from(plantPhotos);
+    const existingFilenames = new Set(existingPhotos.map(p => p.filename));
+
+    // Get all plant files that exist physically
+    const physicalFiles = fs.readdirSync(uploadsDir).filter((file: string) => 
+      file.startsWith('plant-') && (file.endsWith('.jpg') || file.endsWith('.jpeg'))
+    );
+
+    console.log(`Found ${physicalFiles.length} physical photo files`);
+    console.log(`Found ${existingPhotos.length} database photo records`);
+
+    // Try to restore missing database records
+    for (const filename of physicalFiles) {
+      if (!existingFilenames.has(filename)) {
+        try {
+          const filePath = path.join(uploadsDir, filename);
+          const stats = fs.statSync(filePath);
+          
+          // Try to guess plant ID from filename pattern or return an error
+          console.log(`Found orphaned photo file: ${filename}`);
+          errors.push(`Orphaned photo file found: ${filename} - requires manual plant ID assignment`);
+        } catch (error) {
+          errors.push(`Error processing ${filename}: ${error}`);
+        }
+      }
+    }
+
+    return { restored, errors };
+  }
+
   async deletePlantPhoto(id: number, userId: string): Promise<boolean> {
+    // SAFETY CHECK: Never allow bulk deletions - only single photo deletion
+    if (!id || id <= 0) {
+      throw new Error("Invalid photo ID - only single photo deletions allowed");
+    }
+
     // Get the full photo record to access the file path
     const [photo] = await db
       .select()
@@ -711,6 +766,29 @@ export class DatabaseStorage implements IStorage {
     
     const plant = await this.getPlant(photo.plantId, userId);
     if (!plant) return false;
+
+    // BACKUP PROTECTION: Create backup before deletion
+    const fs = require('fs');
+    const path = require('path');
+    const backupDir = '/home/runner/workspace/photo-backups';
+    
+    try {
+      if (!fs.existsSync(backupDir)) {
+        fs.mkdirSync(backupDir, { recursive: true });
+      }
+      
+      // Create backup of photo file before deletion
+      if (photo.filePath && fs.existsSync(photo.filePath)) {
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        const backupPath = path.join(backupDir, `${timestamp}-${path.basename(photo.filePath)}`);
+        fs.copyFileSync(photo.filePath, backupPath);
+        console.log(`Photo backed up to: ${backupPath}`);
+      }
+    } catch (error) {
+      console.error("Error creating photo backup:", error);
+      // SAFETY: Don't delete if backup fails
+      throw new Error("Cannot delete photo - backup creation failed");
+    }
     
     // Delete from database first
     const result = await db.delete(plantPhotos).where(eq(plantPhotos.id, id));
@@ -718,17 +796,15 @@ export class DatabaseStorage implements IStorage {
     // If database deletion successful, try to delete the physical file
     if (result.rowCount! > 0) {
       try {
-        const fs = require('fs');
-        const path = require('path');
-        
-        // Delete the file if it exists
+        // Only delete original file after successful backup and DB deletion
         if (photo.filePath && fs.existsSync(photo.filePath)) {
           fs.unlinkSync(photo.filePath);
+          console.log(`Photo file deleted: ${photo.filePath}`);
         }
       } catch (error) {
         console.error("Error deleting photo file:", error);
         // Don't fail the entire operation if file deletion fails
-        // The database record is already deleted
+        // The database record is already deleted and backup exists
       }
     }
     
