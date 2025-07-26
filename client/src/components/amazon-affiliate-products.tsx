@@ -47,8 +47,17 @@ export default function AmazonAffiliateProducts({
           <Card key={product.id} className="bg-white border-orange-100 hover:shadow-md transition-shadow">
             <CardContent className="p-3">
               <div className="flex gap-3">
-                <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center shrink-0">
-                  <span className="text-2xl">🌵</span>
+                <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center shrink-0 overflow-hidden">
+                  <img 
+                    src={product.imageUrl} 
+                    alt={product.title}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                      e.currentTarget.nextElementSibling!.style.display = 'flex';
+                    }}
+                  />
+                  <span className="text-2xl hidden">🌵</span>
                 </div>
                 
                 <div className="flex-1 min-w-0">
