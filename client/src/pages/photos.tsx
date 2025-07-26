@@ -1,4 +1,4 @@
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth, useAuthOptional } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import Header from "@/components/header";
@@ -35,18 +35,15 @@ interface PublicPhoto {
 }
 
 export default function Photos() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated } = useAuthOptional();
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("recent");
 
   const { data: photos, isLoading: photosLoading } = useQuery<PublicPhoto[]>({
     queryKey: ["/api/photos/public"],
-    enabled: !!isAuthenticated,
   });
 
-  if (isLoading || !isAuthenticated) {
-    return null;
-  }
+  // Public page - no auth check needed
 
   const filteredPhotos = photos?.filter(item => 
     item.plant.customId.toLowerCase().includes(searchTerm.toLowerCase()) ||
