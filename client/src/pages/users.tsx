@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth, useAuthOptional } from "@/hooks/useAuth";
 import { SEO, seoConfigs } from "@/components/seo";
 import { Users as UsersIcon, Sprout, Eye, EyeOff, ArrowUpDown, Heart, TreePine } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,37 +23,12 @@ interface UserWithStats extends User {
 
 export default function Users() {
   const { toast } = useToast();
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated } = useAuthOptional();
   const [sortBy, setSortBy] = useState<'latest' | 'likes' | 'cacti'>('latest');
-
-  // Redirect to login if not authenticated
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      toast({
-        title: "Unauthorized",
-        description: "You are logged out. Logging in again...",
-        variant: "destructive",
-      });
-      setTimeout(() => {
-        window.location.href = "/api/login";
-      }, 500);
-      return;
-    }
-  }, [isAuthenticated, isLoading, toast]);
 
   const { data: users = [], isLoading: usersLoading } = useQuery<UserWithStats[]>({
     queryKey: ["/api/users/public", sortBy],
-    queryFn: async () => {
-      const response = await fetch(`/api/users/public?sortBy=${sortBy}`);
-      if (!response.ok) throw new Error('Failed to fetch users');
-      return response.json();
-    },
-    enabled: isAuthenticated,
   });
-
-  if (isLoading || !isAuthenticated) {
-    return null;
-  }
 
   const getInitials = (user: UserWithStats) => {
     // If user has custom display name, use first 2 characters of that
