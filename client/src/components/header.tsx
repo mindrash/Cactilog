@@ -233,13 +233,15 @@ export function Header() {
                           credentials: 'include'
                         });
                         
-                        if (response.ok) {
-                          // Redirect to home page after successful logout
-                          window.location.href = "/";
-                        } else {
-                          // Fallback: force reload to landing page
-                          window.location.href = "/";
+                        // Always redirect regardless of response to ensure logout
+                        // Clear any client-side cache/state
+                        if (window.caches) {
+                          const cacheNames = await window.caches.keys();
+                          await Promise.all(cacheNames.map(name => window.caches.delete(name)));
                         }
+                        
+                        // Force a complete page reload to clear all state
+                        window.location.replace("/");
                       } catch (error) {
                         console.error('Logout error:', error);
                         // Fallback: force reload to landing page
@@ -417,13 +419,15 @@ export function Header() {
                             credentials: 'include'
                           });
                           
-                          if (response.ok) {
-                            // Redirect to home page after successful logout
-                            window.location.href = "/";
-                          } else {
-                            // Fallback: force reload to landing page
-                            window.location.href = "/";
+                          // Always redirect regardless of response to ensure logout
+                          // Clear any client-side cache/state
+                          if (window.caches) {
+                            const cacheNames = await window.caches.keys();
+                            await Promise.all(cacheNames.map(name => window.caches.delete(name)));
                           }
+                          
+                          // Force a complete page reload to clear all state
+                          window.location.replace("/");
                         } catch (error) {
                           console.error('Logout error:', error);
                           // Fallback: force reload to landing page
