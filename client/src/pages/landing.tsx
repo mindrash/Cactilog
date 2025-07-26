@@ -74,6 +74,7 @@ function LandingPlantCard({ plant }: { plant: Plant }) {
 
 function Landing() {
   const [currentPage, setCurrentPage] = useState(1);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   const { data, isLoading } = useQuery<PublicFeedResponse>({
     queryKey: ["/api/public/plants", currentPage],
@@ -153,42 +154,61 @@ function Landing() {
 
             {/* Desktop Sign In */}
             <div className="hidden lg:flex items-center space-x-3">
-              <Button asChild className="bg-cactus-green hover:bg-cactus-green/90">
-                <a href="/auth">
-                  <LogIn className="w-4 h-4 mr-2" />
-                  Sign In
-                </a>
+              <Button 
+                onClick={() => window.location.href = "/auth"}
+                className="bg-cactus-green hover:bg-cactus-green/90"
+              >
+                <LogIn className="w-4 h-4 mr-2" />
+                Sign In
               </Button>
             </div>
 
             {/* Mobile Navigation */}
             <div className="lg:hidden flex items-center space-x-2">
-              <div className="relative group">
-                <Button size="sm" variant="ghost">
-                  <Menu className="w-4 h-4" />
-                </Button>
-                <div className="absolute top-full right-0 mt-1 w-56 bg-white rounded-md shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                  <div className="py-2">
-                    <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">Community</div>
-                    <a href="/users" onClick={(e) => { e.preventDefault(); window.location.href = '/users'; }} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Collections Directory</a>
-                    <a href="/photos" onClick={(e) => { e.preventDefault(); window.location.href = '/photos'; }} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Photo Gallery</a>
-                    <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide mt-2">Knowledge Base</div>
-                    <a href="/knowledge" onClick={(e) => { e.preventDefault(); window.location.href = '/knowledge'; }} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Browse Genera</a>
-                    <a href="/knowledge/search" onClick={(e) => { e.preventDefault(); window.location.href = '/knowledge/search'; }} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Species Search</a>
-                    <a href="/knowledge/care-guides" onClick={(e) => { e.preventDefault(); window.location.href = '/knowledge/care-guides'; }} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Care Guides</a>
-                    <a href="/knowledge/diseases-pests" onClick={(e) => { e.preventDefault(); window.location.href = '/knowledge/diseases-pests'; }} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Diseases & Pests</a>
-                    <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide mt-2">Other</div>
-                    <a href="/vendors" onClick={(e) => { e.preventDefault(); window.location.href = '/vendors'; }} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Trusted Vendors</a>
-                  </div>
-                </div>
-              </div>
-              <Button size="sm" asChild className="bg-cactus-green hover:bg-cactus-green/90">
-                <a href="/api/login">
-                  <LogIn className="w-4 h-4" />
-                </a>
+              <Button 
+                size="sm" 
+                variant="ghost"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              >
+                {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+              </Button>
+              <Button 
+                size="sm" 
+                onClick={() => window.location.href = "/auth"}
+                className="bg-cactus-green hover:bg-cactus-green/90"
+              >
+                <LogIn className="w-4 h-4" />
               </Button>
             </div>
           </div>
+          
+          {/* Mobile Menu Dropdown */}
+          {mobileMenuOpen && (
+            <div className="lg:hidden border-t border-gray-200 bg-white">
+              <div className="py-2">
+                <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">Community</div>
+                <a href="/users" onClick={(e) => { e.preventDefault(); window.location.href = '/users'; setMobileMenuOpen(false); }} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Collections Directory</a>
+                <a href="/photos" onClick={(e) => { e.preventDefault(); window.location.href = '/photos'; setMobileMenuOpen(false); }} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Photo Gallery</a>
+                <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide mt-2">Knowledge Base</div>
+                <a href="/knowledge" onClick={(e) => { e.preventDefault(); window.location.href = '/knowledge'; setMobileMenuOpen(false); }} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Browse Genera</a>
+                <a href="/knowledge/search" onClick={(e) => { e.preventDefault(); window.location.href = '/knowledge/search'; setMobileMenuOpen(false); }} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Species Search</a>
+                <a href="/knowledge/care-guides" onClick={(e) => { e.preventDefault(); window.location.href = '/knowledge/care-guides'; setMobileMenuOpen(false); }} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Care Guides</a>
+                <a href="/knowledge/diseases-pests" onClick={(e) => { e.preventDefault(); window.location.href = '/knowledge/diseases-pests'; setMobileMenuOpen(false); }} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Diseases & Pests</a>
+                <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide mt-2">Other</div>
+                <a href="/vendors" onClick={(e) => { e.preventDefault(); window.location.href = '/vendors'; setMobileMenuOpen(false); }} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Trusted Vendors</a>
+                <div className="border-t border-gray-200 mt-2 pt-2">
+                  <Button 
+                    onClick={() => { window.location.href = "/auth"; setMobileMenuOpen(false); }}
+                    className="w-full mx-4 mb-2 bg-cactus-green hover:bg-cactus-green/90"
+                    style={{ width: 'calc(100% - 2rem)' }}
+                  >
+                    <LogIn className="w-4 h-4 mr-2" />
+                    Sign In
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </header>
 
@@ -203,7 +223,7 @@ function Landing() {
             From beginners to experts, Cactilog helps you nurture your passion for cacti and succulents.
           </p>
           <Button 
-            onClick={() => window.location.href = "/api/login"}
+            onClick={() => window.location.href = "/auth"}
             size="lg"
             className="bg-cactus-green hover:bg-cactus-green/90 px-8 py-3 text-lg"
           >
@@ -453,7 +473,7 @@ function Landing() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button 
-              onClick={() => window.location.href = "/api/login"}
+              onClick={() => window.location.href = "/auth"}
               size="lg"
               className="bg-cactus-green hover:bg-cactus-green/90 px-8 py-3"
             >
