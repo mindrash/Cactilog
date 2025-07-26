@@ -50,6 +50,17 @@ function Router() {
       {!isAuthenticated ? (
         <>
           <Route path="/" component={Landing} />
+          <Route path="/photos" component={Photos} />
+          <Route path="/users" component={Users} />
+          <Route path="/users/:userId" component={UserProfile} />
+          <Route path="/knowledge" component={Knowledge} />
+          <Route path="/knowledge/search" component={KnowledgeSearch} />
+          <Route path="/knowledge/genus/:genusName" component={KnowledgeGenus} />
+          <Route path="/knowledge/species/:genusName/:speciesName" component={KnowledgeSpecies} />
+          <Route path="/knowledge/variant/:genusName/:speciesName/:variantName" component={KnowledgeVariant} />
+          <Route path="/knowledge/care-guides" component={KnowledgeCareGuides} />
+          <Route path="/knowledge/diseases-pests" component={KnowledgeDiseasesAndPests} />
+          <Route path="/vendors" component={Vendors} />
           <Route path="/about" component={About} />
           <Route path="/contact" component={Contact} />
           <Route path="/privacy" component={Privacy} />

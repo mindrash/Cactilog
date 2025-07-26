@@ -119,8 +119,8 @@ function Landing() {
                 </Button>
                 <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-md shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                   <div className="py-1">
-                    <a href="/users" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Collections Directory</a>
-                    <a href="/photos" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Photo Gallery</a>
+                    <a href="/users" onClick={(e) => { e.preventDefault(); window.location.href = '/users'; }} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Collections Directory</a>
+                    <a href="/photos" onClick={(e) => { e.preventDefault(); window.location.href = '/photos'; }} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Photo Gallery</a>
                   </div>
                 </div>
               </div>
@@ -133,19 +133,17 @@ function Landing() {
                 </Button>
                 <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-md shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                   <div className="py-1">
-                    <a href="/knowledge" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Browse Genera</a>
-                    <a href="/knowledge/search" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Species Search</a>
-                    <a href="/knowledge/care-guides" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Care Guides</a>
-                    <a href="/knowledge/diseases-pests" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Diseases & Pests</a>
+                    <a href="/knowledge" onClick={(e) => { e.preventDefault(); window.location.href = '/knowledge'; }} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Browse Genera</a>
+                    <a href="/knowledge/search" onClick={(e) => { e.preventDefault(); window.location.href = '/knowledge/search'; }} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Species Search</a>
+                    <a href="/knowledge/care-guides" onClick={(e) => { e.preventDefault(); window.location.href = '/knowledge/care-guides'; }} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Care Guides</a>
+                    <a href="/knowledge/diseases-pests" onClick={(e) => { e.preventDefault(); window.location.href = '/knowledge/diseases-pests'; }} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Diseases & Pests</a>
                   </div>
                 </div>
               </div>
               
-              <Button asChild variant="ghost">
-                <a href="/vendors">
-                  <Store className="w-4 h-4 mr-2" />
-                  Vendors
-                </a>
+              <Button variant="ghost" onClick={() => window.location.href = '/vendors'}>
+                <Store className="w-4 h-4 mr-2" />
+                Vendors
               </Button>
             </nav>
 
@@ -168,15 +166,15 @@ function Landing() {
                 <div className="absolute top-full right-0 mt-1 w-56 bg-white rounded-md shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                   <div className="py-2">
                     <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">Community</div>
-                    <a href="/users" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Collections Directory</a>
-                    <a href="/photos" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Photo Gallery</a>
+                    <a href="/users" onClick={(e) => { e.preventDefault(); window.location.href = '/users'; }} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Collections Directory</a>
+                    <a href="/photos" onClick={(e) => { e.preventDefault(); window.location.href = '/photos'; }} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Photo Gallery</a>
                     <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide mt-2">Knowledge Base</div>
-                    <a href="/knowledge" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Browse Genera</a>
-                    <a href="/knowledge/search" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Species Search</a>
-                    <a href="/knowledge/care-guides" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Care Guides</a>
-                    <a href="/knowledge/diseases-pests" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Diseases & Pests</a>
+                    <a href="/knowledge" onClick={(e) => { e.preventDefault(); window.location.href = '/knowledge'; }} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Browse Genera</a>
+                    <a href="/knowledge/search" onClick={(e) => { e.preventDefault(); window.location.href = '/knowledge/search'; }} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Species Search</a>
+                    <a href="/knowledge/care-guides" onClick={(e) => { e.preventDefault(); window.location.href = '/knowledge/care-guides'; }} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Care Guides</a>
+                    <a href="/knowledge/diseases-pests" onClick={(e) => { e.preventDefault(); window.location.href = '/knowledge/diseases-pests'; }} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Diseases & Pests</a>
                     <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide mt-2">Other</div>
-                    <a href="/vendors" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Trusted Vendors</a>
+                    <a href="/vendors" onClick={(e) => { e.preventDefault(); window.location.href = '/vendors'; }} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Trusted Vendors</a>
                   </div>
                 </div>
               </div>
