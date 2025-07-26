@@ -8,7 +8,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import PlantCard from "@/components/plant-card";
 import Header from "@/components/header";
 import { SEO, seoConfigs } from "@/components/seo";
+import AmazonAffiliateProducts from "@/components/amazon-affiliate-products";
 import type { Plant } from "@shared/schema";
+import { getFeaturedProducts } from "@shared/amazon-products";
 
 interface PublicFeedResponse {
   plants: Plant[];
@@ -35,6 +37,7 @@ export default function Home() {
 
   const plants = publicFeed?.plants || [];
   const pagination = publicFeed?.pagination;
+  const homeProducts = getFeaturedProducts('home');
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-lime-wash/20 to-pine-mist/30 cactus-pattern-bg">
@@ -182,6 +185,15 @@ export default function Home() {
               </CardContent>
             </Card>
           )}
+        </div>
+
+        {/* Amazon Affiliate Products Section */}
+        <div className="mt-12">
+          <AmazonAffiliateProducts 
+            products={homeProducts}
+            title="Featured Cactus & Succulent Supplies"
+            context="Community Picks"
+          />
         </div>
       </div>
     </div>

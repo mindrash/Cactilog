@@ -9,7 +9,9 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SpeciesImageGallery } from "@/components/species-image-gallery";
 import { VendorRecommendations } from "@/components/vendor-recommendations";
+import AmazonAffiliateProducts from "@/components/amazon-affiliate-products";
 import { cactusGenera, type CactusSpecies } from "@shared/cactus-data";
+import { getFeaturedProducts, getProductsByTags } from "@shared/amazon-products";
 
 export default function KnowledgeSpecies() {
   const [, params] = useRoute("/knowledge/species/:genusName/:speciesName");
@@ -73,6 +75,15 @@ export default function KnowledgeSpecies() {
   });
 
   const speciesExists = !!foundSpecies;
+  
+  // Get contextual Amazon products for this species
+  const isCactus = genus.name.toLowerCase().includes('trichocereus') || 
+                   genus.name.toLowerCase().includes('mammillaria') ||
+                   genus.name.toLowerCase().includes('opuntia');
+  const speciesProducts = isCactus ? 
+    getProductsByTags(['cactus', 'tools', 'fertilizer']) :
+    getProductsByTags(['succulent', 'tools', 'fertilizer']);
+  const featuredSpeciesProducts = speciesProducts.slice(0, 3);
   
   // Convert to CactusSpecies object for consistent handling
   const species: CactusSpecies = typeof foundSpecies === 'string' 
@@ -537,6 +548,14 @@ export default function KnowledgeSpecies() {
               genus={genusName} 
               species={speciesName}
               maxRecommendations={3}
+            />
+
+            {/* Amazon Affiliate Products */}
+            <AmazonAffiliateProducts 
+              products={featuredSpeciesProducts}
+              title="Essential Growing Supplies"
+              context={`${genusName} Care`}
+              className="max-w-sm"
             />
 
             {/* Quick Actions */}

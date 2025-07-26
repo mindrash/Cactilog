@@ -23,7 +23,9 @@ import {
 } from "lucide-react";
 import Header from "@/components/header";
 import { SEO, seoConfigs } from "@/components/seo";
+import AmazonAffiliateProducts from "@/components/amazon-affiliate-products";
 import { isUnauthorizedError } from "@/lib/authUtils";
+import { getFeaturedProducts } from "@shared/amazon-products";
 import { cactusGenera, type CactusSpecies } from "@shared/cactus-data";
 
 // Care guide data structure
@@ -304,6 +306,8 @@ export default function KnowledgeCareGuides() {
     
     return matchesSearch && matchesGenus && matchesSpecies;
   });
+
+  const careProducts = getFeaturedProducts('care');
 
   // Get unique genera for filtering
   const availableGenera = Array.from(new Set(speciesCareGuides.map(g => g.genus)));
@@ -636,6 +640,15 @@ export default function KnowledgeCareGuides() {
           <div className="border-t border-gray-200 pt-8">
             <h2 className="section-title mb-4">General Cactus Care Guide</h2>
             <CareGuideCard guide={generalCactusGuide} isGeneral={true} />
+          </div>
+
+          {/* Amazon Affiliate Products Section */}
+          <div className="border-t border-gray-200 pt-8">
+            <AmazonAffiliateProducts 
+              products={careProducts}
+              title="Essential Care & Growing Supplies"
+              context="Professional Tools"
+            />
           </div>
         </div>
       </div>
