@@ -68,6 +68,12 @@ export default function AddGrowthModal({ plant, children }: AddGrowthModalProps)
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  // Guard against undefined plant
+  if (!plant) {
+    console.error("AddGrowthModal: plant is undefined");
+    return null;
+  }
+
   const form = useForm<GrowthRecordForm>({
     resolver: zodResolver(growthRecordSchema),
     defaultValues: {

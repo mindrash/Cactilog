@@ -500,12 +500,19 @@ export default function GrowthTracking() {
                       )}
                       
                       <div className="flex gap-2 pt-4">
-                        <AddGrowthModal plant={plant}>
-                          <Button size="sm" variant="outline" className="flex-1">
+                        {plant ? (
+                          <AddGrowthModal plant={plant}>
+                            <Button size="sm" variant="outline" className="flex-1">
+                              <Plus className="h-4 w-4 mr-1" />
+                              Add Record
+                            </Button>
+                          </AddGrowthModal>
+                        ) : (
+                          <Button size="sm" variant="outline" className="flex-1" disabled>
                             <Plus className="h-4 w-4 mr-1" />
                             Add Record
                           </Button>
-                        </AddGrowthModal>
+                        )}
                         <Button size="sm" variant="outline">
                           <Eye className="h-4 w-4" />
                         </Button>
