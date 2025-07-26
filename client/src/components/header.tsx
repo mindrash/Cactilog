@@ -108,8 +108,8 @@ function Header() {
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
-                        variant={isGroupActive(navigationGroups.knowledge) ? "default" : "ghost"}
-                        className={isGroupActive(navigationGroups.knowledge) ? "bg-cactus-green hover:bg-cactus-green/90" : ""}
+                        variant={isGroupActive(navigationGroups.knowledge.slice(0, -1)) ? "default" : "ghost"}
+                        className={isGroupActive(navigationGroups.knowledge.slice(0, -1)) ? "bg-cactus-green hover:bg-cactus-green/90" : ""}
                       >
                         <BookOpen className="w-4 h-4 mr-2" />
                         Knowledge Base
@@ -119,7 +119,7 @@ function Header() {
                     <DropdownMenuContent align="start" className="w-56">
                       <DropdownMenuLabel>Knowledge Base</DropdownMenuLabel>
                       <DropdownMenuSeparator />
-                      {navigationGroups.knowledge.map((item) => (
+                      {navigationGroups.knowledge.slice(0, -1).map((item) => (
                         <Link key={item.href} href={item.href}>
                           <DropdownMenuItem className="cursor-pointer">
                             <item.icon className="w-4 h-4 mr-2" />
@@ -129,6 +129,17 @@ function Header() {
                       ))}
                     </DropdownMenuContent>
                   </DropdownMenu>
+
+                  {/* Vendors Link */}
+                  <Link href="/vendors">
+                    <Button
+                      variant={isActive("/vendors") ? "default" : "ghost"}
+                      className={isActive("/vendors") ? "bg-cactus-green hover:bg-cactus-green/90" : ""}
+                    >
+                      <Store className="w-4 h-4 mr-2" />
+                      Vendors
+                    </Button>
+                  </Link>
                 </>
               )}
 
@@ -445,7 +456,7 @@ function Header() {
                       <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
                         Knowledge Base
                       </div>
-                      {navigationGroups.knowledge.map((item) => (
+                      {navigationGroups.knowledge.slice(0, -1).map((item) => (
                         <Link key={item.href} href={item.href}>
                           <Button
                             variant={isActive(item.href) ? "default" : "ghost"}
@@ -459,6 +470,25 @@ function Header() {
                           </Button>
                         </Link>
                       ))}
+                    </div>
+
+                    {/* Vendors Section */}
+                    <div className="pt-4">
+                      <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        Shop
+                      </div>
+                      <Link href="/vendors">
+                        <Button
+                          variant={isActive("/vendors") ? "default" : "ghost"}
+                          className={`w-full justify-start ${
+                            isActive("/vendors") ? "bg-cactus-green hover:bg-cactus-green/90" : ""
+                          }`}
+                          onClick={() => setShowMobileMenu(false)}
+                        >
+                          <Store className="w-4 h-4 mr-2" />
+                          Trusted Vendors
+                        </Button>
+                      </Link>
                     </div>
 
 
