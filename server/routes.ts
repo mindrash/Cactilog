@@ -739,7 +739,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Plant likes routes
   app.post('/api/plants/:plantId/like', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user?.claims?.sub;
+      const userId = req.user.id; // Use Google Auth user ID
       const plantId = parseInt(req.params.plantId);
       
       if (isNaN(plantId)) {
@@ -757,7 +757,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete('/api/plants/:plantId/like', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user?.claims?.sub;
+      const userId = req.user.id; // Use Google Auth user ID
       const plantId = parseInt(req.params.plantId);
       
       if (isNaN(plantId)) {
@@ -776,7 +776,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/plants/:plantId/likes', async (req, res) => {
     try {
       const plantId = parseInt(req.params.plantId);
-      const userId = (req as any).user?.claims?.sub;
+      const userId = (req as any).user?.id; // Use Google Auth user ID
       
       if (isNaN(plantId)) {
         return res.status(400).json({ message: "Invalid plant ID" });
