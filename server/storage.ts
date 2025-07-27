@@ -49,6 +49,7 @@ export interface IStorage {
     genus?: string;
   }): Promise<Plant[]>;
   getPlant(id: number, userId: string): Promise<Plant | undefined>;
+  getPublicPlantDetail(plantId: number): Promise<any>;
   createPlant(plant: InsertPlant & { userId: string }): Promise<Plant>;
   updatePlant(id: number, userId: string, updates: Partial<InsertPlant>): Promise<Plant | undefined>;
   deletePlant(id: number, userId: string): Promise<boolean>;
@@ -1155,6 +1156,51 @@ export class DatabaseStorage implements IStorage {
     } catch (error) {
       console.error('Error fetching public photos:', error);
       return [];
+    }
+  }
+
+  async getPublicPlantDetail(plantId: number): Promise<any> {
+    try {
+      // Get plant with owner info
+      const [plantResult] = await db
+        .select({
+          plant: plants,
+          user: {
+            id: users.id,
+            firstName: users.firstName,
+            lastName: users.lastName,
+            displayName: users.displayName,
+            profileImageUrl: users.profileImageUrl,
+          },
+        })
+        .from(plants)
+        .innerJoin(users, eq(plants.userId, users.id))
+        .where(eq(plants.id, plantId));
+
+      if (!plantResult) {
+        return null;
+      }
+
+      // Get photos for this plant
+      const photos = await db
+        .select({
+          id: plantPhotos.id,
+          filename: plantPhotos.filename,
+          originalName: plantPhotos.originalName,
+          uploadedAt: plantPhotos.uploadedAt,
+        })
+        .from(plantPhotos)
+        .where(eq(plantPhotos.plantId, plantId))
+        .orderBy(desc(plantPhotos.uploadedAt));
+
+      return {
+        ...plantResult.plant,
+        user: plantResult.user,
+        photos,
+      };
+    } catch (error) {
+      console.error("Error in getPublicPlantDetail:", error);
+      throw error;
     }
   }
 

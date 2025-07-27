@@ -30,6 +30,7 @@ import Privacy from "@/pages/privacy";
 import Terms from "@/pages/terms";
 import Disclaimer from "@/pages/disclaimer";
 import AuthPage from "@/pages/auth";
+import PlantDetail from "@/pages/plant-detail";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -44,7 +45,8 @@ function Router() {
   const isPublicRoute = publicRoutes.some(route => 
     location === route || 
     location.startsWith('/knowledge/') || 
-    location.startsWith('/users/')
+    location.startsWith('/users/') ||
+    location.startsWith('/plants/')
   );
 
   // Only show loading for private routes
@@ -68,6 +70,7 @@ function Router() {
           <Route path="/recommended-socials" component={RecommendedSocials} />
           <Route path="/users" component={Users} />
           <Route path="/users/:userId" component={UserProfile} />
+          <Route path="/plants/:plantId" component={PlantDetail} />
           <Route path="/knowledge" component={Knowledge} />
           <Route path="/knowledge/search" component={KnowledgeSearch} />
           <Route path="/knowledge/genus/:genusName" component={KnowledgeGenus} />
@@ -94,6 +97,7 @@ function Router() {
           <Route path="/recommended-socials" component={RecommendedSocials} />
           <Route path="/users" component={Users} />
           <Route path="/users/:userId" component={UserProfile} />
+          <Route path="/plants/:plantId" component={PlantDetail} />
           <Route path="/knowledge" component={Knowledge} />
           <Route path="/knowledge/search" component={KnowledgeSearch} />
           <Route path="/knowledge/genus/:genusName" component={KnowledgeGenus} />
