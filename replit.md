@@ -47,6 +47,17 @@ The application uses a monorepo structure with shared schemas:
 
 ### Recent Changes
 
+#### July 27, 2025 - Community Photo Display & Public Plant Detail Pages Implementation
+- **Fixed home page community photo display** to show actual photos from database instead of generic plant listings
+- **Created comprehensive public plant detail pages** accessible to all visitors without authentication required
+- **Implemented photo clickthrough functionality** - clicking any community photo navigates to full plant detail page
+- **Built public plant detail component** with owner information, photo galleries, privacy status, and join prompts for visitors
+- **Added public plant detail API endpoint** `/api/plants/public/:plantId` with proper privacy validation and error handling
+- **Enhanced routing system** to support public plant detail URLs like `/plants/123` for both authenticated and unauthenticated users
+- **Updated landing page layout** with proper photo grid display, hover effects, and responsive design for community engagement
+- Community photos now display with proper plant information, owner credits, and seamless navigation to detailed plant views
+- Public access ensures all visitors can explore the community's plant collections while encouraging registration through strategic call-to-action placement
+
 #### July 26, 2025 - Growth Tracking System Fixes & Photo Database Cleanup
 - **Fixed sidebar navigation link** from `/growth` to `/growth-tracking` for proper routing to Growth Tracking page
 - **Implemented consistent sidebar layout** for Growth Tracking page matching Dashboard and Collection pages with main content area
