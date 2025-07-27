@@ -25,6 +25,31 @@ interface PublicFeedResponse {
   };
 }
 
+interface PublicPhoto {
+  photo: {
+    id: number;
+    filename: string;
+    originalName: string;
+    uploadedAt: string;
+  };
+  plant: {
+    id: number;
+    customId: string;
+    genus: string;
+    species: string;
+    commonName: string;
+    updatedAt: string;
+    family: string;
+  };
+  user: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    displayName: string;
+    profileImageUrl: string;
+  };
+}
+
 // Simple plant card for landing page that doesn't need authentication
 function LandingPlantCard({ plant }: { plant: Plant }) {
   const formatDate = (dateString: string | null) => {
@@ -86,6 +111,11 @@ function Landing() {
       }
       return response.json();
     },
+  });
+
+  // Fetch community photos
+  const { data: photos, isLoading: photosLoading } = useQuery<PublicPhoto[]>({
+    queryKey: ["/api/photos/public"],
   });
 
   // Get featured products for the landing page
@@ -395,24 +425,24 @@ function Landing() {
             Latest from Our Community
           </h3>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Explore amazing collections shared by passionate collectors from around the world
+            Explore amazing photos shared by passionate collectors from around the world
           </p>
         </div>
 
-        {isLoading ? (
+        {photosLoading ? (
           <div className="text-center py-12">
             <div className="inline-block w-8 h-8 border-4 border-cactus-green border-t-transparent rounded-full animate-spin"></div>
-            <p className="mt-4 text-gray-600">Loading plant collection...</p>
+            <p className="mt-4 text-gray-600">Loading community photos...</p>
           </div>
-        ) : data?.plants?.length === 0 ? (
+        ) : !photos || photos.length === 0 ? (
           <div className="text-center py-12">
             <img 
               src={logoImage} 
               alt="Cactilog"
               className="w-12 h-12 object-contain mx-auto mb-4 opacity-40"
             />
-            <h3 className="subsection-title mb-2">No plants shared yet</h3>
-            <p className="text-gray-600 mb-6">Be the first to share your plant collection!</p>
+            <h3 className="subsection-title mb-2">No photos shared yet</h3>
+            <p className="text-gray-600 mb-6">Be the first to share photos of your plant collection!</p>
             <Button 
               onClick={() => window.location.href = "/api/login"}
               className="bg-cactus-green hover:bg-cactus-green/90"
@@ -422,42 +452,78 @@ function Landing() {
           </div>
         ) : (
           <>
-            {/* Plant Grid */}
+            {/* Photo Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
-              {data?.plants?.map((plant) => (
-                <LandingPlantCard key={plant.id} plant={plant} />
+              {photos?.slice(0, 12).map((item) => (
+                <Card 
+                  key={item.photo.id} 
+                  className="border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-200 cursor-pointer group"
+                  onClick={() => window.location.href = `/plants/${item.plant.id}`}
+                >
+                  <div className="w-full h-40 sm:h-48 bg-gray-100 flex items-center justify-center border-b border-gray-200 relative overflow-hidden">
+                    <img
+                      src={`/uploads/${item.photo.filename}`}
+                      alt={item.plant.commonName || `${item.plant.genus} ${item.plant.species || ""}`}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      onError={(e) => {
+                        console.error("Failed to load image:", `/uploads/${item.photo.filename}`, "Original name:", item.photo.originalName);
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        const parent = target.parentElement;
+                        if (parent) {
+                          parent.innerHTML = `
+                            <div class="text-center text-gray-500">
+                              <svg class="w-6 h-6 sm:w-8 sm:h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                              </svg>
+                              <p class="text-xs sm:text-sm">Community Photo</p>
+                            </div>
+                          `;
+                        }
+                      }}
+                      onLoad={() => {
+                        console.log("Successfully loaded image:", `/uploads/${item.photo.filename}`);
+                      }}
+                    />
+                  </div>
+                  <CardContent className="p-3 sm:p-4">
+                    {/* Custom ID */}
+                    <div className="mb-2">
+                      <span className="text-xs font-mono text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                        {item.plant.customId || `#${item.plant.id}`}
+                      </span>
+                    </div>
+                    
+                    <h4 className="font-semibold text-gray-900 mb-1 text-sm sm:text-base line-clamp-2">
+                      {item.plant.commonName || `${item.plant.genus} ${item.plant.species || ""}`}
+                    </h4>
+                    <p className="text-xs sm:text-sm text-gray-600 mb-2 line-clamp-1">
+                      <em>{item.plant.genus}</em> {item.plant.species && <span>{item.plant.species}</span>}
+                    </p>
+                    <div className="flex items-center justify-between text-xs text-gray-500">
+                      <span className="truncate flex-1 mr-2">
+                        by {item.user.displayName || `${item.user.firstName || ''} ${item.user.lastName || ''}`.trim() || 'Anonymous'}
+                      </span>
+                      <span className="shrink-0">
+                        {new Date(item.photo.uploadedAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </CardContent>
+                </Card>
               ))}
             </div>
 
-            {/* Pagination */}
-            {data?.pagination && data.pagination.totalPages > 1 && (
-              <div className="flex items-center justify-center space-x-4">
-                <Button
+            {/* View More Link */}
+            {photos && photos.length > 12 && (
+              <div className="text-center">
+                <Button 
                   variant="outline"
-                  onClick={() => setCurrentPage(currentPage - 1)}
-                  disabled={!data.pagination.hasPrev}
+                  onClick={() => window.location.href = "/photos"}
                   className="flex items-center space-x-2"
                 >
-                  <ChevronLeft className="w-4 h-4" />
-                  <span>Previous</span>
-                </Button>
-
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm text-gray-600">
-                    Page {data.pagination.page} of {data.pagination.totalPages}
-                  </span>
-                  <span className="text-sm text-gray-400">
-                    ({data.pagination.total} plants)
-                  </span>
-                </div>
-
-                <Button
-                  variant="outline"
-                  onClick={() => setCurrentPage(currentPage + 1)}
-                  disabled={!data.pagination.hasNext}
-                  className="flex items-center space-x-2"
-                >
-                  <span>Next</span>
+                  <Camera className="w-4 h-4" />
+                  <span>View All Community Photos</span>
                   <ChevronRight className="w-4 h-4" />
                 </Button>
               </div>

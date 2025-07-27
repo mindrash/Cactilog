@@ -473,6 +473,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Public plant detail route
+  app.get('/api/plants/public/:plantId', async (req: any, res) => {
+    try {
+      const plantId = parseInt(req.params.plantId);
+      
+      if (isNaN(plantId)) {
+        return res.status(400).json({ message: "Invalid plant ID" });
+      }
+      
+      const plant = await storage.getPublicPlantDetail(plantId);
+      
+      if (!plant) {
+        return res.status(404).json({ message: "Plant not found" });
+      }
+      
+      if (!plant.isPublic) {
+        return res.status(403).json({ message: "This plant is private" });
+      }
+      
+      res.json(plant);
+    } catch (error) {
+      console.error("Error fetching public plant detail:", error);
+      res.status(500).json({ message: "Failed to fetch plant details" });
+    }
+  });
+
   // Photo routes
   app.get('/api/plants/:plantId/photos', isAuthenticated, async (req: any, res) => {
     try {
