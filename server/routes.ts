@@ -619,26 +619,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete('/api/plants/:plantId/photos/:photoId', isAuthenticated, async (req: any, res) => {
     try {
-
       const userId = req.user.id;
       const plantId = parseInt(req.params.plantId);
       const photoId = parseInt(req.params.photoId);
       
+      console.log(`DELETE photo request - User: ${userId}, Plant: ${plantId}, Photo: ${photoId}`);
+      
       if (isNaN(plantId) || isNaN(photoId)) {
+        console.log("Invalid plant or photo ID provided");
         return res.status(400).json({ message: "Invalid plant or photo ID" });
       }
 
       // Verify plant belongs to user
       const plant = await storage.getPlant(plantId, userId);
       if (!plant) {
+        console.log(`Plant ${plantId} not found for user ${userId}`);
         return res.status(404).json({ message: "Plant not found" });
       }
 
       const deleted = await storage.deletePlantPhoto(photoId, userId);
       if (!deleted) {
+        console.log(`Photo ${photoId} not found or not owned by user ${userId}`);
         return res.status(404).json({ message: "Photo not found" });
       }
       
+      console.log(`Photo ${photoId} successfully deleted for plant ${plantId}`);
       res.status(204).send();
     } catch (error) {
       console.error("Error deleting plant photo:", error);
