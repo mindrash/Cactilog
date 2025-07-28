@@ -47,7 +47,7 @@ The application uses a monorepo structure with shared schemas:
 
 ### Recent Changes
 
-#### July 28, 2025 - HEIC Photo Conversion & Database Storage Migration
+#### July 28, 2025 - HEIC Photo Conversion & Database Storage Migration + Cache Control Implementation
 - **Implemented automatic HEIC to JPEG conversion** for browser compatibility using heic-convert library with Sharp fallback
 - **Completed database-based photo storage migration** from filesystem to base64 encoding, solving persistent photo loss during deployments
 - **Enhanced photo upload system** with automatic conversion of HEIC/HEIF files (from iPhones) to JPEG format for universal browser support
@@ -55,8 +55,12 @@ The application uses a monorepo structure with shared schemas:
 - **Resolved deployment persistence issue** - photos now stored in database rather than filesystem that gets wiped during deployments
 - **Updated all frontend components** to fetch photos from new `/api/photos/{id}/image` endpoint instead of static file routes
 - **Added comprehensive error handling** for photo conversion failures with fallback to original format
+- **Implemented comprehensive cache control system** with no-cache headers on dynamic API endpoints to prevent stale data display issues
+- **Fixed browser caching problems** that were causing deleted photos to appear until manual refresh - now all photo/plant data refreshes immediately
+- **Added no-cache headers to key endpoints**: `/api/photos/{id}/image`, `/api/plants`, `/api/plants/{id}/photos`, `/api/photos/public`, `/api/public/plants`
 - System now supports all image formats with automatic optimization: JPEG, PNG, GIF, WebP, TIFF, BMP, SVG, and HEIC (automatically converted to JPEG for universal browser compatibility)
 - Photos uploaded through the new system will persist through all future deployments since they're stored in the PostgreSQL database
+- Browser cache issues with stale photo data completely resolved - all changes now display immediately without requiring hard refresh
 
 #### July 28, 2025 - Knowledge Base Photo Contribution Default Setting
 - **Updated knowledge base contribution default to enabled** - new users now automatically contribute photos to the knowledge base for community benefit
