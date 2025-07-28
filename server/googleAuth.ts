@@ -96,6 +96,7 @@ export async function setupAuth(app: Express) {
           lastName: payload.family_name || '',
           profileImageUrl: payload.picture || '',
           authProvider: 'google' as const,
+          contributePhotosToKnowledgeBase: true,
         };
         user = await storage.upsertUser(userData);
       }

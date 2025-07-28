@@ -47,6 +47,14 @@ The application uses a monorepo structure with shared schemas:
 
 ### Recent Changes
 
+#### July 28, 2025 - Knowledge Base Photo Contribution Default Setting
+- **Updated knowledge base contribution default to enabled** - new users now automatically contribute photos to the knowledge base for community benefit
+- **Enhanced user registration process** to set contributePhotosToKnowledgeBase to true by default for Google Auth new users
+- **Maintained existing user settings** - users who previously opted out will keep their current preference
+- **Improved community engagement** by increasing photo contributions to help other plant enthusiasts with species identification
+- Users can still disable this feature in Settings if they prefer to keep photos private to their collection
+- Change applies to newly registered users while preserving existing user preferences
+
 #### July 27, 2025 - Community Photo Display & Public Plant Detail Pages Implementation
 - **Fixed home page community photo display** to show actual photos from database instead of generic plant listings
 - **Created comprehensive public plant detail pages** accessible to all visitors without authentication required
