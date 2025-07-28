@@ -126,6 +126,15 @@ export default function PhotoUpload({ plantId, className = "" }: PhotoUploadProp
       });
       return;
     }
+    
+    // Show info for HEIC files
+    if (file.type === 'image/heic' || file.type === 'image/heif' || 
+        file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif')) {
+      toast({
+        title: "HEIC File Detected",
+        description: "Your HEIC photo will be automatically converted to JPEG for better browser compatibility.",
+      });
+    }
 
     // Check file size (5MB limit)
     if (file.size > 5 * 1024 * 1024) {
