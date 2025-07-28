@@ -106,6 +106,7 @@ export const plantPhotos = pgTable("plant_photos", {
   mimeType: varchar("mime_type"),
   size: integer("size"),
   filePath: varchar("file_path"),
+  imageData: text("image_data"), // Base64 encoded image data
   uploadedAt: timestamp("uploaded_at").defaultNow(),
 });
 

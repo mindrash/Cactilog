@@ -223,7 +223,7 @@ export default function PlantDetail() {
                       <div key={photo.id} className="space-y-2">
                         <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
                           <img
-                            src={`/uploads/${photo.filename}`}
+                            src={`/api/photos/${photo.id}/image`}
                             alt={photo.originalName}
                             className="w-full h-full object-cover"
                             onError={(e) => {
