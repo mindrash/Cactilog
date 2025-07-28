@@ -558,25 +558,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let finalMimeType = req.file.mimetype;
       let finalFilename = req.file.filename;
       
-      // Convert HEIC to JPEG for better browser compatibility
-      if (req.file.mimetype === 'image/heic' || req.file.mimetype === 'image/heif' || 
-          req.file.originalname.toLowerCase().endsWith('.heic') || 
-          req.file.originalname.toLowerCase().endsWith('.heif')) {
-        console.log(`Converting HEIC file ${req.file.originalname} to JPEG for browser compatibility`);
+      console.log(`Processing file: ${req.file.originalname}, MIME: ${req.file.mimetype}, Size: ${req.file.size}`);
+      
+      // Convert HEIC/HEIF to JPEG for better browser compatibility
+      // Note: Browsers often don't provide correct MIME types for HEIC files
+      const isHeicFile = req.file.mimetype === 'image/heic' || 
+                        req.file.mimetype === 'image/heif' ||
+                        req.file.mimetype === 'application/octet-stream' && 
+                        (req.file.originalname.toLowerCase().endsWith('.heic') || 
+                         req.file.originalname.toLowerCase().endsWith('.heif')) ||
+                        req.file.originalname.toLowerCase().endsWith('.heic') || 
+                        req.file.originalname.toLowerCase().endsWith('.heif');
+      
+      if (isHeicFile) {
+        console.log(`HEIC file detected: ${req.file.originalname}, MIME: ${req.file.mimetype}, converting to JPEG`);
         
         try {
-          // Convert HEIC to JPEG using Sharp
-          imageBuffer = await sharp(imageBuffer)
+          // Try to convert using Sharp (works with most image formats including HEIC if supported)
+          const sharpImage = sharp(imageBuffer);
+          const metadata = await sharpImage.metadata();
+          console.log(`Image metadata:`, { format: metadata.format, width: metadata.width, height: metadata.height });
+          
+          imageBuffer = await sharpImage
             .jpeg({ quality: 85 }) // High quality JPEG
             .toBuffer();
           
           finalMimeType = 'image/jpeg';
           finalFilename = req.file.filename.replace(/\.(heic|heif)$/i, '.jpg');
-          console.log(`HEIC conversion successful: ${req.file.originalname} -> ${finalFilename}`);
+          console.log(`HEIC conversion successful: ${req.file.originalname} -> ${finalFilename}, new size: ${imageBuffer.length}`);
         } catch (conversionError) {
           console.error('Failed to convert HEIC to JPEG:', conversionError);
-          // Fall back to original if conversion fails
+          console.error('Error details:', conversionError.message);
+          console.log('Falling back to original format - image may not display in all browsers');
         }
+      } else {
+        console.log(`Standard image file: ${req.file.originalname}, MIME: ${req.file.mimetype}`);
       }
       
       const base64Data = imageBuffer.toString('base64');
