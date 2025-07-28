@@ -38,7 +38,7 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
 
   const deletePlantMutation = useMutation({
     mutationFn: async () => {
-      await apiRequest("DELETE", `/api/plants/${plant.id}`);
+      await apiRequest(`/api/plants/${plant.id}`, "DELETE");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/plants"] });
