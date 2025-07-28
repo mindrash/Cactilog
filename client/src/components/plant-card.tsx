@@ -49,7 +49,7 @@ export default function PlantCard({ plant, showPhotos = true }: PlantCardProps) 
         <div className="w-full h-40 sm:h-48 bg-gray-100 flex items-center justify-center border-b border-gray-200 relative overflow-hidden">
           {primaryPhoto ? (
             <img
-              src={`/uploads/${primaryPhoto.filename}`}
+              src={`/api/photos/${primaryPhoto.id}/image`}
               alt={primaryPhoto.originalName || plant.commonName || `${plant.genus} ${plant.species || ""}`}
               className="w-full h-full object-cover"
             />

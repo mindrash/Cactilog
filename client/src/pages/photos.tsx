@@ -169,11 +169,11 @@ export default function Photos() {
                 {/* Actual photo */}
                 <div className="aspect-square bg-gradient-to-br from-cactus-green/10 to-forest/10 overflow-hidden">
                   <img 
-                    src={`/uploads/${item.photo.filename}`}
+                    src={`/api/photos/${item.photo.id}/image`}
                     alt={`${item.plant.genus} ${item.plant.species || ''} - ${item.photo.originalName || 'Plant Photo'}`}
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
                     onError={(e) => {
-                      console.error('Failed to load image:', `/uploads/${item.photo.filename}`, 'Original name:', item.photo.originalName);
+                      console.error('Failed to load image:', `/api/photos/${item.photo.id}/image`, 'Original name:', item.photo.originalName);
                       // Fallback to placeholder if image fails to load
                       const target = e.target as HTMLImageElement;
                       target.style.display = 'none';
@@ -192,7 +192,7 @@ export default function Photos() {
                       `;
                     }}
                     onLoad={() => {
-                      console.log('Successfully loaded image:', `/uploads/${item.photo.filename}`);
+                      console.log('Successfully loaded image:', `/api/photos/${item.photo.id}/image`);
                     }}
                   />
                 </div>

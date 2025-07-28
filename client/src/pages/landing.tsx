@@ -462,11 +462,11 @@ function Landing() {
                 >
                   <div className="w-full h-40 sm:h-48 bg-gray-100 flex items-center justify-center border-b border-gray-200 relative overflow-hidden">
                     <img
-                      src={`/uploads/${item.photo.filename}`}
+                      src={`/api/photos/${item.photo.id}/image`}
                       alt={item.plant.commonName || `${item.plant.genus} ${item.plant.species || ""}`}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       onError={(e) => {
-                        console.error("Failed to load image:", `/uploads/${item.photo.filename}`, "Original name:", item.photo.originalName);
+                        console.error("Failed to load image:", `/api/photos/${item.photo.id}/image`, "Original name:", item.photo.originalName);
                         const target = e.target as HTMLImageElement;
                         target.style.display = 'none';
                         const parent = target.parentElement;
@@ -483,7 +483,7 @@ function Landing() {
                         }
                       }}
                       onLoad={() => {
-                        console.log("Successfully loaded image:", `/uploads/${item.photo.filename}`);
+                        console.log("Successfully loaded image:", `/api/photos/${item.photo.id}/image`);
                       }}
                     />
                   </div>

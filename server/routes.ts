@@ -101,13 +101,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Serve uploaded photos statically
-  app.use('/uploads', (req, res, next) => {
-    // Add basic security headers for images
-    res.setHeader('Cache-Control', 'public, max-age=31536000'); // 1 year cache
-    next();
+  // Serve photos from database as base64 images
+  app.get('/api/photos/:photoId/image', async (req, res) => {
+    try {
+      const photoId = parseInt(req.params.photoId);
+      if (isNaN(photoId)) {
+        return res.status(400).json({ message: "Invalid photo ID" });
+      }
+      
+      const photo = await storage.getPhotoById(photoId);
+      if (!photo || !photo.imageData) {
+        return res.status(404).json({ message: "Photo not found" });
+      }
+      
+      // Convert base64 back to buffer
+      const imageBuffer = Buffer.from(photo.imageData, 'base64');
+      
+      // Set appropriate headers
+      res.setHeader('Content-Type', photo.mimeType || 'image/jpeg');
+      res.setHeader('Cache-Control', 'public, max-age=31536000'); // 1 year cache
+      res.setHeader('Content-Length', imageBuffer.length);
+      
+      res.send(imageBuffer);
+    } catch (error) {
+      console.error("Error serving photo:", error);
+      res.status(500).json({ message: "Failed to serve photo" });
+    }
   });
-  app.use('/uploads', express.static(uploadsDir));
 
   // Public feed route (no authentication required)
   app.get('/api/public/plants', async (req, res) => {
@@ -515,7 +535,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post('/api/plants/:plantId/photos', isAuthenticated, upload.single('photo'), async (req: any, res) => {
     try {
-
       const userId = req.user.id;
       const plantId = parseInt(req.params.plantId);
       
@@ -533,16 +552,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "No photo file provided" });
       }
       
+      // Convert file to base64
+      const imageBuffer = fs.readFileSync(req.file.path);
+      const base64Data = imageBuffer.toString('base64');
+      
       const photoData = {
         plantId,
         filename: req.file.filename,
         originalName: req.file.originalname,
         mimeType: req.file.mimetype,
         size: req.file.size,
-        filePath: req.file.path,
+        imageData: base64Data,
       };
       
       const photo = await storage.createPlantPhoto(photoData);
+      
+      // Clean up temporary file
+      if (fs.existsSync(req.file.path)) {
+        fs.unlinkSync(req.file.path);
+      }
+      
       res.status(201).json(photo);
     } catch (error) {
       console.error("Error uploading plant photo:", error);

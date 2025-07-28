@@ -149,7 +149,7 @@ export default function PhotoUpload({ plantId, className = "" }: PhotoUploadProp
           {photosArray.map((photo: any) => (
             <div key={photo.id} className="relative group">
               <img
-                src={`/uploads/${photo.filename}`}
+                src={`/api/photos/${photo.id}/image`}
                 alt={photo.originalName}
                 className="w-full h-32 object-cover rounded-lg border border-gray-200"
               />
