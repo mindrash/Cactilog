@@ -12,6 +12,8 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import sharp from "sharp";
+// @ts-ignore - heic-convert doesn't have TypeScript declarations
+import convert from "heic-convert";
 import express from "express";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -574,22 +576,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log(`HEIC file detected: ${req.file.originalname}, MIME: ${req.file.mimetype}, converting to JPEG`);
         
         try {
-          // Try to convert using Sharp (works with most image formats including HEIC if supported)
-          const sharpImage = sharp(imageBuffer);
-          const metadata = await sharpImage.metadata();
-          console.log(`Image metadata:`, { format: metadata.format, width: metadata.width, height: metadata.height });
+          // Use heic-convert library for reliable HEIC to JPEG conversion
+          const outputBuffer = await convert({
+            buffer: imageBuffer, // Input HEIC buffer
+            format: 'JPEG',     // Output format
+            quality: 0.85       // Quality (0-1, where 1 is highest)
+          });
           
-          imageBuffer = await sharpImage
-            .jpeg({ quality: 85 }) // High quality JPEG
-            .toBuffer();
-          
+          imageBuffer = Buffer.from(outputBuffer);
           finalMimeType = 'image/jpeg';
           finalFilename = req.file.filename.replace(/\.(heic|heif)$/i, '.jpg');
-          console.log(`HEIC conversion successful: ${req.file.originalname} -> ${finalFilename}, new size: ${imageBuffer.length}`);
-        } catch (conversionError) {
-          console.error('Failed to convert HEIC to JPEG:', conversionError);
-          console.error('Error details:', conversionError.message);
-          console.log('Falling back to original format - image may not display in all browsers');
+          console.log(`HEIC conversion successful: ${req.file.originalname} -> ${finalFilename}, original: ${req.file.size} bytes, converted: ${imageBuffer.length} bytes`);
+        } catch (conversionError: any) {
+          console.error('Failed to convert HEIC to JPEG with heic-convert:', conversionError);
+          console.error('Error details:', conversionError?.message || 'Unknown error');
+          
+          // Fallback: try Sharp anyway (might work for some formats)
+          try {
+            console.log('Trying fallback conversion with Sharp...');
+            imageBuffer = await sharp(imageBuffer).jpeg({ quality: 85 }).toBuffer();
+            finalMimeType = 'image/jpeg';
+            finalFilename = req.file.filename.replace(/\.(heic|heif)$/i, '.jpg');
+            console.log('Sharp fallback conversion successful');
+          } catch (sharpError: any) {
+            console.error('Sharp fallback also failed:', sharpError?.message || 'Unknown error');
+            console.log('Keeping original format - image may not display in all browsers');
+          }
         }
       } else {
         console.log(`Standard image file: ${req.file.originalname}, MIME: ${req.file.mimetype}`);
