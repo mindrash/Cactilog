@@ -84,7 +84,7 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
 
   const createPlantMutation = useMutation({
     mutationFn: async (data: InsertPlant) => {
-      const response = await apiRequest("POST", "/api/plants", data);
+      const response = await apiRequest("/api/plants", "POST", data);
       return response.json();
     },
     onSuccess: async (newPlant) => {
@@ -100,7 +100,7 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
             size: selectedPhoto.size,
           };
           
-          await apiRequest('POST', `/api/plants/${newPlant.id}/photos`, photoData);
+          await apiRequest(`/api/plants/${newPlant.id}/photos`, 'POST', photoData);
           console.log("Photo uploaded successfully");
         } catch (photoError) {
           console.error("Photo upload error:", photoError);
