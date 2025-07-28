@@ -11,6 +11,7 @@ import { z } from "zod";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import sharp from "sharp";
 import express from "express";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -552,16 +553,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "No photo file provided" });
       }
       
-      // Convert file to base64
-      const imageBuffer = fs.readFileSync(req.file.path);
+      // Handle HEIC conversion and image processing
+      let imageBuffer = fs.readFileSync(req.file.path);
+      let finalMimeType = req.file.mimetype;
+      let finalFilename = req.file.filename;
+      
+      // Convert HEIC to JPEG for better browser compatibility
+      if (req.file.mimetype === 'image/heic' || req.file.mimetype === 'image/heif' || 
+          req.file.originalname.toLowerCase().endsWith('.heic') || 
+          req.file.originalname.toLowerCase().endsWith('.heif')) {
+        console.log(`Converting HEIC file ${req.file.originalname} to JPEG for browser compatibility`);
+        
+        try {
+          // Convert HEIC to JPEG using Sharp
+          imageBuffer = await sharp(imageBuffer)
+            .jpeg({ quality: 85 }) // High quality JPEG
+            .toBuffer();
+          
+          finalMimeType = 'image/jpeg';
+          finalFilename = req.file.filename.replace(/\.(heic|heif)$/i, '.jpg');
+          console.log(`HEIC conversion successful: ${req.file.originalname} -> ${finalFilename}`);
+        } catch (conversionError) {
+          console.error('Failed to convert HEIC to JPEG:', conversionError);
+          // Fall back to original if conversion fails
+        }
+      }
+      
       const base64Data = imageBuffer.toString('base64');
       
       const photoData = {
         plantId,
-        filename: req.file.filename,
+        filename: finalFilename,
         originalName: req.file.originalname,
-        mimeType: req.file.mimetype,
-        size: req.file.size,
+        mimeType: finalMimeType,
+        size: imageBuffer.length, // Use processed image size
         imageData: base64Data,
       };
       
