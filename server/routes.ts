@@ -120,9 +120,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Convert base64 back to buffer
       const imageBuffer = Buffer.from(photo.imageData, 'base64');
       
-      // Set appropriate headers
+      // Set no-cache headers to ensure fresh content
       res.setHeader('Content-Type', photo.mimeType || 'image/jpeg');
-      res.setHeader('Cache-Control', 'public, max-age=31536000'); // 1 year cache
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
       res.setHeader('Content-Length', imageBuffer.length);
       
       res.send(imageBuffer);
@@ -135,6 +137,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Public feed route (no authentication required)
   app.get('/api/public/plants', async (req, res) => {
     try {
+      // Set no-cache headers for dynamic public content
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+      
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 20;
       const offset = (page - 1) * limit;
@@ -206,6 +213,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Plant routes
   app.get('/api/plants', isAuthenticated, async (req: any, res) => {
     try {
+      // Set no-cache headers for dynamic plant lists
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+      
       const userId = req.user.id;
       const { search, type, genus, sortBy } = req.query;
       const plants = await storage.getPlants(userId, {
@@ -488,6 +500,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Public photos gallery route
   app.get('/api/photos/public', async (req: any, res) => {
     try {
+      // Set no-cache headers for dynamic photo galleries
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+      
       const photos = await storage.getPublicPhotos();
       res.json(photos);
     } catch (error) {
@@ -525,6 +542,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Photo routes
   app.get('/api/plants/:plantId/photos', isAuthenticated, async (req: any, res) => {
     try {
+      // Set no-cache headers for dynamic photo lists
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
 
       const userId = req.user.id;
       const plantId = parseInt(req.params.plantId);
