@@ -36,7 +36,7 @@ export const users = pgTable("users", {
   profileImageUrl: varchar("profile_image_url"),
   authProvider: varchar("auth_provider"), // Track which OAuth provider was used
   collectionPublic: varchar("collection_public", { enum: ["public", "private"] }).default("public"),
-  contributePhotosToKnowledgeBase: boolean("contribute_photos_to_knowledge_base").default(false),
+  contributePhotosToKnowledgeBase: boolean("contribute_photos_to_knowledge_base").default(true),
   displayName: varchar("display_name", { length: 20 }),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
