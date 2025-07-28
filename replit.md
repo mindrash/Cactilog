@@ -48,14 +48,14 @@ The application uses a monorepo structure with shared schemas:
 ### Recent Changes
 
 #### July 28, 2025 - HEIC Photo Conversion & Database Storage Migration
-- **Implemented automatic HEIC to JPEG conversion** for browser compatibility using Sharp image processing library
+- **Implemented automatic HEIC to JPEG conversion** for browser compatibility using heic-convert library with Sharp fallback
 - **Completed database-based photo storage migration** from filesystem to base64 encoding, solving persistent photo loss during deployments
 - **Enhanced photo upload system** with automatic conversion of HEIC/HEIF files (from iPhones) to JPEG format for universal browser support
 - **Added user notifications** for HEIC file uploads informing users of automatic conversion process
 - **Resolved deployment persistence issue** - photos now stored in database rather than filesystem that gets wiped during deployments
 - **Updated all frontend components** to fetch photos from new `/api/photos/{id}/image` endpoint instead of static file routes
 - **Added comprehensive error handling** for photo conversion failures with fallback to original format
-- System now supports all image formats with automatic optimization: JPEG, PNG, GIF, WebP, TIFF, BMP, SVG, and HEIC (converted to JPEG)
+- System now supports all image formats with automatic optimization: JPEG, PNG, GIF, WebP, TIFF, BMP, SVG, and HEIC (automatically converted to JPEG for universal browser compatibility)
 - Photos uploaded through the new system will persist through all future deployments since they're stored in the PostgreSQL database
 
 #### July 28, 2025 - Knowledge Base Photo Contribution Default Setting
