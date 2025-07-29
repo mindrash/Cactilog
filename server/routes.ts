@@ -518,6 +518,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const uniqueUsers = [...new Set(photos.map(p => p.user.id))];
       console.log(`PUBLIC PHOTOS: Photos from ${uniqueUsers.length} unique users: ${uniqueUsers.join(', ')}`);
       
+      // DEBUG: Log specific photo IDs to see if 96 and 97 are included
+      const photoIds = photos.map(p => p.photo.id).sort((a, b) => b - a);
+      console.log(`PUBLIC PHOTOS: Photo IDs returned: ${photoIds.slice(0, 10).join(', ')}${photoIds.length > 10 ? '...' : ''}`);
+      
+      // DEBUG: Check if SC-1a and SC-2a are in the results
+      const scPhotos = photos.filter(p => p.plant.customId.startsWith('SC-'));
+      console.log(`PUBLIC PHOTOS: SC plants found: ${scPhotos.map(p => `${p.plant.customId} (photo ${p.photo.id})`).join(', ')}`);
+      
       res.json(photos);
     } catch (error) {
       console.error("Error fetching public photos:", error);
