@@ -104,7 +104,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Serve photos from database as base64 images
+  // Serve photos from database as base64 images (PUBLIC ACCESS - No authentication required)
   app.get('/api/photos/:photoId/image', async (req, res) => {
     try {
       const photoId = parseInt(req.params.photoId);
@@ -112,10 +112,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid photo ID" });
       }
       
+      console.log(`PHOTO ACCESS: Photo ID ${photoId} requested`);
+      
       const photo = await storage.getPhotoById(photoId);
       if (!photo || !photo.imageData) {
+        console.log(`PHOTO ACCESS: Photo ${photoId} not found in database`);
         return res.status(404).json({ message: "Photo not found" });
       }
+      
+      console.log(`PHOTO ACCESS: Photo ${photoId} found, serving image (size: ${photo.imageData.length} chars)`);
       
       // Convert base64 back to buffer
       const imageBuffer = Buffer.from(photo.imageData, 'base64');
@@ -505,7 +510,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.setHeader('Pragma', 'no-cache');
       res.setHeader('Expires', '0');
       
+      console.log("PUBLIC PHOTOS: Fetching all public photos");
       const photos = await storage.getPublicPhotos();
+      console.log(`PUBLIC PHOTOS: Found ${photos.length} photos from public plants`);
+      
+      // Log unique user IDs to verify we're getting photos from multiple users
+      const uniqueUsers = [...new Set(photos.map(p => p.user.id))];
+      console.log(`PUBLIC PHOTOS: Photos from ${uniqueUsers.length} unique users: ${uniqueUsers.join(', ')}`);
+      
       res.json(photos);
     } catch (error) {
       console.error("Error fetching public photos:", error);
