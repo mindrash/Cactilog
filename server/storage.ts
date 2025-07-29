@@ -1137,6 +1137,28 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
+  async getPublicPlantPhotos(plantId: number): Promise<any[]> {
+    // Get photos for a specific plant, but only if the plant is public
+    try {
+      const photos = await db
+        .select()
+        .from(plantPhotos)
+        .innerJoin(plants, eq(plantPhotos.plantId, plants.id))
+        .where(
+          and(
+            eq(plants.id, plantId),
+            eq(plants.isPublic, 'public')
+          )
+        )
+        .orderBy(desc(plantPhotos.uploadedAt));
+      
+      return photos.map(row => row.plant_photos);
+    } catch (error) {
+      console.error('Error fetching public plant photos:', error);
+      return [];
+    }
+  }
+
   async getPublicPlantDetail(plantId: number): Promise<any> {
     try {
       // Get plant with owner info

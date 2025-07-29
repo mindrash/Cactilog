@@ -515,7 +515,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`PUBLIC PHOTOS: Found ${photos.length} photos from public plants`);
       
       // Log unique user IDs to verify we're getting photos from multiple users
-      const uniqueUsers = [...new Set(photos.map(p => p.user.id))];
+      const uniqueUsers = Array.from(new Set(photos.map(p => p.user.id)));
       console.log(`PUBLIC PHOTOS: Photos from ${uniqueUsers.length} unique users: ${uniqueUsers.join(', ')}`);
       
       // DEBUG: Log specific photo IDs to see if 96 and 97 are included
@@ -574,6 +574,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching plant photos:", error);
       res.status(500).json({ message: "Failed to fetch plant photos" });
+    }
+  });
+
+  // Public photo endpoint for community feed - no authentication required for public plants
+  app.get('/api/plants/:plantId/photos/public', async (req: any, res) => {
+    try {
+      // Set no-cache headers for dynamic photo lists
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+
+      const plantId = parseInt(req.params.plantId);
+      
+      if (isNaN(plantId)) {
+        return res.status(400).json({ message: "Invalid plant ID" });
+      }
+
+      console.log(`PUBLIC PLANT PHOTOS: Fetching photos for plant ${plantId}`);
+      const photos = await storage.getPublicPlantPhotos(plantId);
+      console.log(`PUBLIC PLANT PHOTOS: Found ${photos.length} photos for plant ${plantId}`);
+      res.json(photos);
+    } catch (error) {
+      console.error("Error fetching public plant photos:", error);
+      res.status(500).json({ message: "Failed to fetch public plant photos" });
     }
   });
 
