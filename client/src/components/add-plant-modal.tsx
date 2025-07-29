@@ -93,15 +93,23 @@ export default function AddPlantModal({ open, onOpenChange }: AddPlantModalProps
       // Upload photo if one was selected
       if (selectedPhoto) {
         try {
-          const photoData = {
-            filename: selectedPhoto.name,
-            originalName: selectedPhoto.name,
-            mimeType: selectedPhoto.type,
-            size: selectedPhoto.size,
-          };
+          console.log("Uploading photo for plant:", newPlant.id);
           
-          await apiRequest(`/api/plants/${newPlant.id}/photos`, 'POST', photoData);
-          console.log("Photo uploaded successfully");
+          // Create FormData for file upload
+          const formData = new FormData();
+          formData.append('photo', selectedPhoto);
+          
+          // Use fetch directly for FormData upload (bypasses apiRequest JSON handling)
+          const response = await fetch(`/api/plants/${newPlant.id}/photos`, {
+            method: 'POST',
+            body: formData,
+          });
+          
+          if (!response.ok) {
+            throw new Error(`Photo upload failed: ${response.status} ${response.statusText}`);
+          }
+          
+          console.log("Photo uploaded successfully for plant:", newPlant.id);
         } catch (photoError) {
           console.error("Photo upload error:", photoError);
           // Don't fail the whole process if photo upload fails

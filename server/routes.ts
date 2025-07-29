@@ -585,8 +585,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       if (!req.file) {
+        console.log(`PHOTO UPLOAD ERROR: No file provided for plant ${plantId} by user ${userId}`);
         return res.status(400).json({ message: "No photo file provided" });
       }
+
+      console.log(`PHOTO UPLOAD START: Plant ${plantId}, User ${userId}, File: ${req.file.originalname}`);
+      console.log(`FILE DETAILS: Size: ${req.file.size}, MIME: ${req.file.mimetype}, Path: ${req.file.path}`);
       
       // Handle HEIC conversion and image processing
       let imageBuffer = fs.readFileSync(req.file.path);
@@ -651,11 +655,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         imageData: base64Data,
       };
       
+      console.log(`PHOTO DATABASE: Creating photo record for plant ${plantId}`);
       const photo = await storage.createPlantPhoto(photoData);
+      console.log(`PHOTO SUCCESS: Photo created with ID ${photo.id} for plant ${plantId}`);
       
       // Clean up temporary file
       if (fs.existsSync(req.file.path)) {
         fs.unlinkSync(req.file.path);
+        console.log(`CLEANUP: Removed temporary file ${req.file.path}`);
       }
       
       res.status(201).json(photo);
