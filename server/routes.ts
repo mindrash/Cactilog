@@ -698,6 +698,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (metadata.width > 1000) {
           console.log(`Resizing image from ${metadata.width}px to 1000px width`);
           imageBuffer = await image
+            .rotate() // Auto-rotate based on EXIF orientation
             .resize(1000, null, { 
               withoutEnlargement: true,
               fit: 'inside'
@@ -715,12 +716,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Convert non-JPEG images to JPEG for consistency and smaller file sizes
           console.log(`Converting ${metadata.format} to JPEG for optimization`);
           imageBuffer = await image
+            .rotate() // Auto-rotate based on EXIF orientation
             .jpeg({ quality: 85 })
             .toBuffer();
           
           finalMimeType = 'image/jpeg';
           finalFilename = finalFilename.replace(/\.[^.]*$/, '.jpg');
           console.log(`Image converted to JPEG. Original: ${req.file.size} bytes, Converted: ${imageBuffer.length} bytes`);
+        } else {
+          // Even if no resize/conversion needed, auto-rotate based on EXIF to prevent orientation issues
+          console.log('Applying EXIF orientation correction');
+          imageBuffer = await image
+            .rotate() // Auto-rotate based on EXIF orientation
+            .jpeg({ quality: 85 })
+            .toBuffer();
         }
         
       } catch (sharpError: any) {
