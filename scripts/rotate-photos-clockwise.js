@@ -8,18 +8,18 @@ neonConfig.webSocketConstructor = ws;
 // Database connection
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
-async function resizeExistingPhotos() {
-  console.log('Starting photo resize process...');
+async function rotatePhotosClockwise() {
+  console.log('Starting photo rotation process (90 degrees clockwise)...');
   
   try {
     // Get all photos from database
     const result = await pool.query('SELECT id, image_data, filename, original_name FROM plant_photos');
     const photos = result.rows;
     
-    console.log(`Found ${photos.length} photos to process`);
+    console.log(`Found ${photos.length} photos to rotate clockwise`);
     
     let processedCount = 0;
-    let resizedCount = 0;
+    let rotatedCount = 0;
     let errorCount = 0;
     
     for (const photo of photos) {
@@ -29,41 +29,35 @@ async function resizeExistingPhotos() {
         // Convert base64 to buffer
         const imageBuffer = Buffer.from(photo.image_data, 'base64');
         
-        // Get image metadata
+        // Get current image metadata
         const image = sharp(imageBuffer);
         const metadata = await image.metadata();
         
-        console.log(`  Original dimensions: ${metadata.width}x${metadata.height}px`);
+        console.log(`  Current dimensions: ${metadata.width}x${metadata.height}px`);
         
-        // Skip if already 1000px wide or less
-        if (!metadata.width || metadata.width <= 1000) {
-          console.log(`  Skipping - already optimal size (${metadata.width}px wide)`);
-          processedCount++;
-          continue;
-        }
-        
-        // Resize image with proper orientation handling
-        console.log(`  Resizing from ${metadata.width}px to 1000px width`);
-        const resizedBuffer = await image
-          .rotate() // Auto-rotate based on EXIF orientation
-          .resize(1000, null, { 
-            withoutEnlargement: true,
-            fit: 'inside'
-          })
+        // Rotate 90 degrees clockwise
+        console.log(`  Rotating 90 degrees clockwise`);
+        const rotatedBuffer = await image
+          .rotate(90) // 90 degrees clockwise
           .jpeg({ quality: 85 })
           .toBuffer();
         
-        // Convert back to base64
-        const resizedBase64 = resizedBuffer.toString('base64');
+        // Get new dimensions
+        const rotatedImage = sharp(rotatedBuffer);
+        const rotatedMetadata = await rotatedImage.metadata();
+        console.log(`  New dimensions: ${rotatedMetadata.width}x${rotatedMetadata.height}px`);
         
-        // Update database with resized image
+        // Convert back to base64
+        const rotatedBase64 = rotatedBuffer.toString('base64');
+        
+        // Update database with rotated image
         await pool.query(
           'UPDATE plant_photos SET image_data = $1, size = $2 WHERE id = $3',
-          [resizedBase64, resizedBuffer.length, photo.id]
+          [rotatedBase64, rotatedBuffer.length, photo.id]
         );
         
-        console.log(`  ✓ Resized successfully. Original: ${imageBuffer.length} bytes, New: ${resizedBuffer.length} bytes`);
-        resizedCount++;
+        console.log(`  ✓ Rotated successfully. New size: ${rotatedBuffer.length} bytes`);
+        rotatedCount++;
         processedCount++;
         
       } catch (error) {
@@ -73,33 +67,32 @@ async function resizeExistingPhotos() {
       }
       
       // Add small delay to avoid overwhelming the database
-      if (processedCount % 10 === 0) {
+      if (processedCount % 5 === 0) {
         console.log(`Progress: ${processedCount}/${photos.length} photos processed`);
         await new Promise(resolve => setTimeout(resolve, 100));
       }
     }
     
-    console.log('\n=== Resize Process Complete ===');
+    console.log('\n=== Rotation Process Complete ===');
     console.log(`Total photos processed: ${processedCount}`);
-    console.log(`Photos resized: ${resizedCount}`);
-    console.log(`Photos skipped (already optimal): ${processedCount - resizedCount - errorCount}`);
+    console.log(`Photos rotated: ${rotatedCount}`);
     console.log(`Errors: ${errorCount}`);
     
   } catch (error) {
-    console.error('Fatal error during photo resize process:', error);
+    console.error('Fatal error during photo rotation process:', error);
     process.exit(1);
   } finally {
     await pool.end();
   }
 }
 
-// Run the resize process
-resizeExistingPhotos().then(() => {
-  console.log('Photo resize process completed successfully');
+// Run the rotation process
+rotatePhotosClockwise().then(() => {
+  console.log('Photo rotation process completed successfully');
   process.exit(0);
 }).catch(error => {
-  console.error('Photo resize process failed:', error);
+  console.error('Photo rotation process failed:', error);
   process.exit(1);
 });
 
-export { resizeExistingPhotos };
+export { rotatePhotosClockwise };
