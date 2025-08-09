@@ -140,6 +140,13 @@ export async function setupAuth(app: Express) {
     res.json(req.user);
   });
 
+  // Generic login route that redirects to Google OAuth
+  app.get('/api/login', (req, res) => {
+    // For now, redirect to the frontend with a message to use Google Sign-In
+    // In the future, this could redirect directly to Google OAuth
+    res.redirect('/?login=true');
+  });
+
   // Config endpoint for frontend
   app.get('/api/auth/config', (req, res) => {
     res.json({
