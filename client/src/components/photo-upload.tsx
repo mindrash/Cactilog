@@ -71,9 +71,14 @@ export default function PhotoUpload({ plantId, className = "", readOnly = false,
         }, 500);
         return;
       }
+      // Extract error message from server response
+      const errorMessage = error.message?.includes(':') 
+        ? error.message.split(':').slice(1).join(':').trim()
+        : error.message || "Failed to upload photo. Please try again.";
+        
       toast({
         title: "Upload Failed",
-        description: "Failed to upload photo. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
       setIsUploading(false);
@@ -133,6 +138,12 @@ export default function PhotoUpload({ plantId, className = "", readOnly = false,
       });
       return;
     }
+
+    // Show helpful info about image requirements
+    toast({
+      title: "Processing Image",
+      description: "Images are automatically optimized. Must be 500-1000px wide for best quality.",
+    });
     
     // Show info for HEIC files
     if (file.type === 'image/heic' || file.type === 'image/heif' || 
@@ -214,6 +225,7 @@ export default function PhotoUpload({ plantId, className = "", readOnly = false,
                   <Plus className="w-8 h-8 mx-auto mb-2" />
                   <p className="text-sm">Add Photo</p>
                   <p className="text-xs">Click to upload</p>
+                  <p className="text-xs text-gray-400 mt-1">Min 500px wide, max 5MB</p>
                 </>
               )}
             </div>
