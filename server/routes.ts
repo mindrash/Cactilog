@@ -676,6 +676,64 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log(`Standard image file: ${req.file.originalname}, MIME: ${req.file.mimetype}`);
       }
       
+      // Process image with Sharp for resizing and validation
+      try {
+        const image = sharp(imageBuffer);
+        const metadata = await image.metadata();
+        
+        console.log(`Image metadata - Width: ${metadata.width}px, Height: ${metadata.height}px, Format: ${metadata.format}`);
+        
+        // Validate minimum width requirement
+        if (!metadata.width || metadata.width < 500) {
+          // Clean up temporary file
+          if (fs.existsSync(req.file.path)) {
+            fs.unlinkSync(req.file.path);
+          }
+          return res.status(400).json({ 
+            message: "Image too small. Images must be at least 500 pixels wide for quality standards." 
+          });
+        }
+        
+        // Resize if image is wider than 1000px
+        if (metadata.width > 1000) {
+          console.log(`Resizing image from ${metadata.width}px to 1000px width`);
+          imageBuffer = await image
+            .resize(1000, null, { 
+              withoutEnlargement: true,
+              fit: 'inside'
+            })
+            .jpeg({ quality: 85 })
+            .toBuffer();
+          
+          finalMimeType = 'image/jpeg';
+          if (!finalFilename.toLowerCase().endsWith('.jpg') && !finalFilename.toLowerCase().endsWith('.jpeg')) {
+            finalFilename = finalFilename.replace(/\.[^.]*$/, '.jpg');
+          }
+          
+          console.log(`Image resized successfully. Original: ${req.file.size} bytes, Resized: ${imageBuffer.length} bytes`);
+        } else if (!isHeicFile && metadata.format !== 'jpeg') {
+          // Convert non-JPEG images to JPEG for consistency and smaller file sizes
+          console.log(`Converting ${metadata.format} to JPEG for optimization`);
+          imageBuffer = await image
+            .jpeg({ quality: 85 })
+            .toBuffer();
+          
+          finalMimeType = 'image/jpeg';
+          finalFilename = finalFilename.replace(/\.[^.]*$/, '.jpg');
+          console.log(`Image converted to JPEG. Original: ${req.file.size} bytes, Converted: ${imageBuffer.length} bytes`);
+        }
+        
+      } catch (sharpError: any) {
+        console.error('Error processing image with Sharp:', sharpError?.message || 'Unknown error');
+        // Clean up temporary file
+        if (fs.existsSync(req.file.path)) {
+          fs.unlinkSync(req.file.path);
+        }
+        return res.status(400).json({ 
+          message: "Invalid image file. Please upload a valid image format." 
+        });
+      }
+      
       const base64Data = imageBuffer.toString('base64');
       
       const photoData = {
