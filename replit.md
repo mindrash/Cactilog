@@ -28,7 +28,7 @@ Cactilog employs a modern full-stack architecture, ensuring clear separation bet
 - **Database**: PostgreSQL with Drizzle ORM (using Neon Database for serverless PostgreSQL)
 - **Authentication**: Replit Auth with OpenID Connect (OIDC)
 - **Session Management**: Express sessions stored in PostgreSQL
-- **Image Handling**: Automatic HEIC to JPEG conversion and base64 encoding for database storage, ensuring photo persistence and browser compatibility.
+- **Image Handling**: Automatic HEIC to JPEG conversion, Smart-based image resizing (max 1000px wide, min 500px wide), and base64 encoding for database storage, ensuring photo persistence and browser compatibility. Bulk photo resize script available for existing collections.
 - **Cache Control**: Implementation of `no-cache` headers on dynamic API endpoints to prevent stale data.
 
 ### Project Structure
