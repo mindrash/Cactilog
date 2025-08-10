@@ -171,7 +171,6 @@ export default function AdminArticleEditorPage() {
       metaTitle,
       metaDescription,
       status: data.publishNow ? 'published' as const : data.status,
-      publishedAt: data.publishNow ? new Date().toISOString() : undefined,
     };
 
     // Remove publishNow from the data as it's not in the schema

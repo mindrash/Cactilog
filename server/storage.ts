@@ -1439,7 +1439,7 @@ export class DatabaseStorage implements IStorage {
 
     const [newArticle] = await db
       .insert(articles)
-      .values(insertData)
+      .values([insertData])
       .returning();
     
     return newArticle;
