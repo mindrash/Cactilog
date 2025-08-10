@@ -33,7 +33,7 @@ import Contact from "@/pages/contact";
 import Privacy from "@/pages/privacy";
 import Terms from "@/pages/terms";
 import Disclaimer from "@/pages/disclaimer";
-import AuthPage from "@/pages/auth";
+import AuthPage from "@/pages/auth-page";
 import PlantDetail from "@/pages/plant-detail";
 import NotFound from "@/pages/not-found";
 

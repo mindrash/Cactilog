@@ -264,10 +264,10 @@ function Header() {
               {/* Public Sign In Button */}
               {!isAuthenticated && (
                 <Button asChild className="bg-cactus-green hover:bg-cactus-green/90">
-                  <a href="/api/login">
+                  <Link href="/auth">
                     <LogIn className="w-4 h-4 mr-2" />
                     Sign In
-                  </a>
+                  </Link>
                 </Button>
               )}
 
@@ -372,9 +372,9 @@ function Header() {
               {/* Public Mobile Sign In */}
               {!isAuthenticated && (
                 <Button size="sm" asChild className="bg-cactus-green hover:bg-cactus-green/90">
-                  <a href="/api/login">
+                  <Link href="/auth">
                     <LogIn className="w-4 h-4" />
-                  </a>
+                  </Link>
                 </Button>
               )}
 
