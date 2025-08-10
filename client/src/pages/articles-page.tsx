@@ -9,6 +9,9 @@ import { Search, Clock, Tag, ArrowRight, BookOpen, Plus, Edit } from "lucide-rea
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import { useAuth } from "@/hooks/useAuth";
+import Header from "@/components/header";
+import Footer from "@/components/footer";
+import { SEO } from "@/components/seo";
 
 interface Article {
   id: string;
@@ -94,7 +97,13 @@ export default function ArticlesPage() {
   }
 
   return (
-    <div className="container mx-auto py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-lime-wash/20 to-pine-mist/30 cactus-pattern-bg">
+      <SEO 
+        title="Cacti Articles - Cactilog"
+        description="Discover expert care guides, growing tips, and community insights from fellow cacti enthusiasts."
+      />
+      <Header />
+      <div className="container mx-auto py-8 px-4">
       {/* Header */}
       <div className="mb-8">
         <div className="flex justify-between items-start mb-4">
@@ -303,6 +312,8 @@ export default function ArticlesPage() {
           )}
         </>
       )}
+      </div>
+      <Footer />
     </div>
   );
 }
