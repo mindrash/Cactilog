@@ -10,6 +10,8 @@ import {
   date,
   integer,
   boolean,
+  uuid,
+  unique,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
@@ -292,6 +294,38 @@ export const adminUsers = pgTable("admin_users", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Articles table for community content
+export const articles = pgTable("articles", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  title: varchar("title", { length: 200 }).notNull(),
+  slug: varchar("slug", { length: 220 }).notNull().unique(),
+  html: text("html").notNull(),
+  excerpt: varchar("excerpt", { length: 300 }),
+  status: varchar("status", { enum: ["draft", "published"] }).default("draft").notNull(),
+  tags: text("tags").array(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  publishedAt: timestamp("published_at"),
+}, (table) => [
+  index("articles_status_published_at_idx").on(table.status, table.publishedAt),
+  index("articles_slug_idx").on(table.slug),
+]);
+
+// Zod schemas for articles
+export const insertArticleSchema = createInsertSchema(articles).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  publishedAt: true,
+}).extend({
+  title: z.string().min(1, "Title is required").max(200, "Title must be less than 200 characters"),
+  html: z.string().min(1, "Content is required"),
+  excerpt: z.string().max(300, "Excerpt must be less than 300 characters").optional(),
+  slug: z.string().max(220, "Slug must be less than 220 characters").optional(),
+  tags: z.array(z.string()).optional(),
+  status: z.enum(["draft", "published"]).optional(),
+});
+
 export type SpeciesImage = typeof speciesImages.$inferSelect;
 export type InsertSpeciesImage = typeof speciesImages.$inferInsert;
 export type PhotoReport = typeof photoReports.$inferSelect;
@@ -306,6 +340,8 @@ export type PlantLike = typeof plantLikes.$inferSelect;
 export type InsertPlantLike = typeof plantLikes.$inferInsert;
 export type Seed = typeof seeds.$inferSelect;
 export type InsertSeed = z.infer<typeof insertSeedSchema>;
+export type Article = typeof articles.$inferSelect;
+export type InsertArticle = z.infer<typeof insertArticleSchema>;
 
 // Botanical families for plant classification
 export const BOTANICAL_FAMILIES = [

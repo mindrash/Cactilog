@@ -1,0 +1,281 @@
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Link } from "wouter";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Search, Clock, Tag, ArrowRight, BookOpen } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { format } from "date-fns";
+
+interface Article {
+  id: string;
+  title: string;
+  excerpt?: string;
+  slug: string;
+  status: 'draft' | 'published';
+  tags?: string[];
+  category?: string;
+  publishedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface ArticlesResponse {
+  items: Article[];
+  total: number;
+  page: number;
+  pageCount: number;
+}
+
+export default function ArticlesPage() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedTag, setSelectedTag] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const { data: articlesData, isLoading, error } = useQuery<ArticlesResponse>({
+    queryKey: ['/api/articles', { q: searchQuery, tag: selectedTag, page: currentPage }],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      if (searchQuery) params.append('q', searchQuery);
+      if (selectedTag) params.append('tag', selectedTag);
+      params.append('page', currentPage.toString());
+      params.append('limit', '12');
+      
+      const response = await fetch(`/api/articles?${params}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch articles');
+      }
+      return response.json();
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+
+  // Get all unique tags from articles for filtering
+  const allTags = articlesData?.items.reduce((tags: string[], article) => {
+    if (article.tags) {
+      tags.push(...article.tags.filter(tag => !tags.includes(tag)));
+    }
+    return tags;
+  }, []) || [];
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    setCurrentPage(1);
+  };
+
+  const handleTagFilter = (tag: string) => {
+    if (selectedTag === tag) {
+      setSelectedTag("");
+    } else {
+      setSelectedTag(tag);
+      setCurrentPage(1);
+    }
+  };
+
+  if (error) {
+    return (
+      <div className="container mx-auto py-8 px-4">
+        <Card className="max-w-md mx-auto">
+          <CardContent className="pt-6 text-center">
+            <BookOpen className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+            <p className="text-lg font-medium mb-2">Unable to load articles</p>
+            <p className="text-muted-foreground">Please try again later.</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div className="container mx-auto py-8 px-4">
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold mb-2 text-forest">Community Articles</h1>
+        <p className="text-lg text-muted-foreground">
+          Discover expert care guides, growing tips, and community insights from fellow cacti enthusiasts.
+        </p>
+      </div>
+
+      {/* Search and Filters */}
+      <div className="mb-8 space-y-4">
+        <form onSubmit={handleSearch} className="flex gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Search articles..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          <Button type="submit" variant="outline">
+            Search
+          </Button>
+        </form>
+
+        {/* Tag filters */}
+        {allTags.length > 0 && (
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium text-muted-foreground">Filter by tag:</h3>
+            <div className="flex flex-wrap gap-2">
+              {allTags.map((tag) => (
+                <Badge
+                  key={tag}
+                  variant={selectedTag === tag ? "default" : "outline"}
+                  className="cursor-pointer hover:bg-sage/20"
+                  onClick={() => handleTagFilter(tag)}
+                >
+                  <Tag className="h-3 w-3 mr-1" />
+                  {tag}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Articles Grid */}
+      {isLoading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Card key={i}>
+              <CardHeader>
+                <Skeleton className="h-6 w-3/4" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-2/3" />
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-1/2" />
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : articlesData?.items.length === 0 ? (
+        <Card className="max-w-md mx-auto">
+          <CardContent className="pt-6 text-center">
+            <BookOpen className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+            <p className="text-lg font-medium mb-2">No articles found</p>
+            <p className="text-muted-foreground">
+              {searchQuery || selectedTag 
+                ? "Try adjusting your search or filters."
+                : "Check back soon for new articles."
+              }
+            </p>
+          </CardContent>
+        </Card>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {articlesData?.items.map((article) => (
+              <Card key={article.id} className="hover:shadow-md transition-shadow">
+                <CardHeader>
+                  <div className="space-y-2">
+                    <CardTitle className="text-xl leading-tight">
+                      <Link href={`/articles/${article.slug}`} className="hover:text-sage transition-colors">
+                        {article.title}
+                      </Link>
+                    </CardTitle>
+                    
+                    {article.category && (
+                      <Badge variant="secondary" className="w-fit">
+                        {article.category}
+                      </Badge>
+                    )}
+                  </div>
+                </CardHeader>
+                
+                <CardContent className="space-y-4">
+                  {article.excerpt && (
+                    <p className="text-muted-foreground line-clamp-3">
+                      {article.excerpt}
+                    </p>
+                  )}
+                  
+                  {article.tags && article.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-1">
+                      {article.tags.slice(0, 3).map((tag) => (
+                        <Badge 
+                          key={tag} 
+                          variant="outline" 
+                          className="text-xs cursor-pointer hover:bg-sage/20"
+                          onClick={() => handleTagFilter(tag)}
+                        >
+                          {tag}
+                        </Badge>
+                      ))}
+                      {article.tags.length > 3 && (
+                        <Badge variant="outline" className="text-xs">
+                          +{article.tags.length - 3} more
+                        </Badge>
+                      )}
+                    </div>
+                  )}
+                  
+                  <div className="flex items-center justify-between pt-2">
+                    <div className="flex items-center text-sm text-muted-foreground">
+                      <Clock className="h-4 w-4 mr-1" />
+                      {article.publishedAt 
+                        ? format(new Date(article.publishedAt), "MMM d, yyyy")
+                        : format(new Date(article.createdAt), "MMM d, yyyy")
+                      }
+                    </div>
+                    
+                    <Link href={`/articles/${article.slug}`}>
+                      <Button variant="ghost" size="sm" className="p-2">
+                        <ArrowRight className="h-4 w-4" />
+                      </Button>
+                    </Link>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Pagination */}
+          {articlesData && articlesData.pageCount > 1 && (
+            <div className="flex justify-center space-x-2">
+              <Button
+                variant="outline"
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(currentPage - 1)}
+              >
+                Previous
+              </Button>
+              
+              <div className="flex items-center space-x-1">
+                {Array.from({ length: Math.min(5, articlesData.pageCount) }, (_, i) => {
+                  const page = i + 1;
+                  return (
+                    <Button
+                      key={page}
+                      variant={currentPage === page ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setCurrentPage(page)}
+                    >
+                      {page}
+                    </Button>
+                  );
+                })}
+              </div>
+              
+              <Button
+                variant="outline"
+                disabled={currentPage === articlesData.pageCount}
+                onClick={() => setCurrentPage(currentPage + 1)}
+              >
+                Next
+              </Button>
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
