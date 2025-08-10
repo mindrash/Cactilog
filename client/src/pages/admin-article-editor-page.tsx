@@ -305,38 +305,16 @@ export default function AdminArticleEditorPage() {
                           <FormLabel>Article Content</FormLabel>
                           <FormControl>
                             <div className="border rounded-md">
-                              <div 
-                                contentEditable
-                                className="min-h-[400px] p-3 prose prose-sm max-w-none focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                                style={{ whiteSpace: 'pre-wrap' }}
-                                dangerouslySetInnerHTML={{ __html: field.value || '' }}
-                                onInput={(e) => {
-                                  const content = e.currentTarget.innerHTML;
-                                  field.onChange(content);
-                                }}
-                                onPaste={(e) => {
-                                  e.preventDefault();
-                                  const paste = e.clipboardData?.getData('text/html') || e.clipboardData?.getData('text/plain') || '';
-                                  if (paste) {
-                                    // Clean and sanitize pasted HTML
-                                    const cleanHtml = DOMPurify.sanitize(paste, {
-                                      ALLOWED_TAGS: ['p', 'br', 'strong', 'b', 'em', 'i', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'blockquote', 'code', 'pre', 'img'],
-                                      ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class', 'style']
-                                    });
-                                    document.execCommand('insertHTML', false, cleanHtml);
-                                    field.onChange(e.currentTarget.innerHTML);
-                                  }
-                                }}
-                                suppressContentEditableWarning={true}
-                              />
-                              <div className="border-t p-2 bg-muted/50 text-xs text-muted-foreground">
+                              <div className="border-b p-2 bg-muted/50 text-xs text-muted-foreground">
                                 <div className="flex flex-wrap gap-2">
                                   <button
                                     type="button"
                                     className="px-2 py-1 bg-background border rounded text-xs hover:bg-accent"
-                                    onClick={() => {
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      const editor = e.currentTarget.parentElement?.parentElement?.nextElementSibling as HTMLElement;
+                                      editor?.focus();
                                       document.execCommand('bold');
-                                      field.onChange(document.querySelector('[contenteditable]')?.innerHTML || '');
                                     }}
                                   >
                                     <strong>Bold</strong>
@@ -344,9 +322,11 @@ export default function AdminArticleEditorPage() {
                                   <button
                                     type="button"
                                     className="px-2 py-1 bg-background border rounded text-xs hover:bg-accent"
-                                    onClick={() => {
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      const editor = e.currentTarget.parentElement?.parentElement?.nextElementSibling as HTMLElement;
+                                      editor?.focus();
                                       document.execCommand('italic');
-                                      field.onChange(document.querySelector('[contenteditable]')?.innerHTML || '');
                                     }}
                                   >
                                     <em>Italic</em>
@@ -354,9 +334,11 @@ export default function AdminArticleEditorPage() {
                                   <button
                                     type="button"
                                     className="px-2 py-1 bg-background border rounded text-xs hover:bg-accent"
-                                    onClick={() => {
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      const editor = e.currentTarget.parentElement?.parentElement?.nextElementSibling as HTMLElement;
+                                      editor?.focus();
                                       document.execCommand('insertUnorderedList');
-                                      field.onChange(document.querySelector('[contenteditable]')?.innerHTML || '');
                                     }}
                                   >
                                     • List
@@ -364,9 +346,11 @@ export default function AdminArticleEditorPage() {
                                   <button
                                     type="button"
                                     className="px-2 py-1 bg-background border rounded text-xs hover:bg-accent"
-                                    onClick={() => {
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      const editor = e.currentTarget.parentElement?.parentElement?.nextElementSibling as HTMLElement;
+                                      editor?.focus();
                                       document.execCommand('formatBlock', false, 'h2');
-                                      field.onChange(document.querySelector('[contenteditable]')?.innerHTML || '');
                                     }}
                                   >
                                     H2
@@ -374,19 +358,51 @@ export default function AdminArticleEditorPage() {
                                   <button
                                     type="button"
                                     className="px-2 py-1 bg-background border rounded text-xs hover:bg-accent"
-                                    onClick={() => {
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      const editor = e.currentTarget.parentElement?.parentElement?.nextElementSibling as HTMLElement;
+                                      editor?.focus();
                                       document.execCommand('formatBlock', false, 'h3');
-                                      field.onChange(document.querySelector('[contenteditable]')?.innerHTML || '');
                                     }}
                                   >
                                     H3
                                   </button>
                                 </div>
                               </div>
+                              <div 
+                                contentEditable
+                                className="min-h-[400px] p-3 prose prose-sm max-w-none focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                                style={{ whiteSpace: 'pre-wrap' }}
+                                onBlur={(e) => {
+                                  field.onChange(e.currentTarget.innerHTML);
+                                }}
+                                onInput={(e) => {
+                                  // Update the field value when content changes
+                                  field.onChange(e.currentTarget.innerHTML);
+                                }}
+                                onPaste={(e) => {
+                                  e.preventDefault();
+                                  const paste = e.clipboardData?.getData('text/html') || e.clipboardData?.getData('text/plain') || '';
+                                  if (paste) {
+                                    // Clean and sanitize pasted HTML
+                                    const cleanHtml = DOMPurify.sanitize(paste, {
+                                      ALLOWED_TAGS: ['p', 'br', 'strong', 'b', 'em', 'i', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'blockquote', 'code', 'pre', 'img', 'span', 'div'],
+                                      ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class', 'style']
+                                    });
+                                    document.execCommand('insertHTML', false, cleanHtml);
+                                  }
+                                }}
+                                suppressContentEditableWarning={true}
+                                ref={(el) => {
+                                  if (el && field.value && el.innerHTML !== field.value) {
+                                    el.innerHTML = field.value;
+                                  }
+                                }}
+                              />
                             </div>
                           </FormControl>
                           <FormDescription>
-                            Rich text editor with HTML support. You can paste formatted content directly or use the formatting buttons.
+                            Rich text editor with HTML support. You can paste formatted content directly or use the formatting buttons above.
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
