@@ -1374,15 +1374,21 @@ export class DatabaseStorage implements IStorage {
     const [{ count: total }] = await totalQuery;
 
     // Get articles
-    let query = db
+    const baseQuery = db
       .select()
-      .from(articles)
+      .from(articles);
+
+    let query = baseQuery
       .limit(limit)
       .offset(offset)
       .orderBy(desc(articles.publishedAt), desc(articles.createdAt));
 
     if (whereConditions.length > 0) {
-      query = query.where(and(...whereConditions));
+      query = baseQuery
+        .where(and(...whereConditions))
+        .limit(limit)
+        .offset(offset)
+        .orderBy(desc(articles.publishedAt), desc(articles.createdAt));
     }
 
     const items = await query;
@@ -1421,25 +1427,24 @@ export class DatabaseStorage implements IStorage {
 
   async createArticle(article: InsertArticle): Promise<Article> {
     // Generate slug if not provided
-    if (!article.slug && article.title) {
-      article.slug = article.title
-        .toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, '')
-        .replace(/\s+/g, '-')
-        .replace(/-+/g, '-')
-        .trim()
-        .substring(0, 200);
-    }
+    const slug = article.slug || article.title
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .trim()
+      .substring(0, 200);
 
     // Set published date if status is published
     const insertData = {
       ...article,
+      slug,
       publishedAt: article.status === 'published' ? new Date() : null,
     };
 
     const [newArticle] = await db
       .insert(articles)
-      .values([insertData])
+      .values(insertData)
       .returning();
     
     return newArticle;
