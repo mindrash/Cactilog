@@ -395,7 +395,7 @@ function Header() {
                     <Menu className="w-4 h-4" />
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="right" className="w-64">
+                <SheetContent side="right" className="w-64 overflow-y-auto max-h-screen">
                   <SheetHeader>
                     <SheetTitle className="flex items-center space-x-1">
                       <div className="w-6 h-6 flex items-center justify-center">
@@ -459,22 +459,26 @@ function Header() {
                       <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
                         Community
                       </div>
+                      
+                      {/* Community Collections */}
                       <Link href="/users">
                         <Button
                           variant={isActive("/users") ? "default" : "ghost"}
-                          className={`w-full justify-start ${
+                          className={`w-full justify-start mb-1 ${
                             isActive("/users") ? "bg-cactus-green hover:bg-cactus-green/90" : ""
                           }`}
                           onClick={() => setShowMobileMenu(false)}
                         >
                           <Users className="w-4 h-4 mr-2" />
-                          Community Collections
+                          Collections Directory
                         </Button>
                       </Link>
+                      
+                      {/* Photo Gallery */}
                       <Link href="/community/photos">
                         <Button
                           variant={isActive("/community/photos") ? "default" : "ghost"}
-                          className={`w-full justify-start ${
+                          className={`w-full justify-start mb-1 ${
                             isActive("/community/photos") ? "bg-cactus-green hover:bg-cactus-green/90" : ""
                           }`}
                           onClick={() => setShowMobileMenu(false)}
@@ -483,10 +487,12 @@ function Header() {
                           Photo Gallery
                         </Button>
                       </Link>
+                      
+                      {/* Articles */}
                       <Link href="/articles">
                         <Button
                           variant={isActive("/articles") ? "default" : "ghost"}
-                          className={`w-full justify-start ${
+                          className={`w-full justify-start mb-1 bg-red-500 text-white ${
                             isActive("/articles") ? "bg-cactus-green hover:bg-cactus-green/90" : ""
                           }`}
                           onClick={() => setShowMobileMenu(false)}
@@ -495,10 +501,12 @@ function Header() {
                           Articles
                         </Button>
                       </Link>
+                      
+                      {/* Recommended Socials */}
                       <Link href="/recommended-socials">
                         <Button
                           variant={isActive("/recommended-socials") ? "default" : "ghost"}
-                          className={`w-full justify-start ${
+                          className={`w-full justify-start mb-1 ${
                             isActive("/recommended-socials") ? "bg-cactus-green hover:bg-cactus-green/90" : ""
                           }`}
                           onClick={() => setShowMobileMenu(false)}
