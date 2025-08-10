@@ -5,6 +5,7 @@ Cactilog is a full-stack web application designed for cacti and succulent enthus
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
+Strongly prefers simple solutions over complex ones - avoid overcomplicating working systems.
 
 ## System Architecture
 Cactilog employs a modern full-stack architecture, ensuring clear separation between frontend and backend concerns.
