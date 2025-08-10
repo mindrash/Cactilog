@@ -521,21 +521,21 @@ function Header() {
                         <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
                           Account
                         </div>
-                        {navigationGroups.account.map((item) => (
-                          (!item.adminOnly || adminStatus?.isAdmin) && (
-                            <Link key={item.href} href={item.href}>
-                              <Button
-                                variant={isActive(item.href) ? "default" : "ghost"}
-                                className={`w-full justify-start ${
-                                  isActive(item.href) ? "bg-cactus-green hover:bg-cactus-green/90" : ""
-                                }`}
-                                onClick={() => setShowMobileMenu(false)}
-                              >
-                                <item.icon className="w-4 h-4 mr-2" />
-                                {item.label}
-                              </Button>
-                            </Link>
-                          )
+                        {navigationGroups.account.filter((item) => 
+                          !item.adminOnly || (adminStatus && typeof adminStatus === 'object' && 'isAdmin' in adminStatus && adminStatus.isAdmin)
+                        ).map((item) => (
+                          <Link key={item.href} href={item.href}>
+                            <Button
+                              variant={isActive(item.href) ? "default" : "ghost"}
+                              className={`w-full justify-start ${
+                                isActive(item.href) ? "bg-cactus-green hover:bg-cactus-green/90" : ""
+                              }`}
+                              onClick={() => setShowMobileMenu(false)}
+                            >
+                              <item.icon className="w-4 h-4 mr-2" />
+                              {item.label}
+                            </Button>
+                          </Link>
                         ))}
                       </div>
                     )}
