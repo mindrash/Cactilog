@@ -69,8 +69,8 @@ export default function AdminArticleEditorPage() {
       title: "",
       html: "",
       excerpt: "",
-      status: "draft",
-      publishNow: false,
+      status: "published",
+      publishNow: true,
     },
   });
 
