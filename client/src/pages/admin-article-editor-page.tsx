@@ -107,7 +107,7 @@ export default function AdminArticleEditorPage() {
     mutationFn: async (data: ArticleFormData) => {
       console.log("Making API request to create article:", data);
       try {
-        const response = await apiRequest('POST', '/api/admin/articles', data);
+        const response = await apiRequest('/api/admin/articles', 'POST', data);
         console.log("API response received:", response.status);
         const result = await response.json();
         console.log("Article created successfully:", result);
