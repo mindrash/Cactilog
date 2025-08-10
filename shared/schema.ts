@@ -303,6 +303,10 @@ export const articles = pgTable("articles", {
   excerpt: varchar("excerpt", { length: 300 }),
   status: varchar("status", { enum: ["draft", "published"] }).default("draft").notNull(),
   tags: text("tags").array(),
+  category: varchar("category", { length: 100 }),
+  author: varchar("author", { length: 100 }),
+  metaTitle: varchar("meta_title", { length: 200 }),
+  metaDescription: varchar("meta_description", { length: 300 }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
   publishedAt: timestamp("published_at"),
@@ -324,6 +328,10 @@ export const insertArticleSchema = createInsertSchema(articles).omit({
   slug: z.string().max(220, "Slug must be less than 220 characters").optional(),
   tags: z.array(z.string()).optional(),
   status: z.enum(["draft", "published"]).optional(),
+  category: z.string().max(100, "Category must be less than 100 characters").optional(),
+  author: z.string().max(100, "Author must be less than 100 characters").optional(),
+  metaTitle: z.string().max(200, "Meta title must be less than 200 characters").optional(),
+  metaDescription: z.string().max(300, "Meta description must be less than 300 characters").optional(),
 });
 
 export type SpeciesImage = typeof speciesImages.$inferSelect;
