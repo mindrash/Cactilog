@@ -92,7 +92,7 @@ export default function ArticlesPage() {
     <div className="container mx-auto py-8 px-4">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-2 text-forest">Community Articles</h1>
+        <h1 className="text-4xl font-bold mb-2 text-forest">Cacti Articles</h1>
         <p className="text-lg text-muted-foreground">
           Discover expert care guides, growing tips, and community insights from fellow cacti enthusiasts.
         </p>
