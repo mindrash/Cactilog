@@ -459,20 +459,54 @@ function Header() {
                       <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
                         Community
                       </div>
-                      {navigationGroups.community.map((item) => (
-                        <Link key={item.href} href={item.href}>
-                          <Button
-                            variant={isActive(item.href) ? "default" : "ghost"}
-                            className={`w-full justify-start ${
-                              isActive(item.href) ? "bg-cactus-green hover:bg-cactus-green/90" : ""
-                            }`}
-                            onClick={() => setShowMobileMenu(false)}
-                          >
-                            <item.icon className="w-4 h-4 mr-2" />
-                            {item.label}
-                          </Button>
-                        </Link>
-                      ))}
+                      <Link href="/users">
+                        <Button
+                          variant={isActive("/users") ? "default" : "ghost"}
+                          className={`w-full justify-start ${
+                            isActive("/users") ? "bg-cactus-green hover:bg-cactus-green/90" : ""
+                          }`}
+                          onClick={() => setShowMobileMenu(false)}
+                        >
+                          <Users className="w-4 h-4 mr-2" />
+                          Community Collections
+                        </Button>
+                      </Link>
+                      <Link href="/community/photos">
+                        <Button
+                          variant={isActive("/community/photos") ? "default" : "ghost"}
+                          className={`w-full justify-start ${
+                            isActive("/community/photos") ? "bg-cactus-green hover:bg-cactus-green/90" : ""
+                          }`}
+                          onClick={() => setShowMobileMenu(false)}
+                        >
+                          <Camera className="w-4 h-4 mr-2" />
+                          Photo Gallery
+                        </Button>
+                      </Link>
+                      <Link href="/articles">
+                        <Button
+                          variant={isActive("/articles") ? "default" : "ghost"}
+                          className={`w-full justify-start ${
+                            isActive("/articles") ? "bg-cactus-green hover:bg-cactus-green/90" : ""
+                          }`}
+                          onClick={() => setShowMobileMenu(false)}
+                        >
+                          <FileText className="w-4 h-4 mr-2" />
+                          Articles
+                        </Button>
+                      </Link>
+                      <Link href="/recommended-socials">
+                        <Button
+                          variant={isActive("/recommended-socials") ? "default" : "ghost"}
+                          className={`w-full justify-start ${
+                            isActive("/recommended-socials") ? "bg-cactus-green hover:bg-cactus-green/90" : ""
+                          }`}
+                          onClick={() => setShowMobileMenu(false)}
+                        >
+                          <Share2 className="w-4 h-4 mr-2" />
+                          Recommended Socials
+                        </Button>
+                      </Link>
                     </div>
 
                     {/* Knowledge Base Section */}

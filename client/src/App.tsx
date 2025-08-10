@@ -43,7 +43,7 @@ function Router() {
   // Get current path to determine if it's a public route
   const [location] = useLocation();
   const publicRoutes = [
-    '/', '/photos', '/users', '/knowledge', '/vendors', '/recommended-socials', '/about', 
+    '/', '/photos', '/community/photos', '/users', '/knowledge', '/vendors', '/recommended-socials', '/about', 
     '/contact', '/privacy', '/terms', '/disclaimer', '/auth', '/articles'
   ];
   const isPublicRoute = publicRoutes.some(route => 
@@ -72,6 +72,7 @@ function Router() {
         <>
           <Route path="/" component={Landing} />
           <Route path="/photos" component={Photos} />
+          <Route path="/community/photos" component={Photos} />
           <Route path="/recommended-socials" component={RecommendedSocials} />
           <Route path="/users" component={Users} />
           <Route path="/users/:userId" component={UserProfile} />
@@ -101,6 +102,7 @@ function Router() {
           <Route path="/collection" component={Collection} />
           <Route path="/growth-tracking" component={GrowthTracking} />
           <Route path="/photos" component={Photos} />
+          <Route path="/community/photos" component={Photos} />
           <Route path="/recommended-socials" component={RecommendedSocials} />
           <Route path="/users" component={Users} />
           <Route path="/users/:userId" component={UserProfile} />
