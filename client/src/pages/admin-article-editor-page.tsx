@@ -105,8 +105,17 @@ export default function AdminArticleEditorPage() {
 
   const createArticleMutation = useMutation({
     mutationFn: async (data: ArticleFormData) => {
-      const response = await apiRequest('POST', '/api/admin/articles', data);
-      return response.json();
+      console.log("Making API request to create article:", data);
+      try {
+        const response = await apiRequest('POST', '/api/admin/articles', data);
+        console.log("API response received:", response.status);
+        const result = await response.json();
+        console.log("Article created successfully:", result);
+        return result;
+      } catch (error) {
+        console.error("API request failed:", error);
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/articles'] });
@@ -117,6 +126,7 @@ export default function AdminArticleEditorPage() {
       setLocation('/admin/articles');
     },
     onError: (error: Error) => {
+      console.error("Mutation error:", error);
       toast({
         title: "Create failed",
         description: error.message,
