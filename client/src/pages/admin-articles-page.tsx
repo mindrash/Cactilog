@@ -64,7 +64,7 @@ export default function AdminArticlesPage() {
 
   const deleteArticleMutation = useMutation({
     mutationFn: async (articleId: string) => {
-      await apiRequest('DELETE', `/api/admin/articles/${articleId}`);
+      await apiRequest(`/api/admin/articles/${articleId}`, 'DELETE');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/articles'] });
