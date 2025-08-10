@@ -1339,12 +1339,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Forbidden: Admin access required" });
       }
 
+      console.log("Article creation request body:", JSON.stringify(req.body, null, 2));
+      
       const validatedData = insertArticleSchema.parse(req.body);
+      console.log("Validated article data:", JSON.stringify(validatedData, null, 2));
+      
       const article = await storage.createArticle(validatedData);
+      console.log("Article created successfully:", JSON.stringify(article, null, 2));
+      
       res.status(201).json(article);
     } catch (error) {
       console.error("Error creating article:", error);
       if (error instanceof z.ZodError) {
+        console.error("Zod validation errors:", error.errors);
         return res.status(400).json({ message: "Invalid article data", errors: error.errors });
       }
       res.status(500).json({ message: "Failed to create article" });

@@ -158,6 +158,8 @@ export default function AdminArticleEditorPage() {
   });
 
   const onSubmit = (data: ArticleFormData) => {
+    console.log("Form submitted with data:", data);
+    
     // Parse tags from input
     const tags = tagsInput
       .split(',')
@@ -173,6 +175,8 @@ export default function AdminArticleEditorPage() {
 
     // Remove publishNow from the data as it's not in the schema
     delete (articleData as any).publishNow;
+
+    console.log("Processed article data:", articleData);
 
     if (isEditing) {
       updateArticleMutation.mutate(articleData);
