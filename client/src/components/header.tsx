@@ -492,7 +492,7 @@ function Header() {
                       <Link href="/articles">
                         <Button
                           variant={isActive("/articles") ? "default" : "ghost"}
-                          className={`w-full justify-start mb-1 bg-red-500 text-white font-bold ${
+                          className={`w-full justify-start mb-1 ${
                             isActive("/articles") ? "bg-cactus-green hover:bg-cactus-green/90" : ""
                           }`}
                           onClick={() => setShowMobileMenu(false)}

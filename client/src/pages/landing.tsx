@@ -157,6 +157,7 @@ function Landing() {
                   <div className="py-1">
                     <a href="/users" onClick={(e) => { e.preventDefault(); window.location.href = '/users'; }} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Collections Directory</a>
                     <a href="/photos" onClick={(e) => { e.preventDefault(); window.location.href = '/photos'; }} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Photo Gallery</a>
+                    <a href="/articles" onClick={(e) => { e.preventDefault(); window.location.href = '/articles'; }} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Articles</a>
                   </div>
                 </div>
               </div>
@@ -220,6 +221,7 @@ function Landing() {
                 <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">Community</div>
                 <a href="/users" onClick={(e) => { e.preventDefault(); window.location.href = '/users'; setMobileMenuOpen(false); }} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Collections Directory</a>
                 <a href="/photos" onClick={(e) => { e.preventDefault(); window.location.href = '/photos'; setMobileMenuOpen(false); }} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Photo Gallery</a>
+                <a href="/articles" onClick={(e) => { e.preventDefault(); window.location.href = '/articles'; setMobileMenuOpen(false); }} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Articles</a>
                 <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide mt-2">Knowledge Base</div>
                 <a href="/knowledge" onClick={(e) => { e.preventDefault(); window.location.href = '/knowledge'; setMobileMenuOpen(false); }} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Browse Genera</a>
                 <a href="/knowledge/search" onClick={(e) => { e.preventDefault(); window.location.href = '/knowledge/search'; setMobileMenuOpen(false); }} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Species Search</a>
