@@ -45,6 +45,7 @@ Cactilog employs a modern full-stack architecture, ensuring clear separation bet
 - **Growth Tracking**: Detailed growth tracking system with fields for circumference, offset count, health scores, flowering status, and environmental notes, supported by an analytics dashboard with charting.
 - **Affiliate Integration**: Expanded Amazon affiliate product database with randomization for varied product recommendations.
 - **Export Functionality**: Collection export to CSV, Excel (.xlsx), and PDF formats.
+- **Articles System**: Simplified article creation with rich text editor, automatic SEO generation (meta titles and descriptions), and streamlined publishing workflow with minimal manual input fields (August 2025).
 
 ## External Dependencies
 
