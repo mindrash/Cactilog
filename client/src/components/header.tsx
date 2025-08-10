@@ -30,7 +30,7 @@ const navigationGroups = {
   community: [
     { href: "/users", label: "Community Collections", icon: Users },
     { href: "/photos", label: "Photo Gallery", icon: Camera },
-    { href: "/articles", label: "Community Articles", icon: FileText },
+    { href: "/articles", label: "Articles", icon: FileText },
     { href: "/recommended-socials", label: "Recommended Socials", icon: Share2 },
   ],
   knowledge: [
