@@ -97,16 +97,31 @@ function Header() {
               {/* Public Navigation - shown when not authenticated */}
               {!isAuthenticated && (
                 <>
-                  {/* Community Link */}
-                  <Link href="/users">
-                    <Button
-                      variant={isActive("/users") ? "default" : "ghost"}
-                      className={isActive("/users") ? "bg-cactus-green hover:bg-cactus-green/90" : ""}
-                    >
-                      <Users className="w-4 h-4 mr-2" />
-                      Community
-                    </Button>
-                  </Link>
+                  {/* Community Dropdown */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant={isGroupActive(navigationGroups.community) ? "default" : "ghost"}
+                        className={isGroupActive(navigationGroups.community) ? "bg-cactus-green hover:bg-cactus-green/90" : ""}
+                      >
+                        <Users className="w-4 h-4 mr-2" />
+                        Community
+                        <ChevronDown className="w-4 h-4 ml-2" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" className="w-56">
+                      <DropdownMenuLabel>Community</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      {navigationGroups.community.map((item) => (
+                        <Link key={item.href} href={item.href}>
+                          <DropdownMenuItem className="cursor-pointer">
+                            <item.icon className="w-4 h-4 mr-2" />
+                            {item.label}
+                          </DropdownMenuItem>
+                        </Link>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
 
                   {/* Knowledge Base Dropdown */}
                   <DropdownMenu>
