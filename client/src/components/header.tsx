@@ -454,7 +454,7 @@ function Header() {
                       </>
                     )}
 
-                    {/* Community Section */}
+                    {/* Community Section - Available to Everyone */}
                     <div className="pt-4">
                       <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
                         Community
@@ -492,7 +492,7 @@ function Header() {
                       <Link href="/articles">
                         <Button
                           variant={isActive("/articles") ? "default" : "ghost"}
-                          className={`w-full justify-start mb-1 bg-red-500 text-white ${
+                          className={`w-full justify-start mb-1 ${
                             isActive("/articles") ? "bg-cactus-green hover:bg-cactus-green/90" : ""
                           }`}
                           onClick={() => setShowMobileMenu(false)}
