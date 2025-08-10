@@ -19,8 +19,12 @@ import { apiRequest } from "@/lib/queryClient";
 import DOMPurify from "dompurify";
 
 // Create a form schema based on insertArticleSchema with additional validation
-const articleFormSchema = insertArticleSchema.extend({
-  tags: z.array(z.string()).optional(),
+const articleFormSchema = insertArticleSchema.pick({
+  title: true,
+  html: true,
+  excerpt: true,
+  status: true,
+}).extend({
   publishNow: z.boolean().optional(),
 });
 
@@ -41,7 +45,6 @@ export default function AdminArticleEditorPage() {
   const articleId = params?.id;
   const isEditing = articleId && articleId !== 'new';
   const [isPreview, setIsPreview] = useState(false);
-  const [tagsInput, setTagsInput] = useState("");
 
   // Fetch article data if editing
   const { data: article, isLoading: isLoadingArticle } = useQuery<Article>({
@@ -66,11 +69,7 @@ export default function AdminArticleEditorPage() {
       title: "",
       html: "",
       excerpt: "",
-      slug: "",
       status: "draft",
-      tags: [],
-      category: "",
-      author: "",
       publishNow: false,
     },
   });
@@ -82,11 +81,7 @@ export default function AdminArticleEditorPage() {
         title: article.title || "",
         html: article.html || "",
         excerpt: article.excerpt || "",
-        slug: article.slug || "",
         status: article.status || "draft",
-        tags: article.tags || [],
-        category: article.category || "",
-        author: article.author || "",
         publishNow: false,
       });
       setTagsInput(article.tags?.join(", ") || "");
@@ -155,21 +150,24 @@ export default function AdminArticleEditorPage() {
 
   const onSubmit = (data: ArticleFormData) => {
     console.log("Form submitted with data:", data);
-    
-    // Parse tags from input
-    const tags = tagsInput
-      .split(',')
-      .map(tag => tag.trim())
-      .filter(tag => tag.length > 0);
 
     // Auto-generate SEO fields
     const metaTitle = data.title ? `${data.title} - Cactilog` : 'Cactilog Article';
     const metaDescription = data.excerpt || 
       (data.html ? data.html.replace(/<[^>]*>/g, '').substring(0, 155) + '...' : 'Expert care guides and tips for cactus and succulent enthusiasts.');
 
+    // Auto-generate slug from title
+    const slug = data.title ? data.title.toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .trim() : 'untitled-article';
+
     const articleData = {
       ...data,
-      tags,
+      slug,
+      tags: [], // Empty array for now
+      category: '', // Empty for now
+      author: 'Cactilog Team', // Default author
       metaTitle,
       metaDescription,
       status: data.publishNow ? 'published' as const : data.status,
@@ -486,70 +484,7 @@ export default function AdminArticleEditorPage() {
                   </CardContent>
                 </Card>
 
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Details</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <FormField
-                      control={form.control}
-                      name="slug"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>URL Slug</FormLabel>
-                          <FormControl>
-                            <Input placeholder="article-url-slug" {...field} />
-                          </FormControl>
-                          <FormDescription>
-                            The URL path for this article
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
 
-                    <FormField
-                      control={form.control}
-                      name="category"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Category</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Care Guide, Tips, etc." {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="author"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Author</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Author name" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <div>
-                      <Label htmlFor="tags">Tags</Label>
-                      <Input
-                        id="tags"
-                        placeholder="care, watering, propagation"
-                        value={tagsInput}
-                        onChange={(e) => setTagsInput(e.target.value)}
-                      />
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Separate tags with commas
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
 
 
               </div>
