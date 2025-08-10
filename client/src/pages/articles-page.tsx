@@ -5,9 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Search, Clock, Tag, ArrowRight, BookOpen } from "lucide-react";
+import { Search, Clock, Tag, ArrowRight, BookOpen, Plus, Edit } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
+import { useAuth } from "@/hooks/useAuth";
 
 interface Article {
   id: string;
@@ -33,6 +34,10 @@ export default function ArticlesPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTag, setSelectedTag] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const { user } = useAuth();
+  
+  // Check if user is admin (based on your existing admin logic)
+  const isAdmin = user && (user.id === "45392487" || user.email === "tomlawson@gmail.com");
 
   const { data: articlesData, isLoading, error } = useQuery<ArticlesResponse>({
     queryKey: ['/api/articles', { q: searchQuery, tag: selectedTag, page: currentPage }],
@@ -92,10 +97,32 @@ export default function ArticlesPage() {
     <div className="container mx-auto py-8 px-4">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-2 text-forest">Cacti Articles</h1>
-        <p className="text-lg text-muted-foreground">
-          Discover expert care guides, growing tips, and community insights from fellow cacti enthusiasts.
-        </p>
+        <div className="flex justify-between items-start mb-4">
+          <div>
+            <h1 className="text-4xl font-bold mb-2 text-forest">Cacti Articles</h1>
+            <p className="text-lg text-muted-foreground">
+              Discover expert care guides, growing tips, and community insights from fellow cacti enthusiasts.
+            </p>
+          </div>
+          
+          {/* Admin Controls */}
+          {isAdmin && (
+            <div className="flex gap-2">
+              <Button asChild className="bg-cactus-green hover:bg-cactus-green/90">
+                <Link href="/admin/articles/new">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Article
+                </Link>
+              </Button>
+              <Button variant="outline" asChild>
+                <Link href="/admin/articles">
+                  <Edit className="h-4 w-4 mr-2" />
+                  Manage Articles
+                </Link>
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Search and Filters */}
