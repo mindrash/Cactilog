@@ -17,13 +17,11 @@ import { useToast } from "@/hooks/use-toast";
 import { insertArticleSchema } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import DOMPurify from "dompurify";
-import TurndownService from "turndown";
 
 // Create a form schema based on insertArticleSchema with additional validation
 const articleFormSchema = insertArticleSchema.extend({
   tags: z.array(z.string()).optional(),
   publishNow: z.boolean().optional(),
-  markdown: z.string().optional(),
 });
 
 type ArticleFormData = z.infer<typeof articleFormSchema>;
@@ -44,12 +42,6 @@ export default function AdminArticleEditorPage() {
   const isEditing = articleId && articleId !== 'new';
   const [isPreview, setIsPreview] = useState(false);
   const [tagsInput, setTagsInput] = useState("");
-
-  const turndownService = new TurndownService({
-    headingStyle: 'atx',
-    bulletListMarker: '-',
-    codeBlockStyle: 'fenced'
-  });
 
   // Fetch article data if editing
   const { data: article, isLoading: isLoadingArticle } = useQuery<Article>({
@@ -73,7 +65,6 @@ export default function AdminArticleEditorPage() {
     defaultValues: {
       title: "",
       html: "",
-      markdown: "",
       excerpt: "",
       slug: "",
       status: "draft",
@@ -92,7 +83,6 @@ export default function AdminArticleEditorPage() {
       form.reset({
         title: article.title || "",
         html: article.html || "",
-        markdown: article.markdown || "",
         excerpt: article.excerpt || "",
         slug: article.slug || "",
         status: article.status || "draft",
@@ -121,31 +111,6 @@ export default function AdminArticleEditorPage() {
     }
   }, [watchTitle, isEditing, form]);
 
-  // Convert markdown to HTML when markdown changes
-  const watchMarkdown = form.watch("markdown") as string;
-  useEffect(() => {
-    if (typeof watchMarkdown === 'string' && watchMarkdown.trim()) {
-      // Simple markdown to HTML conversion
-      let html = watchMarkdown
-        .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-        .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-        .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-        .replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>')
-        .replace(/\*(.*)\*/gim, '<em>$1</em>')
-        .replace(/\n\n/gim, '</p><p>')
-        .replace(/\n/gim, '<br>');
-      
-      html = `<p>${html}</p>`;
-      html = html.replace(/<p><\/p>/g, '');
-      html = html.replace(/<p><h/g, '<h');
-      html = html.replace(/<\/h([1-6])><\/p>/g, '</h$1>');
-      
-      // Sanitize the HTML
-      html = DOMPurify.sanitize(html);
-      
-      form.setValue("html", html);
-    }
-  }, [watchMarkdown, form]);
 
   const createArticleMutation = useMutation({
     mutationFn: async (data: ArticleFormData) => {
@@ -334,20 +299,20 @@ export default function AdminArticleEditorPage() {
 
                     <FormField
                       control={form.control}
-                      name="markdown"
+                      name="html"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Content (Markdown)</FormLabel>
+                          <FormLabel>Article Content</FormLabel>
                           <FormControl>
                             <Textarea 
-                              placeholder="Write your article content in Markdown..." 
+                              placeholder="Write your article content here..." 
                               rows={15}
-                              className="font-mono text-sm"
+                              className="text-sm"
                               {...field} 
                             />
                           </FormControl>
                           <FormDescription>
-                            Write in Markdown format. HTML will be generated automatically.
+                            Write your article content. You can use basic HTML tags if needed.
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
