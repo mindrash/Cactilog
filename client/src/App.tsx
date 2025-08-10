@@ -24,6 +24,10 @@ import Import from "@/pages/import";
 import Settings from "@/pages/settings";
 import Vendors from "@/pages/vendors";
 import AdminDashboard from "@/pages/admin-dashboard";
+import ArticlesPage from "@/pages/articles-page";
+import ArticleDetailPage from "@/pages/article-detail-page";
+import AdminArticlesPage from "@/pages/admin-articles-page";
+import AdminArticleEditorPage from "@/pages/admin-article-editor-page";
 import About from "@/pages/about";
 import Contact from "@/pages/contact";
 import Privacy from "@/pages/privacy";
@@ -40,13 +44,14 @@ function Router() {
   const [location] = useLocation();
   const publicRoutes = [
     '/', '/photos', '/users', '/knowledge', '/vendors', '/recommended-socials', '/about', 
-    '/contact', '/privacy', '/terms', '/disclaimer', '/auth'
+    '/contact', '/privacy', '/terms', '/disclaimer', '/auth', '/articles'
   ];
   const isPublicRoute = publicRoutes.some(route => 
     location === route || 
     location.startsWith('/knowledge/') || 
     location.startsWith('/users/') ||
-    location.startsWith('/plants/')
+    location.startsWith('/plants/') ||
+    location.startsWith('/articles/')
   );
 
   // Only show loading for private routes
@@ -79,6 +84,8 @@ function Router() {
           <Route path="/knowledge/care-guides" component={KnowledgeCareGuides} />
           <Route path="/knowledge/diseases-pests" component={KnowledgeDiseasesAndPests} />
           <Route path="/vendors" component={Vendors} />
+          <Route path="/articles" component={ArticlesPage} />
+          <Route path="/articles/:slug" component={ArticleDetailPage} />
           <Route path="/about" component={About} />
           <Route path="/contact" component={Contact} />
           <Route path="/privacy" component={Privacy} />
@@ -106,9 +113,14 @@ function Router() {
           <Route path="/knowledge/care-guides" component={KnowledgeCareGuides} />
           <Route path="/knowledge/diseases-pests" component={KnowledgeDiseasesAndPests} />
           <Route path="/vendors" component={Vendors} />
+          <Route path="/articles" component={ArticlesPage} />
+          <Route path="/articles/:slug" component={ArticleDetailPage} />
           <Route path="/import" component={Import} />
           <Route path="/settings" component={Settings} />
           <Route path="/admin" component={AdminDashboard} />
+          <Route path="/admin/articles" component={AdminArticlesPage} />
+          <Route path="/admin/articles/:id/edit" component={AdminArticleEditorPage} />
+          <Route path="/admin/articles/new" component={AdminArticleEditorPage} />
           <Route path="/about" component={About} />
           <Route path="/contact" component={Contact} />
           <Route path="/privacy" component={Privacy} />

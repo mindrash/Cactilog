@@ -9,6 +9,7 @@ import {
   adminUsers,
   plantLikes,
   vendors,
+  articles,
   type User,
   type UpsertUser,
   type Plant,
@@ -27,6 +28,8 @@ import {
   type InsertPlantLike,
   type Vendor,
   type InsertVendor,
+  type Article,
+  type InsertArticle,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, ilike, or, count, sql } from "drizzle-orm";
@@ -133,6 +136,26 @@ export interface IStorage {
   getAllVendors(): Promise<Vendor[]>;
   getVendorsBySpecialty(specialty: string): Promise<Vendor[]>;
   seedVendors(): Promise<number>;
+  
+  // Article operations
+  getArticles(filters?: {
+    q?: string;
+    status?: string;
+    tag?: string;
+    page?: number;
+    limit?: number;
+    includeDrafts?: boolean;
+  }): Promise<{
+    items: Article[];
+    total: number;
+    page: number;
+    pageCount: number;
+  }>;
+  getArticleBySlug(slug: string, includeDrafts?: boolean): Promise<Article | undefined>;
+  getArticleById(id: string): Promise<Article | undefined>;
+  createArticle(article: InsertArticle): Promise<Article>;
+  updateArticle(id: string, updates: Partial<InsertArticle>): Promise<Article | undefined>;
+  deleteArticle(id: string): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1293,6 +1316,170 @@ export class DatabaseStorage implements IStorage {
       }))
     ).returning();
     return insertedVendors.length;
+  }
+
+  // Article operations
+  async getArticles(filters?: {
+    q?: string;
+    status?: string;
+    tag?: string;
+    page?: number;
+    limit?: number;
+    includeDrafts?: boolean;
+  }): Promise<{
+    items: Article[];
+    total: number;
+    page: number;
+    pageCount: number;
+  }> {
+    const page = filters?.page ?? 1;
+    const limit = filters?.limit ?? 10;
+    const offset = (page - 1) * limit;
+
+    let whereConditions = [];
+
+    // Status filter - if includeDrafts is false or not specified, only show published
+    if (!filters?.includeDrafts) {
+      whereConditions.push(eq(articles.status, 'published'));
+    } else if (filters?.status) {
+      whereConditions.push(eq(articles.status, filters.status as 'draft' | 'published'));
+    }
+
+    // Search filter
+    if (filters?.q) {
+      const searchCondition = or(
+        ilike(articles.title, `%${filters.q}%`),
+        ilike(articles.html, `%${filters.q}%`),
+        ilike(articles.excerpt, `%${filters.q}%`)
+      );
+      if (searchCondition) {
+        whereConditions.push(searchCondition);
+      }
+    }
+
+    // Tag filter
+    if (filters?.tag) {
+      whereConditions.push(sql`${filters.tag} = ANY(${articles.tags})`);
+    }
+
+    // Get total count
+    const totalQuery = db
+      .select({ count: count() })
+      .from(articles);
+    
+    if (whereConditions.length > 0) {
+      totalQuery.where(and(...whereConditions));
+    }
+
+    const [{ count: total }] = await totalQuery;
+
+    // Get articles
+    let query = db
+      .select()
+      .from(articles)
+      .limit(limit)
+      .offset(offset)
+      .orderBy(desc(articles.publishedAt), desc(articles.createdAt));
+
+    if (whereConditions.length > 0) {
+      query = query.where(and(...whereConditions));
+    }
+
+    const items = await query;
+
+    return {
+      items,
+      total,
+      page,
+      pageCount: Math.ceil(total / limit),
+    };
+  }
+
+  async getArticleBySlug(slug: string, includeDrafts?: boolean): Promise<Article | undefined> {
+    let whereConditions = [eq(articles.slug, slug)];
+    
+    if (!includeDrafts) {
+      whereConditions.push(eq(articles.status, 'published'));
+    }
+
+    const [article] = await db
+      .select()
+      .from(articles)
+      .where(and(...whereConditions));
+    
+    return article;
+  }
+
+  async getArticleById(id: string): Promise<Article | undefined> {
+    const [article] = await db
+      .select()
+      .from(articles)
+      .where(eq(articles.id, id));
+    
+    return article;
+  }
+
+  async createArticle(article: InsertArticle): Promise<Article> {
+    // Generate slug if not provided
+    if (!article.slug && article.title) {
+      article.slug = article.title
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .trim()
+        .substring(0, 200);
+    }
+
+    // Set published date if status is published
+    const insertData = {
+      ...article,
+      publishedAt: article.status === 'published' ? new Date() : null,
+    };
+
+    const [newArticle] = await db
+      .insert(articles)
+      .values(insertData)
+      .returning();
+    
+    return newArticle;
+  }
+
+  async updateArticle(id: string, updates: Partial<InsertArticle>): Promise<Article | undefined> {
+    // Handle status change to published
+    const updateData = {
+      ...updates,
+      updatedAt: new Date(),
+      // Set published date when changing to published status
+      ...(updates.status === 'published' ? { publishedAt: new Date() } : {}),
+    };
+
+    // Generate slug if title is being updated and no slug provided
+    if (updates.title && !updates.slug) {
+      updateData.slug = updates.title
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .trim()
+        .substring(0, 200);
+    }
+
+    const [updatedArticle] = await db
+      .update(articles)
+      .set(updateData)
+      .where(eq(articles.id, id))
+      .returning();
+    
+    return updatedArticle;
+  }
+
+  async deleteArticle(id: string): Promise<boolean> {
+    const result = await db
+      .delete(articles)
+      .where(eq(articles.id, id));
+    
+    return result.rowCount !== null && result.rowCount > 0;
   }
 }
 

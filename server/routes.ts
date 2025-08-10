@@ -6,7 +6,7 @@ import { vendorData } from "@shared/vendor-data";
 import { SpeciesImageService } from "./wikimedia";
 import { createInsertSchema } from "drizzle-zod";
 import { speciesImages, photoReports } from "@shared/schema";
-import { insertPlantSchema, insertGrowthRecordSchema, insertSeedSchema } from "@shared/schema";
+import { insertPlantSchema, insertGrowthRecordSchema, insertSeedSchema, insertArticleSchema } from "@shared/schema";
 import { z } from "zod";
 import multer from "multer";
 import path from "path";
@@ -1255,6 +1255,153 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching vendors by specialty:", error);
       res.status(500).json({ message: "Failed to fetch vendors" });
+    }
+  });
+
+  // Article routes for Community Articles
+  // Public routes (no auth required)
+  app.get('/api/articles', async (req, res) => {
+    try {
+      const {
+        q,
+        status,
+        tag,
+        page = '1',
+        limit = '10',
+        includeDrafts = 'false'
+      } = req.query;
+
+      const filters = {
+        q: q as string,
+        status: status as string,
+        tag: tag as string,
+        page: parseInt(page as string),
+        limit: parseInt(limit as string),
+        includeDrafts: includeDrafts === 'true'
+      };
+
+      const result = await storage.getArticles(filters);
+      res.json(result);
+    } catch (error) {
+      console.error("Error fetching articles:", error);
+      res.status(500).json({ message: "Failed to fetch articles" });
+    }
+  });
+
+  app.get('/api/articles/slug/:slug', async (req, res) => {
+    try {
+      const { slug } = req.params;
+      const { includeDrafts = 'false' } = req.query;
+      
+      const article = await storage.getArticleBySlug(slug, includeDrafts === 'true');
+      
+      if (!article) {
+        return res.status(404).json({ message: "Article not found" });
+      }
+      
+      res.json(article);
+    } catch (error) {
+      console.error("Error fetching article by slug:", error);
+      res.status(500).json({ message: "Failed to fetch article" });
+    }
+  });
+
+  // Admin-only routes (auth required)
+  app.get('/api/admin/articles/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      const isAdmin = await storage.isUserAdmin(userId);
+      
+      if (!isAdmin) {
+        return res.status(403).json({ message: "Forbidden: Admin access required" });
+      }
+
+      const { id } = req.params;
+      const article = await storage.getArticleById(id);
+      
+      if (!article) {
+        return res.status(404).json({ message: "Article not found" });
+      }
+      
+      res.json(article);
+    } catch (error) {
+      console.error("Error fetching article:", error);
+      res.status(500).json({ message: "Failed to fetch article" });
+    }
+  });
+
+  app.post('/api/admin/articles', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      const isAdmin = await storage.isUserAdmin(userId);
+      
+      if (!isAdmin) {
+        return res.status(403).json({ message: "Forbidden: Admin access required" });
+      }
+
+      const validatedData = insertArticleSchema.parse(req.body);
+      const article = await storage.createArticle(validatedData);
+      res.status(201).json(article);
+    } catch (error) {
+      console.error("Error creating article:", error);
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid article data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to create article" });
+    }
+  });
+
+  app.put('/api/admin/articles/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      const isAdmin = await storage.isUserAdmin(userId);
+      
+      if (!isAdmin) {
+        return res.status(403).json({ message: "Forbidden: Admin access required" });
+      }
+
+      const { id } = req.params;
+      
+      // Create a partial schema for updates (make all fields optional)
+      const updateSchema = insertArticleSchema.partial();
+      const validatedData = updateSchema.parse(req.body);
+      
+      const article = await storage.updateArticle(id, validatedData);
+      
+      if (!article) {
+        return res.status(404).json({ message: "Article not found" });
+      }
+      
+      res.json(article);
+    } catch (error) {
+      console.error("Error updating article:", error);
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid article data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to update article" });
+    }
+  });
+
+  app.delete('/api/admin/articles/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      const isAdmin = await storage.isUserAdmin(userId);
+      
+      if (!isAdmin) {
+        return res.status(403).json({ message: "Forbidden: Admin access required" });
+      }
+
+      const { id } = req.params;
+      const deleted = await storage.deleteArticle(id);
+      
+      if (!deleted) {
+        return res.status(404).json({ message: "Article not found" });
+      }
+      
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting article:", error);
+      res.status(500).json({ message: "Failed to delete article" });
     }
   });
 
