@@ -71,8 +71,6 @@ export default function AdminArticleEditorPage() {
       tags: [],
       category: "",
       author: "",
-      metaTitle: "",
-      metaDescription: "",
       publishNow: false,
     },
   });
@@ -89,8 +87,6 @@ export default function AdminArticleEditorPage() {
         tags: article.tags || [],
         category: article.category || "",
         author: article.author || "",
-        metaTitle: article.metaTitle || "",
-        metaDescription: article.metaDescription || "",
         publishNow: false,
       });
       setTagsInput(article.tags?.join(", ") || "");
@@ -166,9 +162,16 @@ export default function AdminArticleEditorPage() {
       .map(tag => tag.trim())
       .filter(tag => tag.length > 0);
 
+    // Auto-generate SEO fields
+    const metaTitle = data.title ? `${data.title} - Cactilog` : 'Cactilog Article';
+    const metaDescription = data.excerpt || 
+      (data.html ? data.html.replace(/<[^>]*>/g, '').substring(0, 155) + '...' : 'Expert care guides and tips for cactus and succulent enthusiasts.');
+
     const articleData = {
       ...data,
       tags,
+      metaTitle,
+      metaDescription,
       status: data.publishNow ? 'published' as const : data.status,
       publishedAt: data.publishNow ? new Date().toISOString() : undefined,
     };
@@ -548,50 +551,7 @@ export default function AdminArticleEditorPage() {
                   </CardContent>
                 </Card>
 
-                <Card>
-                  <CardHeader>
-                    <CardTitle>SEO</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <FormField
-                      control={form.control}
-                      name="metaTitle"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Meta Title</FormLabel>
-                          <FormControl>
-                            <Input placeholder="SEO title..." {...field} />
-                          </FormControl>
-                          <FormDescription>
-                            Title that appears in search results
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
 
-                    <FormField
-                      control={form.control}
-                      name="metaDescription"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Meta Description</FormLabel>
-                          <FormControl>
-                            <Textarea 
-                              placeholder="SEO description..." 
-                              rows={3}
-                              {...field} 
-                            />
-                          </FormControl>
-                          <FormDescription>
-                            Description that appears in search results
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </CardContent>
-                </Card>
               </div>
             </div>
           </form>
