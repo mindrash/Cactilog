@@ -37,7 +37,7 @@ interface ArticlesResponse {
 
 export default function AdminArticlesPage() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
@@ -48,7 +48,7 @@ export default function AdminArticlesPage() {
     queryFn: async () => {
       const params = new URLSearchParams();
       if (searchQuery) params.append('q', searchQuery);
-      if (statusFilter) params.append('status', statusFilter);
+      if (statusFilter && statusFilter !== 'all') params.append('status', statusFilter);
       params.append('page', currentPage.toString());
       params.append('limit', '20');
       params.append('includeDrafts', 'true');
@@ -160,7 +160,7 @@ export default function AdminArticlesPage() {
                 <SelectValue placeholder="All statuses" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All statuses</SelectItem>
+                <SelectItem value="all">All statuses</SelectItem>
                 <SelectItem value="published">Published</SelectItem>
                 <SelectItem value="draft">Draft</SelectItem>
               </SelectContent>
