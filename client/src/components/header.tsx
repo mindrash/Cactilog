@@ -412,42 +412,47 @@ function Header() {
                   </SheetHeader>
                   
                   <div className="mt-6 space-y-1">
-                    {/* Home */}
-                    {navigationGroups.main.map((item) => (
-                      <Link key={item.href} href={item.href}>
-                        <Button
-                          variant={isActive(item.href) ? "default" : "ghost"}
-                          className={`w-full justify-start ${
-                            isActive(item.href) ? "bg-cactus-green hover:bg-cactus-green/90" : ""
-                          }`}
-                          onClick={() => setShowMobileMenu(false)}
-                        >
-                          <item.icon className="w-4 h-4 mr-2" />
-                          {item.label}
-                        </Button>
-                      </Link>
-                    ))}
+                    {/* Authenticated Navigation */}
+                    {isAuthenticated && (
+                      <>
+                        {/* Home */}
+                        {navigationGroups.main.map((item) => (
+                          <Link key={item.href} href={item.href}>
+                            <Button
+                              variant={isActive(item.href) ? "default" : "ghost"}
+                              className={`w-full justify-start ${
+                                isActive(item.href) ? "bg-cactus-green hover:bg-cactus-green/90" : ""
+                              }`}
+                              onClick={() => setShowMobileMenu(false)}
+                            >
+                              <item.icon className="w-4 h-4 mr-2" />
+                              {item.label}
+                            </Button>
+                          </Link>
+                        ))}
 
-                    {/* My Collection Section */}
-                    <div className="pt-4">
-                      <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                        My Cacti
-                      </div>
-                      {navigationGroups.myCollection.map((item) => (
-                        <Link key={item.href} href={item.href}>
-                          <Button
-                            variant={isActive(item.href) ? "default" : "ghost"}
-                            className={`w-full justify-start ${
-                              isActive(item.href) ? "bg-cactus-green hover:bg-cactus-green/90" : ""
-                            }`}
-                            onClick={() => setShowMobileMenu(false)}
-                          >
-                            <item.icon className="w-4 h-4 mr-2" />
-                            {item.label}
-                          </Button>
-                        </Link>
-                      ))}
-                    </div>
+                        {/* My Collection Section */}
+                        <div className="pt-4">
+                          <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            My Cacti
+                          </div>
+                          {navigationGroups.myCollection.map((item) => (
+                            <Link key={item.href} href={item.href}>
+                              <Button
+                                variant={isActive(item.href) ? "default" : "ghost"}
+                                className={`w-full justify-start ${
+                                  isActive(item.href) ? "bg-cactus-green hover:bg-cactus-green/90" : ""
+                                }`}
+                                onClick={() => setShowMobileMenu(false)}
+                              >
+                                <item.icon className="w-4 h-4 mr-2" />
+                                {item.label}
+                              </Button>
+                            </Link>
+                          ))}
+                        </div>
+                      </>
+                    )}
 
                     {/* Community Section */}
                     <div className="pt-4">
@@ -494,7 +499,7 @@ function Header() {
                     {/* Vendors Section */}
                     <div className="pt-4">
                       <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                        Shop
+                        Other
                       </div>
                       <Link href="/vendors">
                         <Button
@@ -510,95 +515,110 @@ function Header() {
                       </Link>
                     </div>
 
-
-
-                    {/* Account Section */}
-                    <div className="pt-4">
-                      <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                        Account
+                    {/* Account Section - Only for authenticated users */}
+                    {isAuthenticated && (
+                      <div className="pt-4">
+                        <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                          Account
+                        </div>
+                        {navigationGroups.account.map((item) => (
+                          (!item.adminOnly || adminStatus?.isAdmin) && (
+                            <Link key={item.href} href={item.href}>
+                              <Button
+                                variant={isActive(item.href) ? "default" : "ghost"}
+                                className={`w-full justify-start ${
+                                  isActive(item.href) ? "bg-cactus-green hover:bg-cactus-green/90" : ""
+                                }`}
+                                onClick={() => setShowMobileMenu(false)}
+                              >
+                                <item.icon className="w-4 h-4 mr-2" />
+                                {item.label}
+                              </Button>
+                            </Link>
+                          )
+                        ))}
                       </div>
-                      {navigationGroups.account.map((item) => (
-                        <Link key={item.href} href={item.href}>
-                          <Button
-                            variant={isActive(item.href) ? "default" : "ghost"}
-                            className={`w-full justify-start ${
-                              isActive(item.href) ? "bg-cactus-green hover:bg-cactus-green/90" : ""
-                            }`}
-                            onClick={() => setShowMobileMenu(false)}
-                          >
-                            <item.icon className="w-4 h-4 mr-2" />
-                            {item.label}
-                          </Button>
-                        </Link>
-                      ))}
-                    </div>
+                    )}
                   </div>
 
+                  {/* Footer section - different for authenticated vs unauthenticated */}
                   <div className="mt-6 pt-6 border-t space-y-2">
-                    <div className="flex items-center space-x-2 px-3 py-2">
-                      {user?.profileImageUrl ? (
-                        <img
-                          src={user.profileImageUrl}
-                          alt="Profile"
-                          className="w-6 h-6 rounded-full object-cover"
-                        />
-                      ) : (
-                        <User className="w-4 h-4" />
-                      )}
-                      <span className="text-sm">
-                        {user?.firstName || user?.email?.split("@")[0] || "User"}
-                      </span>
-                    </div>
-                    
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start text-red-600"
-                      onClick={async () => {
-                        try {
-                          // Make a POST request to logout endpoint
-                          const response = await fetch('/api/logout', {
-                            method: 'POST',
-                            credentials: 'include'
-                          });
-                          
-                          // Force logout regardless of server response
-                          console.log('Mobile logout response:', response.status);
-                          
-                          // Clear all possible browser storage
-                          try {
-                            // Clear localStorage
-                            localStorage.clear();
-                            
-                            // Clear sessionStorage  
-                            sessionStorage.clear();
-                            
-                            // Clear service worker caches
-                            if (window.caches) {
-                              const cacheNames = await window.caches.keys();
-                              await Promise.all(cacheNames.map(name => window.caches.delete(name)));
+                    {isAuthenticated ? (
+                      <>
+                        <div className="flex items-center space-x-2 px-3 py-2">
+                          {user?.profileImageUrl ? (
+                            <img
+                              src={user.profileImageUrl}
+                              alt="Profile"
+                              className="w-6 h-6 rounded-full object-cover"
+                            />
+                          ) : (
+                            <User className="w-4 h-4" />
+                          )}
+                          <span className="text-sm">
+                            {user?.firstName || user?.email?.split("@")[0] || "User"}
+                          </span>
+                        </div>
+                        
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start text-red-600"
+                          onClick={async () => {
+                            try {
+                              // Make a POST request to logout endpoint
+                              const response = await fetch('/api/logout', {
+                                method: 'POST',
+                                credentials: 'include'
+                              });
+                              
+                              // Force logout regardless of server response
+                              console.log('Mobile logout response:', response.status);
+                              
+                              // Clear all possible browser storage
+                              try {
+                                // Clear localStorage
+                                localStorage.clear();
+                                
+                                // Clear sessionStorage  
+                                sessionStorage.clear();
+                                
+                                // Clear service worker caches
+                                if (window.caches) {
+                                  const cacheNames = await window.caches.keys();
+                                  await Promise.all(cacheNames.map(name => window.caches.delete(name)));
+                                }
+                                
+                                // Clear cookies via document.cookie
+                                document.cookie.split(";").forEach(function(c) { 
+                                  document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+                                });
+                                
+                              } catch (e) {
+                                console.error('Error clearing storage:', e);
+                              }
+                              
+                              // Force complete reload with cache busting
+                              window.location.href = "/?t=" + Date.now();
+                            } catch (error) {
+                              console.error('Logout error:', error);
+                              // Fallback: force reload to landing page
+                              window.location.href = "/";
                             }
-                            
-                            // Clear cookies via document.cookie
-                            document.cookie.split(";").forEach(function(c) { 
-                              document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
-                            });
-                            
-                          } catch (e) {
-                            console.error('Error clearing storage:', e);
-                          }
-                          
-                          // Force complete reload with cache busting
-                          window.location.href = "/?t=" + Date.now();
-                        } catch (error) {
-                          console.error('Logout error:', error);
-                          // Fallback: force reload to landing page
-                          window.location.href = "/";
-                        }
-                      }}
-                    >
-                      <LogOut className="w-4 h-4 mr-2" />
-                      Sign Out
-                    </Button>
+                          }}
+                        >
+                          <LogOut className="w-4 h-4 mr-2" />
+                          Sign Out
+                        </Button>
+                      </>
+                    ) : (
+                      // Unauthenticated user footer
+                      <Button asChild className="w-full bg-cactus-green hover:bg-cactus-green/90">
+                        <a href="/api/login">
+                          <LogIn className="w-4 h-4 mr-2" />
+                          Sign In
+                        </a>
+                      </Button>
+                    )}
                   </div>
                 </SheetContent>
               </Sheet>
