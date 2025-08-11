@@ -30,12 +30,12 @@ const navigationGroups = {
   community: [
     { href: "/users", label: "Community Collections", icon: Users },
     { href: "/community/photos", label: "Photo Gallery", icon: Camera },
-    { href: "/articles", label: "Articles", icon: FileText },
     { href: "/recommended-socials", label: "Recommended Socials", icon: Share2 },
   ],
   knowledge: [
     { href: "/knowledge", label: "Browse Genera", icon: BookOpen },
     { href: "/knowledge/search", label: "Species Search", icon: Search },
+    { href: "/articles", label: "Articles", icon: FileText },
     { href: "/knowledge/care-guides", icon: Leaf, label: "Care Guides" },
     { href: "/knowledge/diseases-pests", icon: Shield, label: "Diseases & Pests" },
     { href: "/vendors", label: "Trusted Vendors", icon: Store },
