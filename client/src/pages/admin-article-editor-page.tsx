@@ -220,14 +220,19 @@ export default function AdminArticleEditorPage() {
         </div>
         
         <div className="flex items-center space-x-2">
+          {/* HTML/Rich Text Toggle */}
           <Button
             variant="outline"
-            onClick={() => setIsHtmlMode(!isHtmlMode)}
+            onClick={() => {
+              console.log('Toggle clicked, current mode:', isHtmlMode);
+              setIsHtmlMode(!isHtmlMode);
+            }}
             disabled={isPreview}
           >
             {isHtmlMode ? <Type className="h-4 w-4 mr-2" /> : <Code className="h-4 w-4 mr-2" />}
             {isHtmlMode ? 'Rich Text' : 'HTML'}
           </Button>
+          {/* Preview Toggle */}
           <Button
             variant="outline"
             onClick={() => setIsPreview(!isPreview)}
