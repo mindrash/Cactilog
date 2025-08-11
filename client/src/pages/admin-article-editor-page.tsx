@@ -12,7 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { ArrowLeft, Save, Eye, FileText, Loader2 } from "lucide-react";
+import { ArrowLeft, Save, Eye, FileText, Loader2, Code, Type } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { insertArticleSchema } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
@@ -47,6 +47,7 @@ export default function AdminArticleEditorPage() {
   const articleId = params?.id;
   const isEditing = articleId && articleId !== 'new';
   const [isPreview, setIsPreview] = useState(false);
+  const [isHtmlMode, setIsHtmlMode] = useState(false);
 
   // Fetch article data if editing
   const { data: article, isLoading: isLoadingArticle } = useQuery<Article>({
@@ -221,6 +222,14 @@ export default function AdminArticleEditorPage() {
         <div className="flex items-center space-x-2">
           <Button
             variant="outline"
+            onClick={() => setIsHtmlMode(!isHtmlMode)}
+            disabled={isPreview}
+          >
+            {isHtmlMode ? <Type className="h-4 w-4 mr-2" /> : <Code className="h-4 w-4 mr-2" />}
+            {isHtmlMode ? 'Rich Text' : 'HTML'}
+          </Button>
+          <Button
+            variant="outline"
             onClick={() => setIsPreview(!isPreview)}
             disabled={!form.watch("html")}
           >
@@ -311,105 +320,53 @@ export default function AdminArticleEditorPage() {
                         <FormItem>
                           <FormLabel>Article Content</FormLabel>
                           <FormControl>
-                            <div className="border rounded-md">
-                              <div className="border-b p-2 bg-muted/50 text-xs text-muted-foreground">
-                                <div className="flex flex-wrap gap-2">
-                                  <button
-                                    type="button"
-                                    className="px-2 py-1 bg-background border rounded text-xs hover:bg-accent"
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                      const editor = e.currentTarget.parentElement?.parentElement?.nextElementSibling as HTMLElement;
-                                      editor?.focus();
-                                      document.execCommand('bold');
-                                    }}
-                                  >
-                                    <strong>Bold</strong>
-                                  </button>
-                                  <button
-                                    type="button"
-                                    className="px-2 py-1 bg-background border rounded text-xs hover:bg-accent"
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                      const editor = e.currentTarget.parentElement?.parentElement?.nextElementSibling as HTMLElement;
-                                      editor?.focus();
-                                      document.execCommand('italic');
-                                    }}
-                                  >
-                                    <em>Italic</em>
-                                  </button>
-                                  <button
-                                    type="button"
-                                    className="px-2 py-1 bg-background border rounded text-xs hover:bg-accent"
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                      const editor = e.currentTarget.parentElement?.parentElement?.nextElementSibling as HTMLElement;
-                                      editor?.focus();
-                                      document.execCommand('insertUnorderedList');
-                                    }}
-                                  >
-                                    • List
-                                  </button>
-                                  <button
-                                    type="button"
-                                    className="px-2 py-1 bg-background border rounded text-xs hover:bg-accent"
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                      const editor = e.currentTarget.parentElement?.parentElement?.nextElementSibling as HTMLElement;
-                                      editor?.focus();
-                                      document.execCommand('formatBlock', false, 'h2');
-                                    }}
-                                  >
-                                    H2
-                                  </button>
-                                  <button
-                                    type="button"
-                                    className="px-2 py-1 bg-background border rounded text-xs hover:bg-accent"
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                      const editor = e.currentTarget.parentElement?.parentElement?.nextElementSibling as HTMLElement;
-                                      editor?.focus();
-                                      document.execCommand('formatBlock', false, 'h3');
-                                    }}
-                                  >
-                                    H3
-                                  </button>
-                                </div>
-                              </div>
-                              <div 
-                                contentEditable
-                                className="min-h-[400px] p-3 prose prose-sm max-w-none focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                                style={{ whiteSpace: 'pre-wrap' }}
-                                onBlur={(e) => {
-                                  field.onChange(e.currentTarget.innerHTML);
-                                }}
-                                onInput={(e) => {
-                                  // Update the field value when content changes
-                                  field.onChange(e.currentTarget.innerHTML);
-                                }}
-                                onPaste={(e) => {
-                                  e.preventDefault();
-                                  const paste = e.clipboardData?.getData('text/html') || e.clipboardData?.getData('text/plain') || '';
-                                  if (paste) {
-                                    // Clean and sanitize pasted HTML
-                                    const cleanHtml = DOMPurify.sanitize(paste, {
-                                      ALLOWED_TAGS: ['p', 'br', 'strong', 'b', 'em', 'i', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'blockquote', 'code', 'pre', 'img', 'span', 'div'],
-                                      ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class', 'style']
-                                    });
-                                    document.execCommand('insertHTML', false, cleanHtml);
-                                  }
-                                }}
-                                suppressContentEditableWarning={true}
-                                ref={(el) => {
-                                  if (el && field.value && el.innerHTML !== field.value) {
-                                    el.innerHTML = field.value;
-                                  }
-                                }}
+                            {isHtmlMode ? (
+                              <Textarea
+                                placeholder="Paste or write raw HTML content here..."
+                                className="min-h-[400px] font-mono text-sm"
+                                value={field.value || ""}
+                                onChange={field.onChange}
                               />
-                            </div>
+                            ) : (
+                              <div className="border rounded-md">
+                                <div 
+                                  contentEditable
+                                  className="min-h-[400px] p-3 prose prose-sm max-w-none focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                                  style={{ whiteSpace: 'pre-wrap' }}
+                                  onBlur={(e) => {
+                                    field.onChange(e.currentTarget.innerHTML);
+                                  }}
+                                  onInput={(e) => {
+                                    // Update the field value when content changes
+                                    field.onChange(e.currentTarget.innerHTML);
+                                  }}
+                                  onPaste={(e) => {
+                                    e.preventDefault();
+                                    const paste = e.clipboardData?.getData('text/html') || e.clipboardData?.getData('text/plain') || '';
+                                    if (paste) {
+                                      // Clean and sanitize pasted HTML
+                                      const cleanHtml = DOMPurify.sanitize(paste, {
+                                        ALLOWED_TAGS: ['p', 'br', 'strong', 'b', 'em', 'i', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'blockquote', 'code', 'pre', 'img', 'span', 'div'],
+                                        ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class', 'style']
+                                      });
+                                      document.execCommand('insertHTML', false, cleanHtml);
+                                    }
+                                  }}
+                                  suppressContentEditableWarning={true}
+                                  ref={(el) => {
+                                    if (el && field.value && el.innerHTML !== field.value) {
+                                      el.innerHTML = field.value;
+                                    }
+                                  }}
+                                />
+                              </div>
+                            )}
                           </FormControl>
                           <FormDescription>
-                            Rich text editor with HTML support. You can paste formatted content directly or use the formatting buttons above.
+                            {isHtmlMode 
+                              ? "Raw HTML mode - paste or edit HTML directly. Use the toggle to switch back to rich text editor."
+                              : "Rich text editor with HTML support. Use keyboard shortcuts for formatting (Ctrl+B for bold, Ctrl+I for italic, etc.)."
+                            }
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
