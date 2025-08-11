@@ -13,6 +13,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { apiRequest } from "@/lib/queryClient";
+import Header from "@/components/header";
+import Footer from "@/components/footer";
 
 interface Article {
   id: string;
@@ -104,19 +106,25 @@ export default function AdminArticlesPage() {
 
   if (error) {
     return (
-      <div className="container mx-auto py-8 px-4">
-        <Card className="max-w-md mx-auto">
-          <CardContent className="pt-6 text-center">
-            <FileText className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-            <p className="text-lg font-medium mb-2">Unable to load articles</p>
-            <p className="text-muted-foreground">Please try again later.</p>
-          </CardContent>
-        </Card>
-      </div>
+      <>
+        <Header />
+        <div className="container mx-auto py-8 px-4">
+          <Card className="max-w-md mx-auto">
+            <CardContent className="pt-6 text-center">
+              <FileText className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+              <p className="text-lg font-medium mb-2">Unable to load articles</p>
+              <p className="text-muted-foreground">Please try again later.</p>
+            </CardContent>
+          </Card>
+        </div>
+        <Footer />
+      </>
     );
   }
 
   return (
+    <>
+      <Header />
     <div className="container mx-auto py-8 px-4">
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
@@ -365,5 +373,7 @@ export default function AdminArticlesPage() {
         </CardContent>
       </Card>
     </div>
+    <Footer />
+    </>
   );
 }

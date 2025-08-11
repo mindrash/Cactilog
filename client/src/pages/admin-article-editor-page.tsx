@@ -17,6 +17,8 @@ import { useToast } from "@/hooks/use-toast";
 import { insertArticleSchema } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import DOMPurify from "dompurify";
+import Header from "@/components/header";
+import Footer from "@/components/footer";
 
 // Create a form schema based on insertArticleSchema with additional validation
 const articleFormSchema = insertArticleSchema.pick({
@@ -84,23 +86,8 @@ export default function AdminArticleEditorPage() {
         status: article.status || "draft",
         publishNow: false,
       });
-      setTagsInput(article.tags?.join(", ") || "");
     }
   }, [article, form]);
-
-  // Auto-generate slug from title
-  const watchTitle = form.watch("title");
-  useEffect(() => {
-    if (watchTitle && !isEditing) {
-      const slug = watchTitle
-        .toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, '')
-        .replace(/\s+/g, '-')
-        .replace(/-+/g, '-')
-        .trim();
-      form.setValue("slug", slug);
-    }
-  }, [watchTitle, isEditing, form]);
 
 
   const createArticleMutation = useMutation({
@@ -199,15 +186,21 @@ export default function AdminArticleEditorPage() {
 
   if (isEditing && isLoadingArticle) {
     return (
-      <div className="container mx-auto py-8 px-4">
-        <div className="flex items-center justify-center min-h-[200px]">
-          <Loader2 className="h-8 w-8 animate-spin" />
+      <>
+        <Header />
+        <div className="container mx-auto py-8 px-4">
+          <div className="flex items-center justify-center min-h-[200px]">
+            <Loader2 className="h-8 w-8 animate-spin" />
+          </div>
         </div>
-      </div>
+        <Footer />
+      </>
     );
   }
 
   return (
+    <>
+      <Header />
     <div className="container mx-auto py-8 px-4 max-w-4xl">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
@@ -502,5 +495,7 @@ export default function AdminArticleEditorPage() {
         </Form>
       )}
     </div>
+    <Footer />
+    </>
   );
 }
