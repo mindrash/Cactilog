@@ -325,7 +325,7 @@ export default function AdminArticleEditorPage() {
                                 placeholder="Paste or write raw HTML content here..."
                                 className="min-h-[400px] font-mono text-sm"
                                 value={field.value || ""}
-                                onChange={field.onChange}
+                                onChange={(e) => field.onChange(e.target.value)}
                               />
                             ) : (
                               <div className="border rounded-md">
