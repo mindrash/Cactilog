@@ -162,7 +162,7 @@ export default function AdminArticleEditorPage() {
 
   const updateArticleMutation = useMutation({
     mutationFn: async (data: ArticleFormData) => {
-      const response = await apiRequest('PUT', `/api/admin/articles/${articleId}`, data);
+      const response = await apiRequest(`/api/admin/articles/${articleId}`, 'PUT', data);
       return response.json();
     },
     onSuccess: () => {
