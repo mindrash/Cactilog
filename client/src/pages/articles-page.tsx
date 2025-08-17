@@ -173,29 +173,25 @@ export default function ArticlesPage() {
         )}
       </div>
 
-      {/* Articles Grid */}
-      {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <Card key={i}>
-              <CardHeader>
-                <Skeleton className="h-6 w-3/4" />
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-2/3" />
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
+      {/* Articles List */}
+      <div className="bg-white/80 backdrop-blur-sm rounded-lg border shadow-sm">
+        {isLoading ? (
+          <div className="divide-y">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="p-6 flex items-center justify-between">
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-6 w-3/4" />
                   <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-1/2" />
+                  <Skeleton className="h-3 w-1/4" />
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      ) : articlesData?.items.length === 0 ? (
-        <Card className="max-w-md mx-auto">
-          <CardContent className="pt-6 text-center">
+                <div className="flex space-x-2">
+                  <Skeleton className="h-8 w-16" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : articlesData?.items.length === 0 ? (
+          <div className="text-center py-12">
             <BookOpen className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
             <p className="text-lg font-medium mb-2">No articles found</p>
             <p className="text-muted-foreground">
@@ -204,114 +200,115 @@ export default function ArticlesPage() {
                 : "Check back soon for new articles."
               }
             </p>
-          </CardContent>
-        </Card>
-      ) : (
-        <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          </div>
+        ) : (
+          <div className="divide-y">
             {articlesData?.items.map((article) => (
-              <Card key={article.id} className="hover:shadow-md transition-shadow">
-                <CardHeader>
-                  <div className="space-y-2">
-                    <CardTitle className="text-xl leading-tight">
-                      <Link href={`/articles/${article.slug}`} className="hover:text-sage transition-colors">
-                        {article.title}
-                      </Link>
-                    </CardTitle>
-                    
-                    {article.category && (
-                      <Badge variant="secondary" className="w-fit">
-                        {article.category}
-                      </Badge>
-                    )}
-                  </div>
-                </CardHeader>
-                
-                <CardContent className="space-y-4">
-                  {article.excerpt && (
-                    <p className="text-muted-foreground line-clamp-3">
-                      {article.excerpt}
-                    </p>
-                  )}
-                  
-                  {article.tags && article.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1">
-                      {article.tags.slice(0, 3).map((tag) => (
-                        <Badge 
-                          key={tag} 
-                          variant="outline" 
-                          className="text-xs cursor-pointer hover:bg-sage/20"
-                          onClick={() => handleTagFilter(tag)}
-                        >
-                          {tag}
-                        </Badge>
-                      ))}
-                      {article.tags.length > 3 && (
-                        <Badge variant="outline" className="text-xs">
-                          +{article.tags.length - 3} more
+              <div key={article.id} className="p-6 hover:bg-sage/5 transition-colors">
+                <div className="flex items-center justify-between">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-3 mb-2">
+                      <h3 className="text-xl font-semibold text-forest">
+                        <Link href={`/articles/${article.slug}`} className="hover:text-sage transition-colors">
+                          {article.title}
+                        </Link>
+                      </h3>
+                      {article.category && (
+                        <Badge variant="secondary" className="bg-sage/10 text-sage-600">
+                          {article.category}
                         </Badge>
                       )}
                     </div>
-                  )}
-                  
-                  <div className="flex items-center justify-between pt-2">
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <Clock className="h-4 w-4 mr-1" />
-                      {article.publishedAt 
-                        ? format(new Date(article.publishedAt), "MMM d, yyyy")
-                        : format(new Date(article.createdAt), "MMM d, yyyy")
-                      }
+                    
+                    {article.excerpt && (
+                      <p className="text-muted-foreground mb-3 line-clamp-2">
+                        {article.excerpt}
+                      </p>
+                    )}
+                    
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground mb-2">
+                      <div className="flex items-center gap-1">
+                        <Clock className="h-4 w-4" />
+                        {article.publishedAt 
+                          ? format(new Date(article.publishedAt), "MMM d, yyyy")
+                          : format(new Date(article.createdAt), "MMM d, yyyy")
+                        }
+                      </div>
                     </div>
                     
+                    {article.tags && article.tags.length > 0 && (
+                      <div className="flex gap-2 flex-wrap">
+                        {article.tags.slice(0, 4).map((tag) => (
+                          <Badge 
+                            key={tag} 
+                            variant="outline" 
+                            className="text-xs cursor-pointer hover:bg-sage/20"
+                            onClick={() => handleTagFilter(tag)}
+                          >
+                            <Tag className="h-2 w-2 mr-1" />
+                            {tag}
+                          </Badge>
+                        ))}
+                        {article.tags.length > 4 && (
+                          <Badge variant="outline" className="text-xs">
+                            +{article.tags.length - 4}
+                          </Badge>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="flex items-center ml-4">
                     <Link href={`/articles/${article.slug}`}>
-                      <Button variant="ghost" size="sm" className="p-2">
-                        <ArrowRight className="h-4 w-4" />
+                      <Button variant="outline" className="bg-sage/10 hover:bg-sage/20 border-sage/30">
+                        Read More
+                        <ArrowRight className="h-4 w-4 ml-2" />
                       </Button>
                     </Link>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             ))}
           </div>
+        )}
 
-          {/* Pagination */}
-          {articlesData && articlesData.pageCount > 1 && (
-            <div className="flex justify-center space-x-2">
-              <Button
-                variant="outline"
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage(currentPage - 1)}
-              >
-                Previous
-              </Button>
-              
-              <div className="flex items-center space-x-1">
-                {Array.from({ length: Math.min(5, articlesData.pageCount) }, (_, i) => {
-                  const page = i + 1;
-                  return (
-                    <Button
-                      key={page}
-                      variant={currentPage === page ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setCurrentPage(page)}
-                    >
-                      {page}
-                    </Button>
-                  );
-                })}
-              </div>
-              
-              <Button
-                variant="outline"
-                disabled={currentPage === articlesData.pageCount}
-                onClick={() => setCurrentPage(currentPage + 1)}
-              >
-                Next
-              </Button>
+        {/* Pagination */}
+        {articlesData && articlesData.pageCount > 1 && (
+          <div className="flex justify-center space-x-2 p-6 border-t bg-sage/5">
+            <Button
+              variant="outline"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(currentPage - 1)}
+            >
+              Previous
+            </Button>
+            
+            <div className="flex items-center space-x-1">
+              {Array.from({ length: Math.min(5, articlesData.pageCount) }, (_, i) => {
+                const page = i + 1;
+                return (
+                  <Button
+                    key={page}
+                    variant={currentPage === page ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setCurrentPage(page)}
+                  >
+                    {page}
+                  </Button>
+                );
+              })}
             </div>
-          )}
-        </>
-      )}
+            
+            <Button
+              variant="outline"
+              disabled={currentPage === articlesData.pageCount}
+              onClick={() => setCurrentPage(currentPage + 1)}
+            >
+              Next
+            </Button>
+          </div>
+        )}
+      </div>
       </div>
       <Footer />
     </div>
