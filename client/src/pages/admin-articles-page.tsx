@@ -123,24 +123,24 @@ export default function AdminArticlesPage() {
   }
 
   return (
-    <>
+    <div className="min-h-screen cactus-pattern-bg-light">
       <Header />
-    <div className="container mx-auto py-8 px-4">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-4xl font-bold text-forest">Manage Articles</h1>
-          <p className="text-lg text-muted-foreground">
-            Create and manage community articles
-          </p>
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="page-title-xl mb-2 text-forest">Manage Articles</h1>
+            <p className="text-gray-600">
+              Create and manage community articles
+            </p>
+          </div>
+          <Button onClick={() => setLocation('/admin/articles/new')} size="lg">
+            <Plus className="h-4 w-4 mr-2" />
+            New Article
+          </Button>
         </div>
-        <Button onClick={() => setLocation('/admin/articles/new')} size="lg">
-          <Plus className="h-4 w-4 mr-2" />
-          New Article
-        </Button>
-      </div>
 
-      {/* Search and Filters */}
+        {/* Search and Filters */}
       <Card className="mb-6">
         <CardHeader>
           <CardTitle>Filters</CardTitle>
@@ -367,9 +367,9 @@ export default function AdminArticlesPage() {
             </Button>
           </div>
         )}
+        </div>
       </div>
+      <Footer />
     </div>
-    <Footer />
-    </>
   );
 }
