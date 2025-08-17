@@ -49,6 +49,28 @@ export default function AdminArticleEditorPage() {
   const [isPreview, setIsPreview] = useState(false);
   const [isHtmlMode, setIsHtmlMode] = useState(false);
 
+  // Function to auto-generate excerpt from HTML content
+  const generateExcerpt = (html: string, maxLength: number = 200): string => {
+    if (!html) return '';
+    
+    // Strip HTML tags and get plain text
+    const plainText = html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+    
+    if (plainText.length <= maxLength) {
+      return plainText;
+    }
+    
+    // Truncate at word boundary
+    const truncated = plainText.substring(0, maxLength);
+    const lastSpaceIndex = truncated.lastIndexOf(' ');
+    
+    if (lastSpaceIndex > maxLength * 0.8) {
+      return truncated.substring(0, lastSpaceIndex) + '...';
+    }
+    
+    return truncated + '...';
+  };
+
   // Fetch article data if editing
   const { data: article, isLoading: isLoadingArticle } = useQuery<Article>({
     queryKey: ['/api/admin/articles', articleId],
@@ -89,6 +111,21 @@ export default function AdminArticleEditorPage() {
       });
     }
   }, [article, form]);
+
+  // Auto-update excerpt when HTML content changes (for new articles only)
+  useEffect(() => {
+    if (!isEditing) { // Only auto-generate for new articles
+      const subscription = form.watch((value, { name }) => {
+        if (name === 'html' && value.html) {
+          const autoExcerpt = generateExcerpt(value.html);
+          if (autoExcerpt && autoExcerpt !== value.excerpt) {
+            form.setValue('excerpt', autoExcerpt, { shouldValidate: false });
+          }
+        }
+      });
+      return () => subscription.unsubscribe();
+    }
+  }, [form, isEditing]);
 
 
   const createArticleMutation = useMutation({
@@ -305,13 +342,18 @@ export default function AdminArticleEditorPage() {
                           <FormLabel>Excerpt</FormLabel>
                           <FormControl>
                             <Textarea 
-                              placeholder="Brief summary of the article..." 
+                              placeholder={isEditing ? "Brief summary of the article..." : "Auto-generated from content..."} 
                               rows={3}
+                              readOnly={!isEditing}
+                              className={!isEditing ? "bg-muted text-muted-foreground" : ""}
                               {...field} 
                             />
                           </FormControl>
                           <FormDescription>
-                            A short summary that appears in article listings
+                            {isEditing 
+                              ? "A short summary that appears in article listings" 
+                              : "Auto-generated from article content (editable after saving)"
+                            }
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
