@@ -177,33 +177,39 @@ export default function AdminArticlesPage() {
         </CardContent>
       </Card>
 
-      {/* Articles Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>
+      {/* Articles List */}
+      <div className="bg-white rounded-lg border">
+        <div className="p-6 border-b">
+          <h2 className="text-xl font-semibold text-forest">
             Articles 
             {articlesData && (
               <span className="text-sm font-normal text-muted-foreground ml-2">
                 ({articlesData.total} total)
               </span>
             )}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+          </h2>
+        </div>
+        
+        <div className="divide-y">
           {isLoading ? (
-            <div className="space-y-4">
+            <div className="space-y-0">
               {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="flex items-center space-x-4">
-                  <Skeleton className="h-12 w-12" />
-                  <div className="space-y-2 flex-1">
-                    <Skeleton className="h-4 w-3/4" />
+                <div key={i} className="p-6 flex items-center justify-between">
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-5 w-3/4" />
                     <Skeleton className="h-4 w-1/2" />
+                    <Skeleton className="h-3 w-1/4" />
+                  </div>
+                  <div className="flex space-x-2">
+                    <Skeleton className="h-8 w-16" />
+                    <Skeleton className="h-8 w-8" />
+                    <Skeleton className="h-8 w-8" />
                   </div>
                 </div>
               ))}
             </div>
           ) : articlesData?.items.length === 0 ? (
-            <div className="text-center py-8">
+            <div className="text-center py-12">
               <FileText className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
               <p className="text-lg font-medium mb-2">No articles found</p>
               <p className="text-muted-foreground mb-4">
@@ -220,158 +226,148 @@ export default function AdminArticlesPage() {
               )}
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Title</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Published</TableHead>
-                    <TableHead>Updated</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {articlesData?.items.map((article) => (
-                    <TableRow key={article.id}>
-                      <TableCell>
-                        <div>
-                          <div className="font-medium">{article.title}</div>
-                          {article.excerpt && (
-                            <div className="text-sm text-muted-foreground truncate max-w-md">
-                              {article.excerpt}
-                            </div>
-                          )}
-                          {article.tags && article.tags.length > 0 && (
-                            <div className="flex gap-1 mt-1">
-                              {article.tags.slice(0, 2).map((tag) => (
-                                <Badge key={tag} variant="outline" className="text-xs">
-                                  {tag}
-                                </Badge>
-                              ))}
-                              {article.tags.length > 2 && (
-                                <Badge variant="outline" className="text-xs">
-                                  +{article.tags.length - 2}
-                                </Badge>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
+            <>
+              {articlesData?.items.map((article) => (
+                <div key={article.id} className="p-6 hover:bg-gray-50 transition-colors">
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3 className="text-lg font-medium text-gray-900 truncate">
+                          {article.title}
+                        </h3>
                         {getStatusBadge(article.status)}
-                      </TableCell>
-                      <TableCell>
-                        {article.category ? (
+                        {article.category && (
                           <Badge variant="outline">{article.category}</Badge>
-                        ) : (
-                          <span className="text-muted-foreground">—</span>
                         )}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center text-sm">
-                          <Calendar className="h-4 w-4 mr-1" />
+                      </div>
+                      
+                      {article.excerpt && (
+                        <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
+                          {article.excerpt}
+                        </p>
+                      )}
+                      
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                        <div className="flex items-center gap-1">
+                          <Calendar className="h-3 w-3" />
                           {article.publishedAt 
-                            ? format(new Date(article.publishedAt), "MMM d, yyyy")
-                            : <span className="text-muted-foreground">Not published</span>
+                            ? `Published ${format(new Date(article.publishedAt), "MMM d, yyyy")}`
+                            : "Not published"
                           }
                         </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-sm text-muted-foreground">
-                          {format(new Date(article.updatedAt), "MMM d, yyyy")}
+                        <div>
+                          Updated {format(new Date(article.updatedAt), "MMM d, yyyy")}
                         </div>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end space-x-2">
-                          {article.status === 'published' && (
-                            <Link href={`/articles/${article.slug}`}>
-                              <Button variant="ghost" size="sm">
-                                <Eye className="h-4 w-4" />
-                              </Button>
-                            </Link>
+                        {article.author && (
+                          <div>by {article.author}</div>
+                        )}
+                      </div>
+                      
+                      {article.tags && article.tags.length > 0 && (
+                        <div className="flex gap-1 mt-2">
+                          {article.tags.slice(0, 3).map((tag) => (
+                            <Badge key={tag} variant="outline" className="text-xs">
+                              <Tag className="h-2 w-2 mr-1" />
+                              {tag}
+                            </Badge>
+                          ))}
+                          {article.tags.length > 3 && (
+                            <Badge variant="outline" className="text-xs">
+                              +{article.tags.length - 3}
+                            </Badge>
                           )}
-                          
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setLocation(`/admin/articles/${article.id}/edit`)}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700">
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Delete Article</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Are you sure you want to delete "{article.title}"? This action cannot be undone.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={() => handleDelete(article.id)}
-                                  className="bg-red-600 hover:bg-red-700"
-                                >
-                                  Delete
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
                         </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+                      )}
+                    </div>
+                    
+                    <div className="flex items-center space-x-2 ml-4">
+                      {article.status === 'published' && (
+                        <Link href={`/articles/${article.slug}`}>
+                          <Button variant="outline" size="sm">
+                            <Eye className="h-4 w-4 mr-1" />
+                            View
+                          </Button>
+                        </Link>
+                      )}
+                      
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setLocation(`/admin/articles/${article.id}/edit`)}
+                      >
+                        <Edit className="h-4 w-4 mr-1" />
+                        Edit
+                      </Button>
+                      
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700 hover:border-red-300">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete Article</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to delete "{article.title}"? This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => handleDelete(article.id)}
+                              className="bg-red-600 hover:bg-red-700"
+                            >
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </>
           )}
+        </div>
 
-          {/* Pagination */}
-          {articlesData && articlesData.pageCount > 1 && (
-            <div className="flex justify-center space-x-2 mt-6">
-              <Button
-                variant="outline"
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage(currentPage - 1)}
-              >
-                Previous
-              </Button>
-              
-              <div className="flex items-center space-x-1">
-                {Array.from({ length: Math.min(5, articlesData.pageCount) }, (_, i) => {
-                  const page = i + 1;
-                  return (
-                    <Button
-                      key={page}
-                      variant={currentPage === page ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setCurrentPage(page)}
-                    >
-                      {page}
-                    </Button>
-                  );
-                })}
-              </div>
-              
-              <Button
-                variant="outline"
-                disabled={currentPage === articlesData.pageCount}
-                onClick={() => setCurrentPage(currentPage + 1)}
-              >
-                Next
-              </Button>
+        {/* Pagination */}
+        {articlesData && articlesData.pageCount > 1 && (
+          <div className="flex justify-center space-x-2 p-6 border-t bg-gray-50">
+            <Button
+              variant="outline"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(currentPage - 1)}
+            >
+              Previous
+            </Button>
+            
+            <div className="flex items-center space-x-1">
+              {Array.from({ length: Math.min(5, articlesData.pageCount) }, (_, i) => {
+                const page = i + 1;
+                return (
+                  <Button
+                    key={page}
+                    variant={currentPage === page ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setCurrentPage(page)}
+                  >
+                    {page}
+                  </Button>
+                );
+              })}
             </div>
-          )}
-        </CardContent>
-      </Card>
+            
+            <Button
+              variant="outline"
+              disabled={currentPage === articlesData.pageCount}
+              onClick={() => setCurrentPage(currentPage + 1)}
+            >
+              Next
+            </Button>
+          </div>
+        )}
+      </div>
     </div>
     <Footer />
     </>
