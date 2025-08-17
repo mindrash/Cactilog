@@ -97,22 +97,22 @@ export default function ArticlesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-lime-wash/20 to-pine-mist/30 cactus-pattern-bg">
+    <div className="min-h-screen cactus-pattern-bg-light">
       <SEO 
         title="Cacti Articles - Cactilog"
         description="Discover expert care guides, growing tips, and community insights from fellow cacti enthusiasts."
       />
       <Header />
-      <div className="container mx-auto py-8 px-4">
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex justify-between items-start mb-4">
-          <div>
-            <h1 className="text-4xl font-bold mb-2 text-forest">Cacti Articles</h1>
-            <p className="text-lg text-muted-foreground">
-              Discover expert care guides, growing tips, and community insights from fellow cacti enthusiasts.
-            </p>
-          </div>
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex justify-between items-start mb-4">
+            <div>
+              <h1 className="page-title-xl mb-2 text-forest">Cacti Articles</h1>
+              <p className="text-gray-600">
+                Discover expert care guides, growing tips, and community insights from fellow cacti enthusiasts.
+              </p>
+            </div>
           
           {/* Admin Controls */}
           {isAdmin && (
