@@ -40,7 +40,9 @@ export default function ArticlesPage() {
   const { user } = useAuth();
   
   // Check if user is admin (based on your existing admin logic)
-  const isAdmin = user && (user.id === "45392487" || user.email === "tomlawson@gmail.com");
+  const isAdmin = user && (user.id === "45392487" || user.id === "google_115406590122470795501" || user.email === "tomlawson@gmail.com" || user.email === "hellomindrash@gmail.com");
+  
+
 
   const { data: articlesData, isLoading, error } = useQuery<ArticlesResponse>({
     queryKey: ['/api/articles', { q: searchQuery, tag: selectedTag, page: currentPage }],
