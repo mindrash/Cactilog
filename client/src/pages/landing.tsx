@@ -250,31 +250,45 @@ function Landing() {
                     />
                   </div>
                   <CardContent className="p-4">
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                       <div>
-                        <h3 className="font-medium text-gray-900 group-hover:text-cactus-green transition-colors line-clamp-1">
+                        <h3 className="font-semibold text-gray-900 group-hover:text-cactus-green transition-colors line-clamp-1">
                           {photoData.plant.name}
                         </h3>
-                        {photoData.plant.scientificName && (
+                        {photoData.plant.scientificName ? (
                           <p className="text-sm italic text-gray-600 line-clamp-1">
                             {photoData.plant.scientificName}
                           </p>
+                        ) : (
+                          <div className="text-sm text-gray-500">
+                            {photoData.plant.genus && photoData.plant.species ? (
+                              <span className="italic">
+                                {photoData.plant.genus} {photoData.plant.species}
+                                {photoData.plant.cultivar && <span className="font-medium"> '{photoData.plant.cultivar}'</span>}
+                                {photoData.plant.mutation && <span className="text-purple-600"> f. {photoData.plant.mutation}</span>}
+                              </span>
+                            ) : photoData.plant.genus ? (
+                              <span className="italic">{photoData.plant.genus} sp.</span>
+                            ) : null}
+                          </div>
                         )}
                       </div>
                       
-                      <div className="flex items-center justify-between text-xs text-gray-500">
-                        <span className="flex items-center">
-                          <Users className="w-3 h-3 mr-1" />
-                          {photoData.userDisplayName}
-                        </span>
-                        <Badge variant="secondary" className="bg-green-100 text-green-800 text-xs">
-                          Public
-                        </Badge>
-                      </div>
-                      
-                      <div className="flex items-center text-xs text-gray-500">
-                        <Calendar className="w-3 h-3 mr-1" />
-                        Added {new Date(photoData.plant.createdAt).toLocaleDateString()}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center text-xs text-gray-500">
+                          <Users className="w-3 h-3 mr-1 flex-shrink-0" />
+                          <span className="truncate">{photoData.userDisplayName}</span>
+                        </div>
+                        <div className="flex items-center text-xs text-gray-500">
+                          <Calendar className="w-3 h-3 mr-1 flex-shrink-0" />
+                          <span className="whitespace-nowrap">
+                            {new Date(photoData.plant.createdAt).toLocaleDateString('en-US', { 
+                              month: 'short', 
+                              day: 'numeric',
+                              year: new Date(photoData.plant.createdAt).getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined
+                            })}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </CardContent>
