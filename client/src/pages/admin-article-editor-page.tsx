@@ -103,7 +103,7 @@ export default function AdminArticleEditorPage() {
   const { data: article, isLoading: isLoadingArticle } = useQuery<Article>({
     queryKey: ['/api/articles/admin', articleId],
     queryFn: async () => {
-      const response = await apiRequest('GET', `/api/articles/admin/${articleId}`);
+      const response = await apiRequest(`/api/articles/admin/${articleId}`, 'GET');
       return response.json();
     },
     enabled: !!isEditing,
@@ -153,7 +153,7 @@ export default function AdminArticleEditorPage() {
       const endpoint = isEditing ? `/api/articles/admin/${articleId}` : '/api/articles/admin';
       const method = isEditing ? 'PUT' : 'POST';
       
-      const response = await apiRequest(method, endpoint, {
+      const response = await apiRequest(endpoint, method, {
         title: data.title,
         sections: data.sections,
         status: data.publishNow ? 'published' : data.status,
