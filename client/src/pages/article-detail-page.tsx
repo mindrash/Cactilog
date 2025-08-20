@@ -298,21 +298,23 @@ export default function ArticleDetailPage() {
               return tableOfContents.length > 0 ? (
                 <Card className="sticky top-8">
                   <CardHeader>
-                    <h2 className="flex items-center space-x-2 text-base font-semibold">
-                      <Hash className="w-4 h-4" />
-                      <span>Table of Contents</span>
+                    <h2 className="section-title text-base">
+                      Contents
                     </h2>
                   </CardHeader>
                   <CardContent>
-                    <nav className="space-y-1">
+                    <nav className="space-y-2">
                       {tableOfContents.map((item, index) => (
                         <a
                           key={`${item.id}-${index}`}
                           href={`#${item.id}`}
-                          className={`block text-sm text-muted-foreground hover:text-cactus-green hover:underline py-1 transition-colors ${'pl-' + (item.level - 1) * 4}`}
+                          className={`flex items-center text-sm text-muted-foreground hover:text-cactus-green hover:underline py-1 transition-colors`}
                           style={{ paddingLeft: `${(item.level - 1) * 16}px` }}
                         >
-                          {item.title}
+                          {item.level === 2 && (
+                            <span className="text-cactus-green mr-2 text-base">🌵</span>
+                          )}
+                          <span>{item.title}</span>
                         </a>
                       ))}
                     </nav>
