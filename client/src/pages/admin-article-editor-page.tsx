@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams, useLocation } from "wouter";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,9 +12,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { ArrowLeft, Save, Eye, FileText, Loader2, Code, Type } from "lucide-react";
+import { ArrowLeft, Save, Eye, FileText, Loader2, Code, Type, Plus, X, Hash, ChevronUp, ChevronDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { insertArticleSchema } from "@shared/schema";
+import { insertArticleSchema, type Article, type ArticleSection } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import DOMPurify from "dompurify";
 import Header from "@/components/header";
@@ -23,8 +23,7 @@ import Footer from "@/components/footer";
 // Create a form schema based on insertArticleSchema with additional validation
 const articleFormSchema = insertArticleSchema.pick({
   title: true,
-  html: true,
-  excerpt: true,
+  sections: true,
   status: true,
 }).extend({
   publishNow: z.boolean().optional(),
@@ -32,11 +31,61 @@ const articleFormSchema = insertArticleSchema.pick({
 
 type ArticleFormData = z.infer<typeof articleFormSchema>;
 
-interface Article extends ArticleFormData {
-  id: string;
-  createdAt: string;
-  updatedAt: string;
-}
+// Helper function to extract table of contents from sections
+const extractTableOfContents = (sections: ArticleSection[]) => {
+  const tocItems: Array<{ id: string; title: string; level: number }> = [];
+  
+  sections.forEach((section) => {
+    // Extract headings from the HTML content
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = section.content;
+    
+    const headings = tempDiv.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    headings.forEach((heading) => {
+      const level = parseInt(heading.tagName.charAt(1));
+      const title = heading.textContent?.trim() || '';
+      if (title) {
+        // Create a unique ID for the heading if it doesn't have one
+        let id = heading.id;
+        if (!id) {
+          id = title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-');
+          heading.id = id;
+        }
+        tocItems.push({ id, title, level });
+      }
+    });
+    
+    // Update the section content with the modified HTML (with IDs added)
+    section.content = tempDiv.innerHTML;
+  });
+  
+  return tocItems;
+};
+
+// Helper function to generate excerpt from first section
+const generateExcerpt = (sections: ArticleSection[], maxLength: number = 200): string => {
+  if (!sections || sections.length === 0) return '';
+  
+  const firstSectionContent = sections[0].content;
+  if (!firstSectionContent) return '';
+  
+  // Strip HTML tags and get plain text
+  const plainText = firstSectionContent.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+  
+  if (plainText.length <= maxLength) {
+    return plainText;
+  }
+  
+  // Truncate at word boundary
+  const truncated = plainText.substring(0, maxLength);
+  const lastSpaceIndex = truncated.lastIndexOf(' ');
+  
+  if (lastSpaceIndex > maxLength * 0.8) {
+    return truncated.substring(0, lastSpaceIndex) + '...';
+  }
+  
+  return truncated + '...';
+};
 
 export default function AdminArticleEditorPage() {
   const params = useParams();
@@ -48,458 +97,404 @@ export default function AdminArticleEditorPage() {
   const isEditing = articleId && articleId !== 'new';
   const [isPreview, setIsPreview] = useState(false);
   const [isHtmlMode, setIsHtmlMode] = useState(false);
-
-  // Function to auto-generate excerpt from HTML content
-  const generateExcerpt = (html: string, maxLength: number = 200): string => {
-    if (!html) return '';
-    
-    // Strip HTML tags and get plain text
-    const plainText = html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
-    
-    if (plainText.length <= maxLength) {
-      return plainText;
-    }
-    
-    // Truncate at word boundary
-    const truncated = plainText.substring(0, maxLength);
-    const lastSpaceIndex = truncated.lastIndexOf(' ');
-    
-    if (lastSpaceIndex > maxLength * 0.8) {
-      return truncated.substring(0, lastSpaceIndex) + '...';
-    }
-    
-    return truncated + '...';
-  };
+  const [tableOfContents, setTableOfContents] = useState<Array<{ id: string; title: string; level: number }>>([]);
 
   // Fetch article data if editing
   const { data: article, isLoading: isLoadingArticle } = useQuery<Article>({
-    queryKey: ['/api/admin/articles', articleId],
+    queryKey: ['/api/articles/admin', articleId],
     queryFn: async () => {
-      if (!articleId || articleId === 'new') return null;
-      const response = await fetch(`/api/admin/articles/${articleId}`, {
-        headers: { 'Cache-Control': 'no-cache' }
-      });
-      if (!response.ok) {
-        throw new Error('Failed to fetch article');
-      }
+      const response = await apiRequest('GET', `/api/articles/admin/${articleId}`);
       return response.json();
     },
     enabled: !!isEditing,
-    staleTime: 0,
   });
 
   const form = useForm<ArticleFormData>({
     resolver: zodResolver(articleFormSchema),
     defaultValues: {
       title: "",
-      html: "",
-      excerpt: "",
-      status: "published",
-      publishNow: true,
+      sections: [{ id: crypto.randomUUID(), content: "" }],
+      status: "draft",
+      publishNow: false,
     },
   });
 
-  // Populate form when article data is loaded
+  const { fields, append, remove, move } = useFieldArray({
+    control: form.control,
+    name: "sections",
+  });
+
+  // Update form when article data is loaded
   useEffect(() => {
-    if (article) {
+    if (article && isEditing) {
       form.reset({
-        title: article.title || "",
-        html: article.html || "",
-        excerpt: article.excerpt || "",
-        status: article.status || "draft",
+        title: article.title,
+        sections: article.sections || [{ id: crypto.randomUUID(), content: "" }],
+        status: article.status,
         publishNow: false,
       });
     }
-  }, [article, form]);
+  }, [article, isEditing, form]);
 
-  // Auto-update excerpt when HTML content changes (for new articles only)
+  // Update table of contents when sections change
   useEffect(() => {
-    if (!isEditing) { // Only auto-generate for new articles
-      const subscription = form.watch((value, { name }) => {
-        if (name === 'html' && value.html) {
-          const autoExcerpt = generateExcerpt(value.html);
-          if (autoExcerpt && autoExcerpt !== value.excerpt) {
-            form.setValue('excerpt', autoExcerpt, { shouldValidate: false });
-          }
-        }
-      });
-      return () => subscription.unsubscribe();
-    }
-  }, [form, isEditing]);
+    const subscription = form.watch((data) => {
+      if (data.sections) {
+        const toc = extractTableOfContents([...data.sections] as ArticleSection[]);
+        setTableOfContents(toc);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form]);
 
-
+  // Create/Update article mutation
   const createArticleMutation = useMutation({
     mutationFn: async (data: ArticleFormData) => {
-      console.log("Making API request to create article:", data);
-      try {
-        const response = await apiRequest('/api/admin/articles', 'POST', data);
-        console.log("API response received:", response.status);
-        const result = await response.json();
-        console.log("Article created successfully:", result);
-        return result;
-      } catch (error) {
-        console.error("API request failed:", error);
-        throw error;
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/articles'] });
-      toast({
-        title: "Article created",
-        description: "The article has been successfully created.",
+      const endpoint = isEditing ? `/api/articles/admin/${articleId}` : '/api/articles/admin';
+      const method = isEditing ? 'PUT' : 'POST';
+      
+      const response = await apiRequest(method, endpoint, {
+        title: data.title,
+        sections: data.sections,
+        status: data.publishNow ? 'published' : data.status,
       });
-      setLocation('/admin/articles');
-    },
-    onError: (error: Error) => {
-      console.error("Mutation error:", error);
-      toast({
-        title: "Create failed",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
-
-  const updateArticleMutation = useMutation({
-    mutationFn: async (data: ArticleFormData) => {
-      const response = await apiRequest(`/api/admin/articles/${articleId}`, 'PUT', data);
+      
       return response.json();
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/articles'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/articles', articleId] });
+    onSuccess: (data) => {
       toast({
-        title: "Article updated",
-        description: "The article has been successfully updated.",
+        title: isEditing ? "Article updated" : "Article created",
+        description: isEditing ? "Your article has been updated successfully." : "Your article has been created successfully.",
       });
-      setLocation('/admin/articles');
+      queryClient.invalidateQueries({ queryKey: ['/api/articles'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/articles/admin'] });
+      if (!isEditing) {
+        setLocation(`/admin/articles/${data.id}/edit`);
+      }
     },
-    onError: (error: Error) => {
+    onError: (error) => {
       toast({
-        title: "Update failed",
-        description: error.message,
+        title: "Error",
+        description: error.message || "Failed to save article",
         variant: "destructive",
       });
     },
   });
 
   const onSubmit = (data: ArticleFormData) => {
-    console.log("Form submitted with data:", data);
+    createArticleMutation.mutate(data);
+  };
 
-    // Auto-generate SEO fields
-    const metaTitle = data.title ? `${data.title} - Cactilog` : 'Cactilog Article';
-    const metaDescription = data.excerpt || 
-      (data.html ? data.html.replace(/<[^>]*>/g, '').substring(0, 155) + '...' : 'Expert care guides and tips for cactus and succulent enthusiasts.');
+  const addSection = () => {
+    append({ id: crypto.randomUUID(), content: "" });
+  };
 
-    // Auto-generate slug from title
-    const slug = data.title ? data.title.toLowerCase()
-      .replace(/[^\w\s-]/g, '')
-      .replace(/\s+/g, '-')
-      .trim() : 'untitled-article';
-
-    const articleData = {
-      ...data,
-      slug,
-      tags: [], // Empty array for now
-      category: '', // Empty for now
-      author: 'Cactilog Team', // Default author
-      metaTitle,
-      metaDescription,
-      status: data.publishNow ? 'published' as const : data.status,
-    };
-
-    // Remove publishNow from the data as it's not in the schema
-    delete (articleData as any).publishNow;
-
-    console.log("Processed article data:", articleData);
-
-    if (isEditing) {
-      updateArticleMutation.mutate(articleData);
-    } else {
-      createArticleMutation.mutate(articleData);
+  const removeSection = (index: number) => {
+    if (fields.length > 1) {
+      remove(index);
     }
   };
 
-  const isLoading = createArticleMutation.isPending || updateArticleMutation.isPending;
+  const moveSection = (index: number, direction: 'up' | 'down') => {
+    if (direction === 'up' && index > 0) {
+      move(index, index - 1);
+    } else if (direction === 'down' && index < fields.length - 1) {
+      move(index, index + 1);
+    }
+  };
 
-  if (isEditing && isLoadingArticle) {
+  const scrollToHeading = (id: string) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  if (isLoadingArticle) {
     return (
-      <>
+      <div className="min-h-screen cactus-pattern-bg-light">
         <Header />
-        <div className="container mx-auto py-8 px-4">
-          <div className="flex items-center justify-center min-h-[200px]">
-            <Loader2 className="h-8 w-8 animate-spin" />
+        <div className="max-w-6xl mx-auto px-4 py-8">
+          <div className="text-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-cactus-green" />
+            <p className="text-gray-600">Loading article...</p>
           </div>
         </div>
         <Footer />
-      </>
+      </div>
     );
   }
 
   return (
-    <>
+    <div className="min-h-screen cactus-pattern-bg-light">
       <Header />
-    <div className="container mx-auto py-8 px-4 max-w-4xl">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center space-x-4">
-          <Button
-            variant="ghost"
-            size="sm"
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Back Navigation */}
+        <div className="mb-6">
+          <Button 
             onClick={() => setLocation('/admin/articles')}
+            variant="ghost"
+            className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
           >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Articles
-          </Button>
-          <h1 className="text-3xl font-bold text-forest">
-            {isEditing ? 'Edit Article' : 'New Article'}
-          </h1>
-        </div>
-        
-        <div className="flex items-center space-x-2">
-          {/* HTML/Rich Text Toggle */}
-          <Button
-            variant="outline"
-            onClick={() => {
-              console.log('Toggle clicked, current mode:', isHtmlMode);
-              setIsHtmlMode(!isHtmlMode);
-            }}
-            disabled={isPreview}
-          >
-            {isHtmlMode ? <Type className="h-4 w-4 mr-2" /> : <Code className="h-4 w-4 mr-2" />}
-            {isHtmlMode ? 'Rich Text' : 'HTML'}
-          </Button>
-          {/* Preview Toggle */}
-          <Button
-            variant="outline"
-            onClick={() => setIsPreview(!isPreview)}
-            disabled={!form.watch("html")}
-          >
-            <Eye className="h-4 w-4 mr-2" />
-            {isPreview ? 'Edit' : 'Preview'}
+            <ArrowLeft className="w-4 h-4" />
+            <span>Back to Articles</span>
           </Button>
         </div>
-      </div>
 
-      {isPreview ? (
-        /* Preview Mode */
-        <Card>
-          <CardHeader>
-            <CardTitle>{form.watch("title") || "Untitled Article"}</CardTitle>
-            {form.watch("excerpt") && (
-              <p className="text-lg text-muted-foreground">{form.watch("excerpt")}</p>
-            )}
-          </CardHeader>
-          <CardContent>
-            <div 
-              className="prose prose-lg max-w-none
-                prose-headings:text-forest prose-headings:font-semibold
-                prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl
-                prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-4
-                prose-a:text-sage prose-a:no-underline hover:prose-a:underline
-                prose-strong:text-forest prose-strong:font-semibold
-                prose-ul:space-y-2 prose-ol:space-y-2
-                prose-li:text-gray-700
-                prose-blockquote:border-l-4 prose-blockquote:border-sage/20 
-                prose-blockquote:pl-6 prose-blockquote:italic prose-blockquote:text-gray-600
-                prose-code:bg-gray-100 prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:text-sm
-                prose-pre:bg-gray-100 prose-pre:border prose-pre:rounded-lg prose-pre:p-4"
-              dangerouslySetInnerHTML={{ __html: form.watch("html") || "<p>No content yet.</p>" }}
-            />
-          </CardContent>
-        </Card>
-      ) : (
-        /* Edit Mode */
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Main Content */}
-              <div className="lg:col-span-2 space-y-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Content</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Main Editor */}
+          <div className="lg:col-span-3">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center space-x-2">
+                    <FileText className="w-5 h-5" />
+                    <span>{isEditing ? 'Edit Article' : 'Create Article'}</span>
+                  </CardTitle>
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setIsHtmlMode(!isHtmlMode)}
+                      className="flex items-center space-x-1"
+                    >
+                      {isHtmlMode ? <Type className="w-4 h-4" /> : <Code className="w-4 h-4" />}
+                      <span>{isHtmlMode ? 'Visual' : 'HTML'}</span>
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setIsPreview(!isPreview)}
+                      className="flex items-center space-x-1"
+                    >
+                      <Eye className="w-4 h-4" />
+                      <span>Preview</span>
+                    </Button>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    {/* Article Title */}
                     <FormField
                       control={form.control}
                       name="title"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Title</FormLabel>
+                          <FormLabel>Article Title</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter article title..." {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="excerpt"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Excerpt</FormLabel>
-                          <FormControl>
-                            <Textarea 
-                              placeholder={isEditing ? "Brief summary of the article..." : "Auto-generated from content..."} 
-                              rows={3}
-                              readOnly={!isEditing}
-                              className={!isEditing ? "bg-muted text-muted-foreground" : ""}
-                              {...field} 
+                            <Input
+                              {...field}
+                              placeholder="Enter article title..."
+                              className="text-lg font-medium"
+                              disabled={isPreview}
                             />
                           </FormControl>
-                          <FormDescription>
-                            {isEditing 
-                              ? "A short summary that appears in article listings" 
-                              : "Auto-generated from article content (editable after saving)"
-                            }
-                          </FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
 
-                    <FormField
-                      control={form.control}
-                      name="html"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Article Content</FormLabel>
-                          <FormControl>
-                            {isHtmlMode ? (
-                              <Textarea
-                                placeholder="Paste or write raw HTML content here..."
-                                className="min-h-[400px] font-mono text-sm"
-                                value={field.value || ""}
-                                onChange={(e) => field.onChange(e.target.value)}
-                              />
-                            ) : (
-                              <div className="border rounded-md">
-                                <div 
-                                  contentEditable
-                                  className="min-h-[400px] p-3 prose prose-sm max-w-none focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                                  style={{ whiteSpace: 'pre-wrap' }}
-                                  onBlur={(e) => {
-                                    field.onChange(e.currentTarget.innerHTML);
-                                  }}
-                                  onInput={(e) => {
-                                    // Update the field value when content changes
-                                    field.onChange(e.currentTarget.innerHTML);
-                                  }}
-                                  onPaste={(e) => {
-                                    e.preventDefault();
-                                    const paste = e.clipboardData?.getData('text/html') || e.clipboardData?.getData('text/plain') || '';
-                                    if (paste) {
-                                      // Clean and sanitize pasted HTML
-                                      const cleanHtml = DOMPurify.sanitize(paste, {
-                                        ALLOWED_TAGS: ['p', 'br', 'strong', 'b', 'em', 'i', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'blockquote', 'code', 'pre', 'img', 'span', 'div'],
-                                        ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class', 'style']
-                                      });
-                                      document.execCommand('insertHTML', false, cleanHtml);
-                                    }
-                                  }}
-                                  suppressContentEditableWarning={true}
-                                  ref={(el) => {
-                                    if (el && field.value && el.innerHTML !== field.value) {
-                                      el.innerHTML = field.value;
-                                    }
-                                  }}
-                                />
+                    {/* Article Sections */}
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <Label className="text-base font-medium">Article Sections</Label>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={addSection}
+                          className="flex items-center space-x-1"
+                          disabled={isPreview}
+                        >
+                          <Plus className="w-4 h-4" />
+                          <span>Add Section</span>
+                        </Button>
+                      </div>
+                      
+                      {fields.map((field, index) => (
+                        <Card key={field.id} className="border-l-4 border-l-cactus-green/30">
+                          <CardHeader className="pb-3">
+                            <div className="flex items-center justify-between">
+                              <Label className="font-medium">Section {index + 1}</Label>
+                              <div className="flex items-center space-x-1">
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => moveSection(index, 'up')}
+                                  disabled={isPreview || index === 0}
+                                >
+                                  <ChevronUp className="w-4 h-4" />
+                                </Button>
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => moveSection(index, 'down')}
+                                  disabled={isPreview || index === fields.length - 1}
+                                >
+                                  <ChevronDown className="w-4 h-4" />
+                                </Button>
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => removeSection(index)}
+                                  disabled={isPreview || fields.length === 1}
+                                >
+                                  <X className="w-4 h-4" />
+                                </Button>
                               </div>
-                            )}
-                          </FormControl>
-                          <FormDescription>
-                            {isHtmlMode 
-                              ? "Raw HTML mode - paste or edit HTML directly. Use the toggle to switch back to rich text editor."
-                              : "Rich text editor with HTML support. Use keyboard shortcuts for formatting (Ctrl+B for bold, Ctrl+I for italic, etc.)."
-                            }
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Sidebar */}
-              <div className="space-y-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Publish</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <FormField
-                      control={form.control}
-                      name="status"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Status</FormLabel>
-                          <Select onValueChange={field.onChange} value={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select status" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="draft">Draft</SelectItem>
-                              <SelectItem value="published">Published</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="publishNow"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-                          <div className="space-y-0.5">
-                            <FormLabel>Publish immediately</FormLabel>
-                            <FormDescription>
-                              Set status to published and set publish date to now
-                            </FormDescription>
-                          </div>
-                          <FormControl>
-                            <Switch
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
+                            </div>
+                          </CardHeader>
+                          <CardContent>
+                            <FormField
+                              control={form.control}
+                              name={`sections.${index}.content`}
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormControl>
+                                    {isPreview ? (
+                                      <div 
+                                        className="min-h-[200px] p-4 border rounded prose prose-sm max-w-none"
+                                        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(field.value) }}
+                                      />
+                                    ) : (
+                                      <Textarea
+                                        {...field}
+                                        placeholder={isHtmlMode ? "Enter HTML content..." : "Enter content (supports HTML)..."}
+                                        className="min-h-[200px] font-mono"
+                                        rows={8}
+                                      />
+                                    )}
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
                             />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
 
-                    <div className="pt-4 border-t">
-                      <Button 
-                        type="submit" 
-                        className="w-full" 
-                        disabled={isLoading}
-                      >
-                        {isLoading ? (
-                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        ) : (
-                          <Save className="h-4 w-4 mr-2" />
+                    {/* Article Status and Publish Controls */}
+                    <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t">
+                      <FormField
+                        control={form.control}
+                        name="status"
+                        render={({ field }) => (
+                          <FormItem className="flex-1">
+                            <FormLabel>Status</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select status" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="draft">Draft</SelectItem>
+                                <SelectItem value="published">Published</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
                         )}
-                        {isEditing ? 'Update Article' : 'Create Article'}
+                      />
+                      
+                      <FormField
+                        control={form.control}
+                        name="publishNow"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                            <div className="space-y-0.5">
+                              <FormLabel className="text-base">Publish Now</FormLabel>
+                              <FormDescription>
+                                Override status and publish immediately
+                              </FormDescription>
+                            </div>
+                            <FormControl>
+                              <Switch
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    {/* Save Button */}
+                    <div className="flex justify-end space-x-4 pt-6 border-t">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setLocation('/admin/articles')}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        type="submit"
+                        disabled={createArticleMutation.isPending}
+                        className="bg-cactus-green hover:bg-cactus-green/90"
+                      >
+                        {createArticleMutation.isPending ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Saving...
+                          </>
+                        ) : (
+                          <>
+                            <Save className="w-4 h-4 mr-2" />
+                            {isEditing ? 'Update Article' : 'Create Article'}
+                          </>
+                        )}
                       </Button>
                     </div>
-                  </CardContent>
-                </Card>
+                  </form>
+                </Form>
+              </CardContent>
+            </Card>
+          </div>
 
-
-
-
-              </div>
-            </div>
-          </form>
-        </Form>
-      )}
+          {/* Table of Contents Sidebar */}
+          <div className="lg:col-span-1">
+            <Card className="sticky top-8">
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2 text-base">
+                  <Hash className="w-4 h-4" />
+                  <span>Table of Contents</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {tableOfContents.length > 0 ? (
+                  <nav className="space-y-1">
+                    {tableOfContents.map((item, index) => (
+                      <button
+                        key={`${item.id}-${index}`}
+                        type="button"
+                        onClick={() => scrollToHeading(item.id)}
+                        className={`block w-full text-left text-sm text-gray-600 hover:text-cactus-green hover:underline py-1 ${'pl-' + (item.level - 1) * 4}`}
+                        style={{ paddingLeft: `${(item.level - 1) * 16}px` }}
+                      >
+                        {item.title}
+                      </button>
+                    ))}
+                  </nav>
+                ) : (
+                  <p className="text-sm text-gray-500 italic">
+                    Add headings (H1-H6) to your sections to generate a table of contents
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+      <Footer />
     </div>
-    <Footer />
-    </>
   );
 }

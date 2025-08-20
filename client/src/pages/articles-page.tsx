@@ -12,19 +12,7 @@ import { useAuth } from "@/hooks/useAuth";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { SEO } from "@/components/seo";
-
-interface Article {
-  id: string;
-  title: string;
-  excerpt?: string;
-  slug: string;
-  status: 'draft' | 'published';
-  tags?: string[];
-  category?: string;
-  publishedAt?: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import { Article, ArticleSection } from "@shared/schema";
 
 interface ArticlesResponse {
   items: Article[];
@@ -32,6 +20,31 @@ interface ArticlesResponse {
   page: number;
   pageCount: number;
 }
+
+// Helper function to generate excerpt from sections
+const generateExcerpt = (sections: ArticleSection[], maxLength: number = 150): string => {
+  if (!sections || sections.length === 0) return '';
+  
+  const firstSectionContent = sections[0].content;
+  if (!firstSectionContent) return '';
+  
+  // Strip HTML tags and get plain text
+  const plainText = firstSectionContent.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+  
+  if (plainText.length <= maxLength) {
+    return plainText;
+  }
+  
+  // Truncate at word boundary
+  const truncated = plainText.substring(0, maxLength);
+  const lastSpaceIndex = truncated.lastIndexOf(' ');
+  
+  if (lastSpaceIndex > maxLength * 0.8) {
+    return truncated.substring(0, lastSpaceIndex) + '...';
+  }
+  
+  return truncated + '...';
+};
 
 export default function ArticlesPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -222,11 +235,17 @@ export default function ArticlesPage() {
                       )}
                     </div>
                     
-                    {article.excerpt && (
-                      <p className="text-muted-foreground mb-3 line-clamp-2">
-                        {article.excerpt}
-                      </p>
-                    )}
+                    {(() => {
+                      if (article.sections && Array.isArray(article.sections) && article.sections.length > 0) {
+                        const excerpt = generateExcerpt(article.sections as ArticleSection[]);
+                        return excerpt ? (
+                          <p className="text-muted-foreground mb-3 line-clamp-2">
+                            {excerpt}
+                          </p>
+                        ) : null;
+                      }
+                      return null;
+                    })()}
                     
                     <div className="flex items-center gap-4 text-sm text-muted-foreground mb-2">
                       <div className="flex items-center gap-1">
