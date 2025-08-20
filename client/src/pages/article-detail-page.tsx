@@ -297,7 +297,7 @@ export default function ArticleDetailPage() {
                     </h2>
                   </CardHeader>
                   <CardContent>
-                    <nav className="space-y-2 max-h-96 overflow-y-auto">
+                    <nav className="space-y-2">
                       {tableOfContents.map((item, index) => (
                         <a
                           key={`${item.id}-${index}`}
