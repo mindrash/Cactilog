@@ -302,7 +302,7 @@ export default function ArticleDetailPage() {
                         <a
                           key={`${item.id}-${index}`}
                           href={`#${item.id}`}
-                          className={`flex items-center text-sm text-muted-foreground hover:text-cactus-green hover:underline py-1 transition-colors`}
+                          className={`flex items-center text-sm text-muted-foreground hover:text-cactus-green hover:underline py-1 transition-colors ${item.level === 1 ? 'font-bold text-forest' : ''}`}
                           style={{ paddingLeft: item.level === 2 ? '0px' : `${(item.level - 1) * 16}px` }}
                         >
                           {item.level === 2 && (
