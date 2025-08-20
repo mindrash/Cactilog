@@ -47,8 +47,19 @@ const generateExcerpt = (sections: ArticleSection[], maxLength: number = 200): s
   const firstSectionContent = sections[0].content;
   if (!firstSectionContent) return '';
   
-  // Strip HTML tags and get plain text
-  const plainText = firstSectionContent.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+  // Create a temporary DOM element to properly parse and extract text
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = firstSectionContent;
+  
+  // Remove style and script tags completely
+  const styleTags = tempDiv.querySelectorAll('style, script');
+  styleTags.forEach(tag => tag.remove());
+  
+  // Get the plain text content
+  let plainText = tempDiv.textContent || tempDiv.innerText || '';
+  
+  // Clean up whitespace and normalize
+  plainText = plainText.replace(/\s+/g, ' ').trim();
   
   if (plainText.length <= maxLength) {
     return plainText;
