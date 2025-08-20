@@ -256,13 +256,11 @@ export default function ArticleDetailPage() {
             <Card>
               <CardContent className="pt-6">
                 {Array.isArray(article.sections) && article.sections.length > 0 ? (
-                  <div className="space-y-8">
+                  <div className="space-y-8 article-content">
                     {(article.sections as ArticleSection[]).map((section, index) => (
                       <div key={section.id || index} className="section-content">
                         <div 
                           className="prose prose-lg max-w-none
-                            prose-headings:text-forest prose-headings:font-semibold
-                            prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl
                             prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-4
                             prose-a:text-sage prose-a:no-underline hover:prose-a:underline
                             prose-strong:text-forest prose-strong:font-semibold
@@ -273,7 +271,7 @@ export default function ArticleDetailPage() {
                             prose-code:bg-gray-100 prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:text-sm
                             prose-pre:bg-gray-100 prose-pre:border prose-pre:rounded-lg prose-pre:p-4
                             prose-img:rounded-lg prose-img:shadow-md prose-img:mx-auto
-                            dark:prose-invert dark:prose-headings:text-white 
+                            dark:prose-invert 
                             dark:prose-p:text-gray-300 dark:prose-a:text-sage-light
                             dark:prose-strong:text-white dark:prose-li:text-gray-300
                             dark:prose-blockquote:text-gray-400 dark:prose-code:bg-gray-800
