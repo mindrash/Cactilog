@@ -106,76 +106,76 @@ export default function ArticlesPage() {
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex justify-between items-start mb-4">
-            <div>
+          <div className="flex flex-col lg:flex-row lg:justify-between lg:items-start gap-4 mb-4">
+            <div className="flex-1">
               <h1 className="page-title-xl mb-2 text-forest">Cacti Articles</h1>
               <p className="text-gray-600">
                 Discover expert care guides, growing tips, and community insights from fellow cacti enthusiasts.
               </p>
             </div>
           
-          {/* Admin Controls */}
-          {isAdmin && (
-            <div className="flex gap-2">
-              <Button asChild className="bg-cactus-green hover:bg-cactus-green/90">
-                <Link href="/admin/articles/new">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Article
-                </Link>
-              </Button>
-              <Button variant="outline" asChild>
-                <Link href="/admin/articles">
-                  <Edit className="h-4 w-4 mr-2" />
-                  Manage Articles
-                </Link>
-              </Button>
+            {/* Admin Controls */}
+            {isAdmin && (
+              <div className="flex gap-2 shrink-0">
+                <Button asChild className="bg-cactus-green hover:bg-cactus-green/90">
+                  <Link href="/admin/articles/new">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Article
+                  </Link>
+                </Button>
+                <Button variant="outline" asChild>
+                  <Link href="/admin/articles">
+                    <Edit className="h-4 w-4 mr-2" />
+                    Manage Articles
+                  </Link>
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Search and Filters */}
+        <div className="mb-8 space-y-4">
+          <form onSubmit={handleSearch} className="flex gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Search articles..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <Button type="submit" variant="outline">
+              Search
+            </Button>
+          </form>
+
+          {/* Tag filters */}
+          {allTags.length > 0 && (
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium text-muted-foreground">Filter by tag:</h3>
+              <div className="flex flex-wrap gap-2">
+                {allTags.map((tag) => (
+                  <Badge
+                    key={tag}
+                    variant={selectedTag === tag ? "default" : "outline"}
+                    className="cursor-pointer hover:bg-sage/20"
+                    onClick={() => handleTagFilter(tag)}
+                  >
+                    <Tag className="h-3 w-3 mr-1" />
+                    {tag}
+                  </Badge>
+                ))}
+              </div>
             </div>
           )}
         </div>
-      </div>
 
-      {/* Search and Filters */}
-      <div className="mb-8 space-y-4">
-        <form onSubmit={handleSearch} className="flex gap-2">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="text"
-              placeholder="Search articles..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-          <Button type="submit" variant="outline">
-            Search
-          </Button>
-        </form>
-
-        {/* Tag filters */}
-        {allTags.length > 0 && (
-          <div className="space-y-2">
-            <h3 className="text-sm font-medium text-muted-foreground">Filter by tag:</h3>
-            <div className="flex flex-wrap gap-2">
-              {allTags.map((tag) => (
-                <Badge
-                  key={tag}
-                  variant={selectedTag === tag ? "default" : "outline"}
-                  className="cursor-pointer hover:bg-sage/20"
-                  onClick={() => handleTagFilter(tag)}
-                >
-                  <Tag className="h-3 w-3 mr-1" />
-                  {tag}
-                </Badge>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Articles List */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-lg border shadow-sm">
-        {isLoading ? (
+        {/* Articles List */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-lg border shadow-sm">
+          {isLoading ? (
           <div className="divide-y">
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="p-6 flex items-center justify-between">
