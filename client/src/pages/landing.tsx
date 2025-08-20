@@ -55,7 +55,7 @@ function Landing() {
   const { data, isLoading } = useQuery<PublicFeedResponse>({
     queryKey: ["/api/public/plants", currentPage],
     queryFn: async () => {
-      const response = await fetch(`/api/public/plants?page=${currentPage}&limit=20`);
+      const response = await fetch(`/api/public/plants?page=${currentPage}&limit=8`);
       if (!response.ok) {
         throw new Error("Failed to fetch public plants");
       }
@@ -105,11 +105,18 @@ function Landing() {
       {/* Latest Community Collections */}
       {isLoading ? (
         <section className="max-w-6xl mx-auto px-4 py-12 bg-white/50 rounded-lg mx-4 mb-8">
-          <div className="text-center mb-8">
-            <h2 className="section-title mb-4">Community Feed</h2>
-            <p className="text-gray-600">
-              Latest plants shared by our community
-            </p>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+            <div className="flex-1">
+              <h2 className="section-title">Community Feed</h2>
+              <p className="text-gray-600 hidden sm:block">Latest plants shared by our community</p>
+              <p className="text-gray-500 text-sm sm:hidden">Latest community plants</p>
+            </div>
+            <div className="flex items-center space-x-2 shrink-0">
+              <Users className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
+              <span className="text-xs sm:text-sm text-gray-600 whitespace-nowrap">
+                Loading...
+              </span>
+            </div>
           </div>
           <div className="flex items-center justify-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cactus-green"></div>
@@ -117,35 +124,78 @@ function Landing() {
         </section>
       ) : data?.plants && data.plants.length > 0 ? (
         <section className="max-w-6xl mx-auto px-4 py-12 bg-white/50 rounded-lg mx-4 mb-8">
-          <div className="text-center mb-8">
-            <h2 className="section-title mb-4">Community Feed</h2>
-            <p className="text-gray-600">
-              Latest plants shared by our community
-            </p>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+            <div className="flex-1">
+              <h2 className="section-title">Community Feed</h2>
+              <p className="text-gray-600 hidden sm:block">Latest plants shared by our community</p>
+              <p className="text-gray-500 text-sm sm:hidden">Latest community plants</p>
+            </div>
+            <div className="flex items-center space-x-2 shrink-0">
+              <Users className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
+              <span className="text-xs sm:text-sm text-gray-600 whitespace-nowrap">
+                Page {data?.pagination?.page || 1} of {data?.pagination?.totalPages || 1}
+              </span>
+            </div>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-6">
-            {data?.plants.slice(0, 8).map((plant) => (
+            {data?.plants.map((plant) => (
               <PlantCard key={plant.id} plant={plant} isPublicContext={true} />
             ))}
           </div>
 
-          <div className="text-center">
-            <Link href="/community/photos">
-              <Button variant="outline" className="inline-flex items-center">
-                Explore Community Gallery
-                <ArrowRight className="w-4 h-4 ml-2" />
+          {data?.pagination && data.pagination.totalPages > 1 && (
+            <div className="flex items-center justify-between">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="flex items-center"
+              >
+                <ChevronLeft className="h-4 w-4 mr-1" />
+                Previous
               </Button>
-            </Link>
-          </div>
+              
+              <div className="text-center flex-1">
+                <Link href="/community/photos">
+                  <Button variant="outline" className="inline-flex items-center">
+                    Explore Community Gallery
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </Link>
+              </div>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(p => Math.min(data.pagination.totalPages, p + 1))}
+                disabled={currentPage === data?.pagination?.totalPages}
+                className="flex items-center"
+              >
+                Next
+                <ChevronRight className="h-4 w-4 ml-1" />
+              </Button>
+            </div>
+          )}
         </section>
       ) : (
         <section className="max-w-6xl mx-auto px-4 py-12 bg-white/50 rounded-lg mx-4 mb-8">
-          <div className="text-center mb-8">
-            <h2 className="section-title mb-4">Community Feed</h2>
-            <p className="text-gray-600">
-              Latest plants shared by our community
-            </p>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+            <div className="flex-1">
+              <h2 className="section-title">Community Feed</h2>
+              <p className="text-gray-600 hidden sm:block">Latest plants shared by our community</p>
+              <p className="text-gray-500 text-sm sm:hidden">Latest community plants</p>
+            </div>
+            <div className="flex items-center space-x-2 shrink-0">
+              <Users className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
+              <span className="text-xs sm:text-sm text-gray-600 whitespace-nowrap">
+                Page 1 of 1
+              </span>
+            </div>
+          </div>
+          <div className="text-center py-8">
+            <p className="text-gray-500">Community collections will appear here as members share their plants!</p>
           </div>
         </section>
       )}
