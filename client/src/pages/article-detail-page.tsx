@@ -202,7 +202,7 @@ export default function ArticleDetailPage() {
 
         {/* Article Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-4 text-forest leading-tight">
+          <h1 className="page-title-lg mb-4 leading-tight">
             {article.title}
           </h1>
           
