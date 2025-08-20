@@ -290,14 +290,14 @@ export default function ArticleDetailPage() {
             {Array.isArray(article.sections) && article.sections.length > 0 && (() => {
               const tableOfContents = extractTableOfContents(article.sections as ArticleSection[]);
               return tableOfContents.length > 0 ? (
-                <Card className="sticky top-8">
+                <Card>
                   <CardHeader>
                     <h2 className="section-title text-base">
                       Contents
                     </h2>
                   </CardHeader>
                   <CardContent>
-                    <nav className="space-y-2">
+                    <nav className="space-y-2 max-h-96 overflow-y-auto">
                       {tableOfContents.map((item, index) => (
                         <a
                           key={`${item.id}-${index}`}
