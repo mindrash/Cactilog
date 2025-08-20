@@ -25,6 +25,7 @@ const articleFormSchema = insertArticleSchema.pick({
   title: true,
   sections: true,
   status: true,
+  inlineStyles: true,
 });
 
 type ArticleFormData = z.infer<typeof articleFormSchema>;
@@ -113,6 +114,7 @@ export default function AdminArticleEditorPage() {
       title: "",
       sections: [{ id: crypto.randomUUID(), content: "" }],
       status: "draft",
+      inlineStyles: "",
     },
   });
 
@@ -135,6 +137,7 @@ export default function AdminArticleEditorPage() {
         title: article.title || "",
         sections: sections,
         status: (article.status as "draft" | "published") || "draft",
+        inlineStyles: article.inlineStyles || "",
       });
     }
   }, [article, isEditing, form]);
@@ -160,6 +163,7 @@ export default function AdminArticleEditorPage() {
         title: data.title,
         sections: data.sections,
         status: data.status,
+        inlineStyles: data.inlineStyles,
       });
       
       return response.json();
@@ -296,6 +300,29 @@ export default function AdminArticleEditorPage() {
                               disabled={isPreview}
                             />
                           </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* Inline Styles */}
+                    <FormField
+                      control={form.control}
+                      name="inlineStyles"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Custom CSS Styles</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              {...field}
+                              placeholder="/* Enter custom CSS styles for this article */&#10;.custom-class {&#10;  color: #4ade80;&#10;  font-weight: bold;&#10;}"
+                              className="font-mono text-sm min-h-[120px]"
+                              disabled={isPreview}
+                            />
+                          </FormControl>
+                          <FormDescription>
+                            Add custom CSS styles that will be applied only to this article.
+                          </FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}

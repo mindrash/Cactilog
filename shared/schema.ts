@@ -306,6 +306,7 @@ export const articles = pgTable("articles", {
   author: varchar("author", { length: 100 }),
   metaTitle: varchar("meta_title", { length: 200 }),
   metaDescription: varchar("meta_description", { length: 300 }),
+  inlineStyles: text("inline_styles"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
   publishedAt: timestamp("published_at"),
@@ -336,6 +337,7 @@ export const insertArticleSchema = createInsertSchema(articles).omit({
   author: z.string().max(100, "Author must be less than 100 characters").optional(),
   metaTitle: z.string().max(200, "Meta title must be less than 200 characters").optional(),
   metaDescription: z.string().max(300, "Meta description must be less than 300 characters").optional(),
+  inlineStyles: z.string().optional(),
 });
 
 export type Article = typeof articles.$inferSelect;
