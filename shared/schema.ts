@@ -299,8 +299,7 @@ export const articles = pgTable("articles", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   title: varchar("title", { length: 200 }).notNull(),
   slug: varchar("slug", { length: 220 }).notNull().unique(),
-  html: text("html").notNull(),
-  excerpt: varchar("excerpt", { length: 300 }),
+  sections: jsonb("sections").notNull(),
   status: varchar("status", { enum: ["draft", "published"] }).default("draft").notNull(),
   tags: text("tags").array(),
   category: varchar("category", { length: 100 }),
@@ -315,6 +314,12 @@ export const articles = pgTable("articles", {
   index("articles_slug_idx").on(table.slug),
 ]);
 
+// Article section schema
+export const articleSectionSchema = z.object({
+  id: z.string(),
+  content: z.string().min(1, "Section content is required"),
+});
+
 // Zod schemas for articles
 export const insertArticleSchema = createInsertSchema(articles).omit({
   id: true,
@@ -323,8 +328,7 @@ export const insertArticleSchema = createInsertSchema(articles).omit({
   publishedAt: true,
 }).extend({
   title: z.string().min(1, "Title is required").max(200, "Title must be less than 200 characters"),
-  html: z.string().min(1, "Content is required"),
-  excerpt: z.string().max(300, "Excerpt must be less than 300 characters").optional(),
+  sections: z.array(articleSectionSchema).min(1, "At least one section is required"),
   slug: z.string().max(220, "Slug must be less than 220 characters").optional(),
   tags: z.array(z.string()).optional(),
   status: z.enum(["draft", "published"]).optional(),
@@ -333,6 +337,10 @@ export const insertArticleSchema = createInsertSchema(articles).omit({
   metaTitle: z.string().max(200, "Meta title must be less than 200 characters").optional(),
   metaDescription: z.string().max(300, "Meta description must be less than 300 characters").optional(),
 });
+
+export type Article = typeof articles.$inferSelect;
+export type InsertArticle = z.infer<typeof insertArticleSchema>;
+export type ArticleSection = z.infer<typeof articleSectionSchema>;
 
 export type SpeciesImage = typeof speciesImages.$inferSelect;
 export type InsertSpeciesImage = typeof speciesImages.$inferInsert;
@@ -348,8 +356,6 @@ export type PlantLike = typeof plantLikes.$inferSelect;
 export type InsertPlantLike = typeof plantLikes.$inferInsert;
 export type Seed = typeof seeds.$inferSelect;
 export type InsertSeed = z.infer<typeof insertSeedSchema>;
-export type Article = typeof articles.$inferSelect;
-export type InsertArticle = z.infer<typeof insertArticleSchema>;
 
 // Botanical families for plant classification
 export const BOTANICAL_FAMILIES = [

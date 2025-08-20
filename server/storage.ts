@@ -1345,12 +1345,15 @@ export class DatabaseStorage implements IStorage {
       whereConditions.push(eq(articles.status, filters.status as 'draft' | 'published'));
     }
 
-    // Search filter
+    // Search filter - now searches within sections JSON content
     if (filters?.q) {
       const searchCondition = or(
         ilike(articles.title, `%${filters.q}%`),
-        ilike(articles.html, `%${filters.q}%`),
-        ilike(articles.excerpt, `%${filters.q}%`)
+        // Search within sections content using JSON operators
+        sql`EXISTS (
+          SELECT 1 FROM jsonb_array_elements(${articles.sections}) AS section
+          WHERE section->>'content' ILIKE ${`%${filters.q}%`}
+        )`
       );
       if (searchCondition) {
         whereConditions.push(searchCondition);
@@ -1376,22 +1379,20 @@ export class DatabaseStorage implements IStorage {
     // Get articles
     const baseQuery = db
       .select()
-      .from(articles);
-
-    let query = baseQuery
+      .from(articles)
       .limit(limit)
       .offset(offset)
       .orderBy(desc(articles.publishedAt), desc(articles.createdAt));
 
-    if (whereConditions.length > 0) {
-      query = baseQuery
-        .where(and(...whereConditions))
-        .limit(limit)
-        .offset(offset)
-        .orderBy(desc(articles.publishedAt), desc(articles.createdAt));
-    }
-
-    const items = await query;
+    const items = whereConditions.length > 0
+      ? await db
+          .select()
+          .from(articles)
+          .where(and(...whereConditions))
+          .limit(limit)
+          .offset(offset)
+          .orderBy(desc(articles.publishedAt), desc(articles.createdAt))
+      : await baseQuery;
 
     return {
       items,

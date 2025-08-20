@@ -3,29 +3,67 @@ import { useParams, Link } from "wouter";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Clock, Tag, User, BookOpen } from "lucide-react";
+import { ArrowLeft, Clock, Tag, User, BookOpen, Hash } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { SEO } from "@/components/seo";
+import { Article, ArticleSection } from "@shared/schema";
+import DOMPurify from "dompurify";
 
-interface Article {
-  id: string;
-  title: string;
-  html: string;
-  excerpt?: string;
-  slug: string;
-  status: 'draft' | 'published';
-  tags?: string[];
-  category?: string;
-  author?: string;
-  publishedAt?: string;
-  createdAt: string;
-  updatedAt: string;
-  metaTitle?: string;
-  metaDescription?: string;
-}
+// Helper function to extract table of contents from sections
+const extractTableOfContents = (sections: ArticleSection[]) => {
+  const tocItems: Array<{ id: string; title: string; level: number }> = [];
+  
+  sections.forEach((section) => {
+    // Extract headings from the HTML content
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = section.content;
+    
+    const headings = tempDiv.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    headings.forEach((heading) => {
+      const level = parseInt(heading.tagName.charAt(1));
+      const title = heading.textContent?.trim() || '';
+      if (title) {
+        // Create a unique ID for the heading if it doesn't have one
+        let id = heading.id;
+        if (!id) {
+          id = title.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-');
+          heading.id = id;
+        }
+        tocItems.push({ id, title, level });
+      }
+    });
+  });
+  
+  return tocItems;
+};
+
+// Helper function to generate excerpt from first section
+const generateExcerpt = (sections: ArticleSection[], maxLength: number = 200): string => {
+  if (!sections || sections.length === 0) return '';
+  
+  const firstSectionContent = sections[0].content;
+  if (!firstSectionContent) return '';
+  
+  // Strip HTML tags and get plain text
+  const plainText = firstSectionContent.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+  
+  if (plainText.length <= maxLength) {
+    return plainText;
+  }
+  
+  // Truncate at word boundary
+  const truncated = plainText.substring(0, maxLength);
+  const lastSpaceIndex = truncated.lastIndexOf(' ');
+  
+  if (lastSpaceIndex > maxLength * 0.8) {
+    return truncated.substring(0, lastSpaceIndex) + '...';
+  }
+  
+  return truncated + '...';
+};
 
 export default function ArticleDetailPage() {
   const params = useParams();
@@ -115,14 +153,17 @@ export default function ArticleDetailPage() {
     );
   }
 
+  // Generate excerpt from sections for meta description
+  const excerpt = Array.isArray(article.sections) ? generateExcerpt(article.sections as ArticleSection[]) : '';
+  
   // Set document title and meta description if available
   if (typeof document !== 'undefined') {
     document.title = article.metaTitle || article.title || 'Article - Cactilog';
     
     // Update meta description
     const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription && (article.metaDescription || article.excerpt)) {
-      metaDescription.setAttribute('content', article.metaDescription || article.excerpt || '');
+    if (metaDescription && (article.metaDescription || excerpt)) {
+      metaDescription.setAttribute('content', article.metaDescription || excerpt || '');
     }
   }
 
@@ -130,7 +171,7 @@ export default function ArticleDetailPage() {
     <>
       <SEO 
         title={article.metaTitle || `${article.title} - Cactilog`}
-        description={article.metaDescription || article.excerpt || `Read ${article.title} on Cactilog - expert cacti care guides and growing tips.`}
+        description={article.metaDescription || excerpt || `Read ${article.title} on Cactilog - expert cacti care guides and growing tips.`}
       />
       <Header />
       <div className="container mx-auto py-8 px-4 max-w-4xl">
@@ -150,9 +191,9 @@ export default function ArticleDetailPage() {
             {article.title}
           </h1>
           
-          {article.excerpt && (
+          {excerpt && (
             <p className="text-xl text-muted-foreground mb-6 leading-relaxed">
-              {article.excerpt}
+              {excerpt}
             </p>
           )}
           
@@ -194,32 +235,80 @@ export default function ArticleDetailPage() {
           )}
         </div>
 
-        {/* Article Content */}
-        <Card>
-          <CardContent className="pt-6">
-            <div 
-              className="prose prose-lg max-w-none
-                prose-headings:text-forest prose-headings:font-semibold
-                prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl
-                prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-4
-                prose-a:text-sage prose-a:no-underline hover:prose-a:underline
-                prose-strong:text-forest prose-strong:font-semibold
-                prose-ul:space-y-2 prose-ol:space-y-2
-                prose-li:text-gray-700
-                prose-blockquote:border-l-4 prose-blockquote:border-sage/20 
-                prose-blockquote:pl-6 prose-blockquote:italic prose-blockquote:text-gray-600
-                prose-code:bg-gray-100 prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:text-sm
-                prose-pre:bg-gray-100 prose-pre:border prose-pre:rounded-lg prose-pre:p-4
-                prose-img:rounded-lg prose-img:shadow-md prose-img:mx-auto
-                dark:prose-invert dark:prose-headings:text-white 
-                dark:prose-p:text-gray-300 dark:prose-a:text-sage-light
-                dark:prose-strong:text-white dark:prose-li:text-gray-300
-                dark:prose-blockquote:text-gray-400 dark:prose-code:bg-gray-800
-                dark:prose-pre:bg-gray-800"
-              dangerouslySetInnerHTML={{ __html: article.html }}
-            />
-          </CardContent>
-        </Card>
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          {/* Main Article Content */}
+          <div className="lg:col-span-3">
+            <Card>
+              <CardContent className="pt-6">
+                {Array.isArray(article.sections) && article.sections.length > 0 ? (
+                  <div className="space-y-8">
+                    {(article.sections as ArticleSection[]).map((section, index) => (
+                      <div key={section.id || index} className="section-content">
+                        <div 
+                          className="prose prose-lg max-w-none
+                            prose-headings:text-forest prose-headings:font-semibold
+                            prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl
+                            prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-4
+                            prose-a:text-sage prose-a:no-underline hover:prose-a:underline
+                            prose-strong:text-forest prose-strong:font-semibold
+                            prose-ul:space-y-2 prose-ol:space-y-2
+                            prose-li:text-gray-700
+                            prose-blockquote:border-l-4 prose-blockquote:border-sage/20 
+                            prose-blockquote:pl-6 prose-blockquote:italic prose-blockquote:text-gray-600
+                            prose-code:bg-gray-100 prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:text-sm
+                            prose-pre:bg-gray-100 prose-pre:border prose-pre:rounded-lg prose-pre:p-4
+                            prose-img:rounded-lg prose-img:shadow-md prose-img:mx-auto
+                            dark:prose-invert dark:prose-headings:text-white 
+                            dark:prose-p:text-gray-300 dark:prose-a:text-sage-light
+                            dark:prose-strong:text-white dark:prose-li:text-gray-300
+                            dark:prose-blockquote:text-gray-400 dark:prose-code:bg-gray-800
+                            dark:prose-pre:bg-gray-800"
+                          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(section.content) }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <BookOpen className="h-12 w-12 mx-auto mb-4" />
+                    <p>No content available for this article.</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Table of Contents Sidebar */}
+          <div className="lg:col-span-1">
+            {Array.isArray(article.sections) && article.sections.length > 0 && (() => {
+              const tableOfContents = extractTableOfContents(article.sections as ArticleSection[]);
+              return tableOfContents.length > 0 ? (
+                <Card className="sticky top-8">
+                  <CardHeader>
+                    <h2 className="flex items-center space-x-2 text-base font-semibold">
+                      <Hash className="w-4 h-4" />
+                      <span>Table of Contents</span>
+                    </h2>
+                  </CardHeader>
+                  <CardContent>
+                    <nav className="space-y-1">
+                      {tableOfContents.map((item, index) => (
+                        <a
+                          key={`${item.id}-${index}`}
+                          href={`#${item.id}`}
+                          className={`block text-sm text-muted-foreground hover:text-cactus-green hover:underline py-1 transition-colors ${'pl-' + (item.level - 1) * 4}`}
+                          style={{ paddingLeft: `${(item.level - 1) * 16}px` }}
+                        >
+                          {item.title}
+                        </a>
+                      ))}
+                    </nav>
+                  </CardContent>
+                </Card>
+              ) : null;
+            })()}
+          </div>
+        </div>
 
         {/* Back to Articles Footer */}
         <div className="mt-8 pt-8 border-t">
