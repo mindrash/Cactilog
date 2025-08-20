@@ -184,6 +184,10 @@ export default function ArticleDetailPage() {
         title={article.metaTitle || `${article.title} - Cactilog`}
         description={article.metaDescription || excerpt || `Read ${article.title} on Cactilog - expert cacti care guides and growing tips.`}
       />
+      {/* Render custom inline styles for this article */}
+      {article.inlineStyles && (
+        <style dangerouslySetInnerHTML={{ __html: article.inlineStyles }} />
+      )}
       <Header />
       <div className="container mx-auto py-8 px-4 max-w-4xl">
         {/* Navigation */}
