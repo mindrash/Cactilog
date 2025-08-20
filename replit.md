@@ -7,6 +7,16 @@ Cactilog is a full-stack web application designed for cacti and succulent enthus
 Preferred communication style: Simple, everyday language.
 Strongly prefers simple solutions over complex ones - avoid overcomplicating working systems.
 
+### Styling Standards & Design System
+- **Typography Classes**: Always use established class patterns:
+  - `page-title-xl` for main page titles
+  - `section-title` for section headings
+  - Standard text sizing without custom overrides
+- **Component Consistency**: Follow existing component styling patterns found throughout the codebase
+- **Design Philosophy**: Clean, botanical-themed interface with consistent spacing and visual hierarchy
+- **Quality Standards**: User emphasizes high-quality work - always verify styling matches established patterns before implementation
+- **Banner Design**: Compact, horizontal layouts preferred for info sections (similar to Species Search pattern)
+
 ## System Architecture
 Cactilog employs a modern full-stack architecture, ensuring clear separation between frontend and backend concerns.
 

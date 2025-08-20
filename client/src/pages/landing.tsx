@@ -79,10 +79,10 @@ function Landing() {
       <section className="max-w-6xl mx-auto px-4 py-6">
         <div className="bg-white/80 rounded-lg border border-gray-200 p-4 flex items-center justify-between shadow-sm">
           <div className="flex-1">
-            <h2 className="text-xl font-semibold text-gray-900 mb-1">
+            <h2 className="section-title mb-1">
               Track, Share & Grow Your Plant Collection
             </h2>
-            <p className="text-gray-600 text-sm">
+            <p className="text-gray-600">
               Join thousands of cactus and succulent enthusiasts documenting their journey.
             </p>
           </div>
