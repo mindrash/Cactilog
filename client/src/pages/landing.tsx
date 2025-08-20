@@ -211,25 +211,35 @@ function Landing() {
         </div>
       </section>
 
-      {/* Community Showcase */}
-      <section className="max-w-6xl mx-auto px-4 py-16 bg-white/50 rounded-lg mx-4 mb-8">
-        <div className="text-center mb-8">
-          <h2 className="section-title mb-4">Community Showcase</h2>
-          <p className="text-gray-600">
-            Discover amazing plants shared by our passionate community
-          </p>
-        </div>
 
-        {photosLoading ? (
+
+      {/* Latest Community Collections */}
+      {photosLoading ? (
+        <section className="max-w-6xl mx-auto px-4 py-16 bg-white/50 rounded-lg mx-4 mb-8">
+          <div className="text-center mb-8">
+            <h2 className="section-title mb-4">Latest Community Collections</h2>
+            <p className="text-gray-600">
+              Discover amazing plants shared by our passionate community
+            </p>
+          </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[...Array(8)].map((_, i) => (
               <div key={i} className="aspect-square bg-gray-200 rounded-lg animate-pulse" />
             ))}
           </div>
-        ) : photos && photos.length > 0 ? (
+        </section>
+      ) : photos && photos.length > 0 ? (
+        <section className="max-w-6xl mx-auto px-4 py-16 bg-white/50 rounded-lg mx-4 mb-8">
+          <div className="text-center mb-8">
+            <h2 className="section-title mb-4">Latest Community Collections</h2>
+            <p className="text-gray-600">
+              Discover amazing plants shared by our passionate community
+            </p>
+          </div>
+          
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             {photos.slice(0, 8).map((photoData) => (
-              <div key={photoData.photo.id} className="group relative">
+              <Link key={photoData.photo.id} href={`/plants/${photoData.plant.id}`} className="group relative block">
                 <div className="aspect-square overflow-hidden rounded-lg bg-gray-100">
                   <img
                     src={`/api/photos/${photoData.photo.id}/image`}
@@ -249,90 +259,27 @@ function Landing() {
                     </p>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
-        ) : (
-          <div className="text-center py-8 text-gray-500">
-            <p>Community photos will appear here as members share their collections!</p>
+
+          <div className="text-center">
+            <Link href="/community/photos">
+              <Button variant="outline" className="inline-flex items-center">
+                Explore Community Gallery
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Link>
           </div>
-        )}
-
-        <div className="text-center">
-          <Link href="/community/photos">
-            <Button variant="outline" className="inline-flex items-center">
-              Explore Community Gallery
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-          </Link>
-        </div>
-      </section>
-
-      {/* Public Feed Preview */}
-      {data && data.plants && data.plants.length > 0 && (
-        <section className="max-w-6xl mx-auto px-4 py-16">
+        </section>
+      ) : (
+        <section className="max-w-6xl mx-auto px-4 py-16 bg-white/50 rounded-lg mx-4 mb-8">
           <div className="text-center mb-8">
             <h2 className="section-title mb-4">Latest Community Collections</h2>
-            <div className="flex items-center justify-center space-x-4 text-sm text-gray-600">
-              <div className="flex items-center">
-                <Users className="w-4 h-4 mr-1" />
-                <span>{data.pagination.total} plants shared</span>
-              </div>
-            </div>
+            <p className="text-gray-600">
+              Community collections will appear here as members share their plants!
+            </p>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            {data.plants.slice(0, 6).map((plant) => (
-              <Card key={plant.id} className="hover:shadow-lg transition-shadow">
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between mb-2">
-                    <div>
-                      <h3 className="font-medium text-gray-900">{plant.name}</h3>
-                      {plant.scientificName && (
-                        <p className="text-sm italic text-gray-600">{plant.scientificName}</p>
-                      )}
-                    </div>
-                    {plant.isPublic && (
-                      <Badge variant="secondary" className="bg-green-100 text-green-800">
-                        Public
-                      </Badge>
-                    )}
-                  </div>
-                  
-                  <div className="flex items-center justify-between text-xs text-gray-500">
-                    <span>Added {new Date(plant.createdAt).toLocaleDateString()}</span>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          {/* Pagination */}
-          {data.pagination.totalPages > 1 && (
-            <div className="flex items-center justify-center space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                disabled={currentPage === 1}
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </Button>
-              
-              <span className="text-sm text-gray-600">
-                Page {currentPage} of {data.pagination.totalPages}
-              </span>
-              
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage(Math.min(data.pagination.totalPages, currentPage + 1))}
-                disabled={currentPage === data.pagination.totalPages}
-              >
-                <ChevronRight className="w-4 h-4" />
-              </Button>
-            </div>
-          )}
         </section>
       )}
 
