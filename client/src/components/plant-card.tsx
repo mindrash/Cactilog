@@ -83,7 +83,7 @@ export default function PlantCard({ plant, showPhotos = true, isPublicContext = 
           {/* Badges row */}
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-1 sm:gap-2">
-              <PrivacyBadge isPublic={plant.isPublic || "public"} />
+              {!isPublicContext && <PrivacyBadge isPublic={plant.isPublic || "public"} />}
               <Badge 
                 variant={plant.family === 'Cactaceae' ? 'default' : 'secondary'}
                 className={`text-xs ${plant.family === 'Cactaceae' ? 'bg-cactus-green/10 text-cactus-green' : 'bg-desert-sage/10 text-desert-sage'}`}
