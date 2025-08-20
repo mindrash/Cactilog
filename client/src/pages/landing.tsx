@@ -33,18 +33,19 @@ interface PublicPhoto {
   };
   plant: {
     id: number;
-    userId: string;
-    name: string;
-    scientificName?: string;
+    customId: string;
     genus?: string;
     species?: string;
-    cultivar?: string;
-    mutation?: string;
-    isPublic: boolean;
-    createdAt: string;
+    commonName?: string;
     updatedAt: string;
   };
-  userDisplayName: string;
+  user: {
+    id: string;
+    firstName?: string;
+    lastName?: string;
+    displayName?: string;
+    profileImageUrl?: string;
+  };
 }
 
 function Landing() {
@@ -238,10 +239,8 @@ function Landing() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-            {photos.slice(0, 6).map((photoData) => {
-              console.log('Photo data:', photoData);
-              return (
-                <Link key={photoData.photo.id} href={`/plants/${photoData.plant.id}`} className="group block">
+            {photos.slice(0, 6).map((photoData) => (
+              <Link key={photoData.photo.id} href={`/plants/${photoData.plant.id}`} className="group block">
                 <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
                   <div className="aspect-[4/3] overflow-hidden bg-gray-100">
                     <img
@@ -255,43 +254,34 @@ function Landing() {
                     <div className="space-y-3">
                       <div>
                         <h3 className="font-semibold text-gray-900 group-hover:text-cactus-green transition-colors line-clamp-1">
-                          {photoData.plant.name}
+                          {photoData.plant.commonName || photoData.plant.customId}
                         </h3>
-                        {photoData.plant.scientificName ? (
+                        {photoData.plant.genus && photoData.plant.species ? (
                           <p className="text-sm italic text-gray-600 line-clamp-1">
-                            {photoData.plant.scientificName}
+                            {photoData.plant.genus} {photoData.plant.species}
                           </p>
-                        ) : (
-                          <div className="text-sm text-gray-500">
-                            {photoData.plant.genus && photoData.plant.species ? (
-                              <span className="italic">
-                                {photoData.plant.genus} {photoData.plant.species}
-                                {photoData.plant.cultivar && <span className="font-medium"> '{photoData.plant.cultivar}'</span>}
-                                {photoData.plant.mutation && <span className="text-purple-600"> f. {photoData.plant.mutation}</span>}
-                              </span>
-                            ) : photoData.plant.genus ? (
-                              <span className="italic">{photoData.plant.genus} sp.</span>
-                            ) : null}
-                          </div>
-                        )}
+                        ) : photoData.plant.genus ? (
+                          <p className="text-sm italic text-gray-600 line-clamp-1">
+                            {photoData.plant.genus} sp.
+                          </p>
+                        ) : null}
                       </div>
                       
                       <div className="flex items-center justify-between text-xs text-gray-500">
                         <div className="flex items-center">
                           <Users className="w-3 h-3 mr-1" />
-                          <span>{photoData.userDisplayName}</span>
+                          <span>{photoData.user.displayName || photoData.user.firstName || 'Community Member'}</span>
                         </div>
                         <div className="flex items-center">
                           <Calendar className="w-3 h-3 mr-1" />
-                          <span>{new Date(photoData.plant.createdAt).toLocaleDateString()}</span>
+                          <span>{new Date(photoData.plant.updatedAt).toLocaleDateString()}</span>
                         </div>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
-                </Link>
-              );
-            })}
+              </Link>
+            ))}
           </div>
 
           <div className="text-center">
