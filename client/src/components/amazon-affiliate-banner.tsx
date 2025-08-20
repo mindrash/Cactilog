@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, ShoppingCart, Sparkles, Flower2, Package, Wrench, Droplets, Lightbulb, Book, Sprout, Sun } from "lucide-react";
+import { ExternalLink, ShoppingCart, Sparkles } from "lucide-react";
 import { amazonProducts, type AmazonProduct } from "@shared/amazon-products";
 
 interface AmazonAffiliateBannerProps {
@@ -10,20 +10,7 @@ interface AmazonAffiliateBannerProps {
   compact?: boolean;
 }
 
-// Get category icon
-const getCategoryIcon = (category: string) => {
-  switch (category) {
-    case 'soil': return <Package className="w-6 h-6" />;
-    case 'pots': return <Flower2 className="w-6 h-6" />;
-    case 'tools': return <Wrench className="w-6 h-6" />;
-    case 'watering': return <Droplets className="w-6 h-6" />;
-    case 'lights': return <Lightbulb className="w-6 h-6" />;
-    case 'books': return <Book className="w-6 h-6" />;
-    case 'seeds': return <Sprout className="w-6 h-6" />;
-    case 'fertilizer': return <Sun className="w-6 h-6" />;
-    default: return <ShoppingCart className="w-6 h-6" />;
-  }
-};
+
 
 export default function AmazonAffiliateBanner({ 
   category, 
@@ -91,8 +78,19 @@ export default function AmazonAffiliateBanner({
         <div className="grid gap-4">
           {selectedProducts.map((product) => (
             <div key={product.id} className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 bg-white rounded-lg border border-orange-100">
-              <div className="w-12 h-12 rounded shrink-0 bg-orange-100 flex items-center justify-center text-orange-500">
-                {getCategoryIcon(product.category)}
+              <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center shrink-0 overflow-hidden">
+                <img 
+                  src={product.imageUrl} 
+                  alt={product.title}
+                  className="w-full h-full object-cover rounded-lg"
+                  onError={(e) => {
+                    const target = e.currentTarget as HTMLImageElement;
+                    const fallback = target.nextElementSibling as HTMLSpanElement;
+                    target.style.display = 'none';
+                    if (fallback) fallback.style.display = 'flex';
+                  }}
+                />
+                <span className="text-2xl hidden items-center justify-center w-full h-full">🌵</span>
               </div>
               <div className="flex-1 min-w-0">
                 <h4 className="text-sm font-medium text-gray-900 break-words">
