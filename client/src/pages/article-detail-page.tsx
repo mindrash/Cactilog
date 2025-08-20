@@ -102,7 +102,7 @@ export default function ArticleDetailPage() {
     return (
       <>
         <Header />
-        <div className="container mx-auto py-8 px-4 max-w-4xl">
+        <div className="max-w-6xl mx-auto px-4 py-8">
           <div className="mb-6">
             <Skeleton className="h-6 w-24 mb-4" />
             <Skeleton className="h-12 w-3/4 mb-4" />
@@ -136,7 +136,7 @@ export default function ArticleDetailPage() {
     return (
       <>
         <Header />
-        <div className="container mx-auto py-8 px-4 max-w-4xl">
+        <div className="max-w-6xl mx-auto px-4 py-8">
           <div className="mb-6">
             <Link href="/articles">
               <Button variant="ghost" size="sm" className="mb-4">
@@ -189,7 +189,7 @@ export default function ArticleDetailPage() {
         <style dangerouslySetInnerHTML={{ __html: article.inlineStyles }} />
       )}
       <Header />
-      <div className="container mx-auto py-8 px-4 max-w-4xl">
+      <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Navigation */}
         <div className="mb-6">
           <Link href="/articles">
