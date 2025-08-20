@@ -106,9 +106,9 @@ function Landing() {
       {isLoading ? (
         <section className="max-w-6xl mx-auto px-4 py-12 bg-white/50 rounded-lg mx-4 mb-8">
           <div className="text-center mb-8">
-            <h2 className="section-title mb-4">Latest Community Collections</h2>
+            <h2 className="section-title mb-4">Community Feed</h2>
             <p className="text-gray-600">
-              Discover amazing plants shared by our passionate community
+              Latest plants shared by our community
             </p>
           </div>
           <div className="flex items-center justify-center">
@@ -118,9 +118,9 @@ function Landing() {
       ) : data?.plants && data.plants.length > 0 ? (
         <section className="max-w-6xl mx-auto px-4 py-12 bg-white/50 rounded-lg mx-4 mb-8">
           <div className="text-center mb-8">
-            <h2 className="section-title mb-4">Latest Community Collections</h2>
+            <h2 className="section-title mb-4">Community Feed</h2>
             <p className="text-gray-600">
-              Discover amazing plants shared by our passionate community
+              Latest plants shared by our community
             </p>
           </div>
           
@@ -142,9 +142,9 @@ function Landing() {
       ) : (
         <section className="max-w-6xl mx-auto px-4 py-12 bg-white/50 rounded-lg mx-4 mb-8">
           <div className="text-center mb-8">
-            <h2 className="section-title mb-4">Latest Community Collections</h2>
+            <h2 className="section-title mb-4">Community Feed</h2>
             <p className="text-gray-600">
-              Community collections will appear here as members share their plants!
+              Latest plants shared by our community
             </p>
           </div>
         </section>
