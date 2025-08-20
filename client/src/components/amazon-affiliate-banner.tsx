@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, ShoppingCart, Sparkles } from "lucide-react";
+import { ExternalLink, ShoppingCart, Sparkles, Flower2, Package, Wrench, Droplets, Lightbulb, Book, Sprout, Sun } from "lucide-react";
 import { amazonProducts, type AmazonProduct } from "@shared/amazon-products";
 
 interface AmazonAffiliateBannerProps {
@@ -9,6 +9,21 @@ interface AmazonAffiliateBannerProps {
   title?: string;
   compact?: boolean;
 }
+
+// Get category icon
+const getCategoryIcon = (category: string) => {
+  switch (category) {
+    case 'soil': return <Package className="w-6 h-6" />;
+    case 'pots': return <Flower2 className="w-6 h-6" />;
+    case 'tools': return <Wrench className="w-6 h-6" />;
+    case 'watering': return <Droplets className="w-6 h-6" />;
+    case 'lights': return <Lightbulb className="w-6 h-6" />;
+    case 'books': return <Book className="w-6 h-6" />;
+    case 'seeds': return <Sprout className="w-6 h-6" />;
+    case 'fertilizer': return <Sun className="w-6 h-6" />;
+    default: return <ShoppingCart className="w-6 h-6" />;
+  }
+};
 
 export default function AmazonAffiliateBanner({ 
   category, 
@@ -76,15 +91,9 @@ export default function AmazonAffiliateBanner({
         <div className="grid gap-4">
           {selectedProducts.map((product) => (
             <div key={product.id} className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 bg-white rounded-lg border border-orange-100">
-              <img
-                src={product.imageUrl}
-                alt={product.title}
-                className="w-12 h-12 object-cover rounded shrink-0"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.src = '/api/placeholder/48/48';
-                }}
-              />
+              <div className="w-12 h-12 rounded shrink-0 bg-orange-100 flex items-center justify-center text-orange-500">
+                {getCategoryIcon(product.category)}
+              </div>
               <div className="flex-1 min-w-0">
                 <h4 className="text-sm font-medium text-gray-900 break-words">
                   {product.title.length > 60 ? `${product.title.substring(0, 60)}...` : product.title}
