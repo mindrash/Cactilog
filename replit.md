@@ -16,6 +16,11 @@ Strongly prefers simple solutions over complex ones - avoid overcomplicating wor
 - **Design Philosophy**: Clean, botanical-themed interface with consistent spacing and visual hierarchy
 - **Quality Standards**: User emphasizes high-quality work - always verify styling matches established patterns before implementation
 - **Banner Design**: Compact, horizontal layouts preferred for info sections (similar to Species Search pattern)
+- **Responsive Design**: Always implement mobile-first responsive layouts:
+  - Use `flex-col` for mobile, `md:flex-row` for desktop
+  - Consider mobile UX in all component designs
+  - Test and optimize for both mobile and desktop experiences
+  - Stack elements vertically on small screens, horizontally on larger screens
 
 ## System Architecture
 Cactilog employs a modern full-stack architecture, ensuring clear separation between frontend and backend concerns.
