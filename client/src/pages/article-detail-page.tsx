@@ -202,15 +202,9 @@ export default function ArticleDetailPage() {
 
         {/* Article Header */}
         <div className="mb-8">
-          <h1 className="page-title-lg mb-4 leading-tight">
+          <h1 className="page-title-lg mb-6 leading-tight">
             {article.title}
           </h1>
-          
-          {excerpt && (
-            <p className="text-xl text-muted-foreground mb-6 leading-relaxed">
-              {excerpt}
-            </p>
-          )}
           
           {/* Article Meta */}
           <div className="flex flex-wrap items-center gap-4 mb-6 text-sm text-muted-foreground">
