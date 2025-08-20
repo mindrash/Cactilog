@@ -76,22 +76,22 @@ function Landing() {
       <Header />
       
       {/* Hero Section */}
-      <section className="max-w-6xl mx-auto px-4 py-16 text-center">
-        <div className="mb-8">
-          <h1 className="page-title-xl mb-4">
+      <section className="max-w-6xl mx-auto px-4 py-8 text-center">
+        <div className="mb-6">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
             The Complete Platform for Cactus & Succulent Enthusiasts
           </h1>
-          <p className="text-lg text-gray-700 max-w-3xl mx-auto mb-8">
+          <p className="text-base text-gray-700 max-w-2xl mx-auto mb-6">
             Join thousands of collectors tracking their plants, sharing discoveries, and growing their knowledge. 
             From beginners to experts, Cactilog helps you nurture your passion for cacti and succulents.
           </p>
           <Button 
             asChild
             size="lg"
-            className="bg-cactus-green hover:bg-cactus-green/90 px-8 py-3 text-lg"
+            className="bg-cactus-green hover:bg-cactus-green/90 px-6 py-2"
           >
             <a href="/api/login">
-              <LogIn className="w-5 h-5 mr-2" />
+              <LogIn className="w-4 h-4 mr-2" />
               Start Your Collection Today
             </a>
           </Button>
@@ -100,7 +100,7 @@ function Landing() {
 
       {/* Latest Community Collections */}
       {photosLoading ? (
-        <section className="max-w-6xl mx-auto px-4 py-16 bg-white/50 rounded-lg mx-4 mb-8">
+        <section className="max-w-6xl mx-auto px-4 py-12 bg-white/50 rounded-lg mx-4 mb-8">
           <div className="text-center mb-8">
             <h2 className="section-title mb-4">Latest Community Collections</h2>
             <p className="text-gray-600">
@@ -112,7 +112,7 @@ function Landing() {
           </div>
         </section>
       ) : photos && photos.length > 0 ? (
-        <section className="max-w-6xl mx-auto px-4 py-16 bg-white/50 rounded-lg mx-4 mb-8">
+        <section className="max-w-6xl mx-auto px-4 py-12 bg-white/50 rounded-lg mx-4 mb-8">
           <div className="text-center mb-8">
             <h2 className="section-title mb-4">Latest Community Collections</h2>
             <p className="text-gray-600">
@@ -176,7 +176,7 @@ function Landing() {
           </div>
         </section>
       ) : (
-        <section className="max-w-6xl mx-auto px-4 py-16 bg-white/50 rounded-lg mx-4 mb-8">
+        <section className="max-w-6xl mx-auto px-4 py-12 bg-white/50 rounded-lg mx-4 mb-8">
           <div className="text-center mb-8">
             <h2 className="section-title mb-4">Latest Community Collections</h2>
             <p className="text-gray-600">
