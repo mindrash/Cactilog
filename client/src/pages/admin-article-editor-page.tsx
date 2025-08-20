@@ -25,8 +25,6 @@ const articleFormSchema = insertArticleSchema.pick({
   title: true,
   sections: true,
   status: true,
-}).extend({
-  publishNow: z.boolean().optional(),
 });
 
 type ArticleFormData = z.infer<typeof articleFormSchema>;
@@ -115,7 +113,6 @@ export default function AdminArticleEditorPage() {
       title: "",
       sections: [{ id: crypto.randomUUID(), content: "" }],
       status: "draft",
-      publishNow: false,
     },
   });
 
@@ -135,10 +132,9 @@ export default function AdminArticleEditorPage() {
         : [{ id: crypto.randomUUID(), content: "" }];
       
       form.reset({
-        title: article.title,
+        title: article.title || "",
         sections: sections,
-        status: article.status,
-        publishNow: false,
+        status: (article.status as "draft" | "published") || "draft",
       });
     }
   }, [article, isEditing, form]);
@@ -163,7 +159,7 @@ export default function AdminArticleEditorPage() {
       const response = await apiRequest(endpoint, method, {
         title: data.title,
         sections: data.sections,
-        status: data.publishNow ? 'published' : data.status,
+        status: data.status,
       });
       
       return response.json();
@@ -388,15 +384,15 @@ export default function AdminArticleEditorPage() {
                       ))}
                     </div>
 
-                    {/* Article Status and Publish Controls */}
-                    <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t">
+                    {/* Article Status Control */}
+                    <div className="pt-6 border-t">
                       <FormField
                         control={form.control}
                         name="status"
                         render={({ field }) => (
-                          <FormItem className="flex-1">
-                            <FormLabel>Status</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormItem className="w-48">
+                            <FormLabel>Article Status</FormLabel>
+                            <Select onValueChange={field.onChange} value={field.value}>
                               <FormControl>
                                 <SelectTrigger>
                                   <SelectValue placeholder="Select status" />
@@ -408,27 +404,6 @@ export default function AdminArticleEditorPage() {
                               </SelectContent>
                             </Select>
                             <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      
-                      <FormField
-                        control={form.control}
-                        name="publishNow"
-                        render={({ field }) => (
-                          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                            <div className="space-y-0.5">
-                              <FormLabel className="text-base">Publish Now</FormLabel>
-                              <FormDescription>
-                                Override status and publish immediately
-                              </FormDescription>
-                            </div>
-                            <FormControl>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
-                            </FormControl>
                           </FormItem>
                         )}
                       />
