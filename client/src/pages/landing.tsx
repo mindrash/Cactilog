@@ -98,6 +98,94 @@ function Landing() {
         </div>
       </section>
 
+      {/* Latest Community Collections */}
+      {photosLoading ? (
+        <section className="max-w-6xl mx-auto px-4 py-16 bg-white/50 rounded-lg mx-4 mb-8">
+          <div className="text-center mb-8">
+            <h2 className="section-title mb-4">Latest Community Collections</h2>
+            <p className="text-gray-600">
+              Discover amazing plants shared by our passionate community
+            </p>
+          </div>
+          <div className="flex items-center justify-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cactus-green"></div>
+          </div>
+        </section>
+      ) : photos && photos.length > 0 ? (
+        <section className="max-w-6xl mx-auto px-4 py-16 bg-white/50 rounded-lg mx-4 mb-8">
+          <div className="text-center mb-8">
+            <h2 className="section-title mb-4">Latest Community Collections</h2>
+            <p className="text-gray-600">
+              Discover amazing plants shared by our passionate community
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+            {photos.slice(0, 6).map((photoData) => (
+              <Link key={photoData.photo.id} href={`/plants/${photoData.plant.id}`} className="group block">
+                <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                  <div className="aspect-[4/3] overflow-hidden bg-gray-100">
+                    <img
+                      src={`/api/photos/${photoData.photo.id}/image`}
+                      alt={photoData.plant.commonName || photoData.plant.customId}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+
+                    />
+                  </div>
+                  <CardContent className="p-4">
+                    <div className="space-y-3">
+                      <div>
+                        <h3 className="font-semibold text-gray-900 group-hover:text-cactus-green transition-colors line-clamp-1">
+                          {photoData.plant.commonName || photoData.plant.customId}
+                        </h3>
+                        {photoData.plant.genus && photoData.plant.species ? (
+                          <p className="text-sm italic text-gray-600 line-clamp-1">
+                            {photoData.plant.genus} {photoData.plant.species}
+                          </p>
+                        ) : photoData.plant.genus ? (
+                          <p className="text-sm italic text-gray-600 line-clamp-1">
+                            {photoData.plant.genus} sp.
+                          </p>
+                        ) : null}
+                      </div>
+                      
+                      <div className="flex items-center justify-between text-xs text-gray-500">
+                        <div className="flex items-center">
+                          <Users className="w-3 h-3 mr-1" />
+                          <span>{photoData.user.displayName || photoData.user.firstName || 'Community Member'}</span>
+                        </div>
+                        <div className="flex items-center">
+                          <Calendar className="w-3 h-3 mr-1" />
+                          <span>{new Date(photoData.plant.updatedAt).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
+
+          <div className="text-center">
+            <Link href="/community/photos">
+              <Button variant="outline" className="inline-flex items-center">
+                Explore Community Gallery
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Link>
+          </div>
+        </section>
+      ) : (
+        <section className="max-w-6xl mx-auto px-4 py-16 bg-white/50 rounded-lg mx-4 mb-8">
+          <div className="text-center mb-8">
+            <h2 className="section-title mb-4">Latest Community Collections</h2>
+            <p className="text-gray-600">
+              Community collections will appear here as members share their plants!
+            </p>
+          </div>
+        </section>
+      )}
+
       {/* Featured Products Above Fold */}
       <section className="max-w-6xl mx-auto px-4 py-8 bg-white/50 rounded-lg mx-4 mb-8">
         <div className="text-center mb-6">
@@ -214,95 +302,7 @@ function Landing() {
 
 
 
-      {/* Latest Community Collections */}
-      {photosLoading ? (
-        <section className="max-w-6xl mx-auto px-4 py-16 bg-white/50 rounded-lg mx-4 mb-8">
-          <div className="text-center mb-8">
-            <h2 className="section-title mb-4">Latest Community Collections</h2>
-            <p className="text-gray-600">
-              Discover amazing plants shared by our passionate community
-            </p>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="aspect-square bg-gray-200 rounded-lg animate-pulse" />
-            ))}
-          </div>
-        </section>
-      ) : photos && photos.length > 0 ? (
-        <section className="max-w-6xl mx-auto px-4 py-16 bg-white/50 rounded-lg mx-4 mb-8">
-          <div className="text-center mb-8">
-            <h2 className="section-title mb-4">Latest Community Collections</h2>
-            <p className="text-gray-600">
-              Discover amazing plants shared by our passionate community
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-            {photos.slice(0, 6).map((photoData) => (
-              <Link key={photoData.photo.id} href={`/plants/${photoData.plant.id}`} className="group block">
-                <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                  <div className="aspect-[4/3] overflow-hidden bg-gray-100">
-                    <img
-                      src={`/api/photos/${photoData.photo.id}/image`}
-                      alt={photoData.plant.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      onLoad={() => console.log('Successfully loaded image:', `/api/photos/${photoData.photo.id}/image`)}
-                    />
-                  </div>
-                  <CardContent className="p-4">
-                    <div className="space-y-3">
-                      <div>
-                        <h3 className="font-semibold text-gray-900 group-hover:text-cactus-green transition-colors line-clamp-1">
-                          {photoData.plant.commonName || photoData.plant.customId}
-                        </h3>
-                        {photoData.plant.genus && photoData.plant.species ? (
-                          <p className="text-sm italic text-gray-600 line-clamp-1">
-                            {photoData.plant.genus} {photoData.plant.species}
-                          </p>
-                        ) : photoData.plant.genus ? (
-                          <p className="text-sm italic text-gray-600 line-clamp-1">
-                            {photoData.plant.genus} sp.
-                          </p>
-                        ) : null}
-                      </div>
-                      
-                      <div className="flex items-center justify-between text-xs text-gray-500">
-                        <div className="flex items-center">
-                          <Users className="w-3 h-3 mr-1" />
-                          <span>{photoData.user.displayName || photoData.user.firstName || 'Community Member'}</span>
-                        </div>
-                        <div className="flex items-center">
-                          <Calendar className="w-3 h-3 mr-1" />
-                          <span>{new Date(photoData.plant.updatedAt).toLocaleDateString()}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
-          </div>
 
-          <div className="text-center">
-            <Link href="/community/photos">
-              <Button variant="outline" className="inline-flex items-center">
-                Explore Community Gallery
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </Link>
-          </div>
-        </section>
-      ) : (
-        <section className="max-w-6xl mx-auto px-4 py-16 bg-white/50 rounded-lg mx-4 mb-8">
-          <div className="text-center mb-8">
-            <h2 className="section-title mb-4">Latest Community Collections</h2>
-            <p className="text-gray-600">
-              Community collections will appear here as members share their plants!
-            </p>
-          </div>
-        </section>
-      )}
 
       {/* Final CTA */}
       <section className="max-w-4xl mx-auto px-4 py-16 text-center">
