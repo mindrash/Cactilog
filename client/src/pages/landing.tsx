@@ -11,6 +11,7 @@ import { SEO } from "@/components/seo";
 import AmazonAffiliateProducts from "@/components/amazon-affiliate-products";
 import type { Plant } from "@shared/schema";
 import { getFeaturedProducts } from "@shared/amazon-products";
+import PlantCard from "@/components/plant-card";
 
 interface PublicFeedResponse {
   plants: Plant[];
@@ -102,7 +103,7 @@ function Landing() {
       </section>
 
       {/* Latest Community Collections */}
-      {photosLoading ? (
+      {isLoading ? (
         <section className="max-w-6xl mx-auto px-4 py-12 bg-white/50 rounded-lg mx-4 mb-8">
           <div className="text-center mb-8">
             <h2 className="section-title mb-4">Latest Community Collections</h2>
@@ -114,7 +115,7 @@ function Landing() {
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cactus-green"></div>
           </div>
         </section>
-      ) : photos && photos.length > 0 ? (
+      ) : data?.plants && data.plants.length > 0 ? (
         <section className="max-w-6xl mx-auto px-4 py-12 bg-white/50 rounded-lg mx-4 mb-8">
           <div className="text-center mb-8">
             <h2 className="section-title mb-4">Latest Community Collections</h2>
@@ -123,49 +124,9 @@ function Landing() {
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-            {photos.slice(0, 6).map((photoData) => (
-              <Link key={photoData.photo.id} href={`/plants/${photoData.plant.id}`} className="group block">
-                <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                  <div className="aspect-[4/3] overflow-hidden bg-gray-100">
-                    <img
-                      src={`/api/photos/${photoData.photo.id}/image`}
-                      alt={photoData.plant.commonName || photoData.plant.customId}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-
-                    />
-                  </div>
-                  <CardContent className="p-4">
-                    <div className="space-y-3">
-                      <div>
-                        <h3 className="font-semibold text-gray-900 group-hover:text-cactus-green transition-colors line-clamp-1">
-                          {photoData.plant.commonName || photoData.plant.customId}
-                        </h3>
-                        {photoData.plant.genus && photoData.plant.species ? (
-                          <p className="text-sm italic text-gray-600 line-clamp-1">
-                            {photoData.plant.genus} {photoData.plant.species}
-                          </p>
-                        ) : photoData.plant.genus ? (
-                          <p className="text-sm italic text-gray-600 line-clamp-1">
-                            {photoData.plant.genus} sp.
-                          </p>
-                        ) : null}
-                      </div>
-                      
-                      <div className="flex items-center justify-between text-xs text-gray-500">
-                        <div className="flex items-center">
-                          <Users className="w-3 h-3 mr-1" />
-                          <span>{photoData.user.displayName || photoData.user.firstName || 'Community Member'}</span>
-                        </div>
-                        <div className="flex items-center">
-                          <Calendar className="w-3 h-3 mr-1" />
-                          <span>{new Date(photoData.plant.updatedAt).toLocaleDateString()}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-6">
+            {data?.plants.slice(0, 8).map((plant) => (
+              <PlantCard key={plant.id} plant={plant} isPublicContext={true} />
             ))}
           </div>
 
