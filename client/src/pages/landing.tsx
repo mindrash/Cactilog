@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
-import { LogIn, ArrowRight, TrendingUp, Users, Star, ChevronLeft, ChevronRight } from "lucide-react";
+import { LogIn, ArrowRight, TrendingUp, Users, Star, ChevronLeft, ChevronRight, MapPin, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -237,28 +237,48 @@ function Landing() {
             </p>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            {photos.slice(0, 8).map((photoData) => (
-              <Link key={photoData.photo.id} href={`/plants/${photoData.plant.id}`} className="group relative block">
-                <div className="aspect-square overflow-hidden rounded-lg bg-gray-100">
-                  <img
-                    src={`/api/photos/${photoData.photo.id}/image`}
-                    alt={photoData.plant.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    onLoad={() => console.log('Successfully loaded image:', `/api/photos/${photoData.photo.id}/image`)}
-                  />
-                </div>
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 rounded-lg" />
-                <div className="absolute bottom-2 left-2 right-2">
-                  <div className="bg-white/90 backdrop-blur-sm rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <p className="text-xs font-medium text-gray-900 truncate">
-                      {photoData.plant.name}
-                    </p>
-                    <p className="text-xs text-gray-600 truncate">
-                      by {photoData.userDisplayName}
-                    </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+            {photos.slice(0, 6).map((photoData) => (
+              <Link key={photoData.photo.id} href={`/plants/${photoData.plant.id}`} className="group block">
+                <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                  <div className="aspect-[4/3] overflow-hidden bg-gray-100">
+                    <img
+                      src={`/api/photos/${photoData.photo.id}/image`}
+                      alt={photoData.plant.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      onLoad={() => console.log('Successfully loaded image:', `/api/photos/${photoData.photo.id}/image`)}
+                    />
                   </div>
-                </div>
+                  <CardContent className="p-4">
+                    <div className="space-y-2">
+                      <div>
+                        <h3 className="font-medium text-gray-900 group-hover:text-cactus-green transition-colors line-clamp-1">
+                          {photoData.plant.name}
+                        </h3>
+                        {photoData.plant.scientificName && (
+                          <p className="text-sm italic text-gray-600 line-clamp-1">
+                            {photoData.plant.scientificName}
+                          </p>
+                        )}
+                      </div>
+                      
+                      <div className="flex items-center justify-between text-xs text-gray-500">
+                        <span className="flex items-center">
+                          <Users className="w-3 h-3 mr-1" />
+                          {photoData.userDisplayName}
+                        </span>
+                        <Badge variant="secondary" className="bg-green-100 text-green-800 text-xs">
+                          Public
+                        </Badge>
+                      </div>
+                      
+                      <div className="flex items-center text-xs text-gray-500">
+                        <Calendar className="w-3 h-3 mr-1" />
+                        Added {new Date(photoData.plant.createdAt).toLocaleDateString()}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </Link>
             ))}
           </div>
