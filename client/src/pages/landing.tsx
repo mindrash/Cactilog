@@ -75,23 +75,22 @@ function Landing() {
       <SEO />
       <Header />
       
-      {/* Hero Section */}
-      <section className="max-w-6xl mx-auto px-4 py-8 text-center">
+      {/* Hero Banner - Compact */}
+      <section className="max-w-6xl mx-auto px-4 py-12 text-center">
         <div className="mb-6">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
-            The Complete Platform for Cactus & Succulent Enthusiasts
+          <h1 className="page-title-xl mb-4">
+            Track, Share & Grow Your Plant Collection
           </h1>
-          <p className="text-base text-gray-700 max-w-2xl mx-auto mb-6">
-            Join thousands of collectors tracking their plants, sharing discoveries, and growing their knowledge. 
-            From beginners to experts, Cactilog helps you nurture your passion for cacti and succulents.
+          <p className="text-lg text-gray-700 max-w-2xl mx-auto mb-6">
+            Join thousands of cactus and succulent enthusiasts documenting their journey.
           </p>
           <Button 
             asChild
             size="lg"
-            className="bg-cactus-green hover:bg-cactus-green/90 px-6 py-2"
+            className="bg-cactus-green hover:bg-cactus-green/90 px-8 py-3 text-lg"
           >
             <a href="/api/login">
-              <LogIn className="w-4 h-4 mr-2" />
+              <LogIn className="w-5 h-5 mr-2" />
               Start Your Collection Today
             </a>
           </Button>
