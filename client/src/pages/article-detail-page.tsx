@@ -260,7 +260,7 @@ export default function ArticleDetailPage() {
                     {(article.sections as ArticleSection[]).map((section, index) => (
                       <div key={section.id || index} className="section-content">
                         <div 
-                          className="prose prose-lg max-w-none
+                          className="prose max-w-none
                             prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-4
                             prose-a:text-sage prose-a:no-underline hover:prose-a:underline
                             prose-strong:text-forest prose-strong:font-semibold
@@ -309,7 +309,7 @@ export default function ArticleDetailPage() {
                           key={`${item.id}-${index}`}
                           href={`#${item.id}`}
                           className={`flex items-center text-sm text-muted-foreground hover:text-cactus-green hover:underline py-1 transition-colors`}
-                          style={{ paddingLeft: `${(item.level - 1) * 16}px` }}
+                          style={{ paddingLeft: item.level === 2 ? '0px' : `${(item.level - 1) * 16}px` }}
                         >
                           {item.level === 2 && (
                             <span className="text-cactus-green mr-2 text-base">🌵</span>
