@@ -215,7 +215,7 @@ export const amazonProducts: AmazonProduct[] = [
     title: 'Succulent Kit with Organizer Bag',
     description: 'Complete terrarium supplies with organizer bag for succulent cuttings and fertilizer management',
     price: '$24.99',
-    imageUrl: 'https://m.media-amazon.com/images/I/81N6RXzjrfL._AC_SX569_.jpg',
+    imageUrl: 'https://m.media-amazon.com/images/I/81Uc8b9yDuL._AC_SY355_.jpg',
     affiliateUrl: 'https://www.amazon.com/dp/B07QYCB42M?tag=mindrash-20&linkCode=ogi&th=1&psc=1',
     category: 'tools',
     tags: ['organizer-bag', 'terrarium', 'cuttings', 'fertilizer-management'],
