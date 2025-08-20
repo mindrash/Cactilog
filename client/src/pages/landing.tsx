@@ -77,25 +77,27 @@ function Landing() {
       
       {/* Compact Info Banner */}
       <section className="max-w-6xl mx-auto px-4 py-6">
-        <div className="bg-white/80 rounded-lg border border-gray-200 p-4 flex items-center justify-between shadow-sm">
-          <div className="flex-1">
-            <h2 className="section-title mb-1">
-              Track, Share & Grow Your Plant Collection
-            </h2>
-            <p className="text-gray-600">
-              Join thousands of cactus and succulent enthusiasts documenting their journey.
-            </p>
+        <div className="bg-white/80 rounded-lg border border-gray-200 p-4 shadow-sm">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="flex-1">
+              <h2 className="section-title mb-2">
+                Track, Share & Grow Your Plant Collection
+              </h2>
+              <p className="text-gray-600">
+                Join thousands of cactus and succulent enthusiasts documenting their journey.
+              </p>
+            </div>
+            <Button 
+              asChild
+              size="lg"
+              className="bg-cactus-green hover:bg-cactus-green/90 shrink-0"
+            >
+              <a href="/api/login">
+                <LogIn className="w-4 h-4 mr-2" />
+                Start Your Collection
+              </a>
+            </Button>
           </div>
-          <Button 
-            asChild
-            size="lg"
-            className="bg-cactus-green hover:bg-cactus-green/90 ml-6 shrink-0"
-          >
-            <a href="/api/login">
-              <LogIn className="w-4 h-4 mr-2" />
-              Start Your Collection
-            </a>
-          </Button>
         </div>
       </section>
 
