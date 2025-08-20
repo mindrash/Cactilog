@@ -101,9 +101,9 @@ export default function AdminArticleEditorPage() {
 
   // Fetch article data if editing
   const { data: article, isLoading: isLoadingArticle } = useQuery<Article>({
-    queryKey: ['/api/articles/admin', articleId],
+    queryKey: ['/api/admin/articles', articleId],
     queryFn: async () => {
-      const response = await apiRequest(`/api/articles/admin/${articleId}`, 'GET');
+      const response = await apiRequest(`/api/admin/articles/${articleId}`, 'GET');
       return response.json();
     },
     enabled: !!isEditing,
@@ -127,9 +127,16 @@ export default function AdminArticleEditorPage() {
   // Update form when article data is loaded
   useEffect(() => {
     if (article && isEditing) {
+      // Ensure sections is always an array
+      const sections = Array.isArray(article.sections) 
+        ? article.sections 
+        : article.sections 
+        ? [article.sections]
+        : [{ id: crypto.randomUUID(), content: "" }];
+      
       form.reset({
         title: article.title,
-        sections: article.sections || [{ id: crypto.randomUUID(), content: "" }],
+        sections: sections,
         status: article.status,
         publishNow: false,
       });
@@ -150,7 +157,7 @@ export default function AdminArticleEditorPage() {
   // Create/Update article mutation
   const createArticleMutation = useMutation({
     mutationFn: async (data: ArticleFormData) => {
-      const endpoint = isEditing ? `/api/articles/admin/${articleId}` : '/api/articles/admin';
+      const endpoint = isEditing ? `/api/admin/articles/${articleId}` : '/api/admin/articles';
       const method = isEditing ? 'PUT' : 'POST';
       
       const response = await apiRequest(endpoint, method, {
@@ -167,7 +174,7 @@ export default function AdminArticleEditorPage() {
         description: isEditing ? "Your article has been updated successfully." : "Your article has been created successfully.",
       });
       queryClient.invalidateQueries({ queryKey: ['/api/articles'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/articles/admin'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/articles'] });
       if (!isEditing) {
         setLocation(`/admin/articles/${data.id}/edit`);
       }
