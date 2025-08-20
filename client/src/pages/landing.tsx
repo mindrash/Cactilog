@@ -238,8 +238,10 @@ function Landing() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-            {photos.slice(0, 6).map((photoData) => (
-              <Link key={photoData.photo.id} href={`/plants/${photoData.plant.id}`} className="group block">
+            {photos.slice(0, 6).map((photoData) => {
+              console.log('Photo data:', photoData);
+              return (
+                <Link key={photoData.photo.id} href={`/plants/${photoData.plant.id}`} className="group block">
                 <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
                   <div className="aspect-[4/3] overflow-hidden bg-gray-100">
                     <img
@@ -274,27 +276,22 @@ function Landing() {
                         )}
                       </div>
                       
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center text-xs text-gray-500">
-                          <Users className="w-3 h-3 mr-1 flex-shrink-0" />
-                          <span className="truncate">{photoData.userDisplayName}</span>
+                      <div className="flex items-center justify-between text-xs text-gray-500">
+                        <div className="flex items-center">
+                          <Users className="w-3 h-3 mr-1" />
+                          <span>{photoData.userDisplayName}</span>
                         </div>
-                        <div className="flex items-center text-xs text-gray-500">
-                          <Calendar className="w-3 h-3 mr-1 flex-shrink-0" />
-                          <span className="whitespace-nowrap">
-                            {new Date(photoData.plant.createdAt).toLocaleDateString('en-US', { 
-                              month: 'short', 
-                              day: 'numeric',
-                              year: new Date(photoData.plant.createdAt).getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined
-                            })}
-                          </span>
+                        <div className="flex items-center">
+                          <Calendar className="w-3 h-3 mr-1" />
+                          <span>{new Date(photoData.plant.createdAt).toLocaleDateString()}</span>
                         </div>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
 
           <div className="text-center">
