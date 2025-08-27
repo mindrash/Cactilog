@@ -234,7 +234,7 @@ export default function ArticlesPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-3 mb-2">
-                      <h3 className="section-title text-xl">
+                      <h3 className="section-title text-xl break-words hyphens-auto">
                         <Link href={`/articles/${article.slug}`} className="hover:text-sage transition-colors">
                           {article.title}
                         </Link>
