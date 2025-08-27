@@ -231,73 +231,69 @@ export default function ArticlesPage() {
           <div className="divide-y">
             {articlesData?.items.map((article) => (
               <div key={article.id} className="p-6 hover:bg-sage/5 transition-colors">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-3 mb-2">
-                      <h3 className="section-title text-xl break-words hyphens-auto">
-                        <Link href={`/articles/${article.slug}`} className="hover:text-sage transition-colors">
-                          {article.title}
-                        </Link>
-                      </h3>
-                      {article.category && (
-                        <Badge variant="secondary" className="bg-sage/10 text-sage-600">
-                          {article.category}
-                        </Badge>
-                      )}
-                    </div>
-                    
-                    {(() => {
-                      if (article.sections && Array.isArray(article.sections) && article.sections.length > 0) {
-                        const excerpt = generateExcerpt(article.sections as ArticleSection[]);
-                        return excerpt ? (
-                          <p className="text-muted-foreground mb-3 line-clamp-2">
-                            {excerpt}
-                          </p>
-                        ) : null;
-                      }
-                      return null;
-                    })()}
-                    
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground mb-2">
-                      <div className="flex items-center gap-1">
-                        <Clock className="h-4 w-4" />
-                        {article.publishedAt 
-                          ? format(new Date(article.publishedAt), "MMM d, yyyy")
-                          : format(new Date(article.createdAt), "MMM d, yyyy")
-                        }
-                      </div>
-                    </div>
-                    
-                    {article.tags && article.tags.length > 0 && (
-                      <div className="flex gap-2 flex-wrap">
-                        {article.tags.slice(0, 4).map((tag) => (
-                          <Badge 
-                            key={tag} 
-                            variant="outline" 
-                            className="text-xs cursor-pointer hover:bg-sage/20"
-                            onClick={() => handleTagFilter(tag)}
-                          >
-                            <Tag className="h-2 w-2 mr-1" />
-                            {tag}
-                          </Badge>
-                        ))}
-                        {article.tags.length > 4 && (
-                          <Badge variant="outline" className="text-xs">
-                            +{article.tags.length - 4}
-                          </Badge>
-                        )}
-                      </div>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <h3 className="section-title text-xl break-words hyphens-auto flex-1">
+                      <Link href={`/articles/${article.slug}`} className="hover:text-sage transition-colors">
+                        {article.title}
+                      </Link>
+                    </h3>
+                    {article.category && (
+                      <Badge variant="secondary" className="bg-sage/10 text-sage-600 shrink-0">
+                        {article.category}
+                      </Badge>
                     )}
                   </div>
                   
-                  <div className="flex items-center ml-4">
+                  {(() => {
+                    if (article.sections && Array.isArray(article.sections) && article.sections.length > 0) {
+                      const excerpt = generateExcerpt(article.sections as ArticleSection[]);
+                      return excerpt ? (
+                        <p className="text-muted-foreground line-clamp-2">
+                          {excerpt}
+                        </p>
+                      ) : null;
+                    }
+                    return null;
+                  })()}
+                  
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                      <Clock className="h-4 w-4" />
+                      {article.publishedAt 
+                        ? format(new Date(article.publishedAt), "MMM d, yyyy")
+                        : format(new Date(article.createdAt), "MMM d, yyyy")
+                      }
+                    </div>
+                    
                     <Link href={`/articles/${article.slug}`}>
-                      <Button variant="outline" className="bg-sage/10 hover:bg-sage/20 border-sage/30">
+                      <Button variant="outline" size="sm" className="bg-sage/10 hover:bg-sage/20 border-sage/30">
                         Read More
                         <ArrowRight className="h-4 w-4 ml-2" />
                       </Button>
                     </Link>
                   </div>
+                  
+                  {article.tags && article.tags.length > 0 && (
+                    <div className="flex gap-2 flex-wrap">
+                      {article.tags.slice(0, 4).map((tag) => (
+                        <Badge 
+                          key={tag} 
+                          variant="outline" 
+                          className="text-xs cursor-pointer hover:bg-sage/20"
+                          onClick={() => handleTagFilter(tag)}
+                        >
+                          <Tag className="h-2 w-2 mr-1" />
+                          {tag}
+                        </Badge>
+                      ))}
+                      {article.tags.length > 4 && (
+                        <Badge variant="outline" className="text-xs">
+                          +{article.tags.length - 4}
+                        </Badge>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
