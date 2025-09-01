@@ -10,6 +10,8 @@ import {
   date,
   integer,
   boolean,
+  uuid,
+  unique,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
@@ -36,7 +38,7 @@ export const users = pgTable("users", {
   profileImageUrl: varchar("profile_image_url"),
   authProvider: varchar("auth_provider"), // Track which OAuth provider was used
   collectionPublic: varchar("collection_public", { enum: ["public", "private"] }).default("public"),
-  contributePhotosToKnowledgeBase: boolean("contribute_photos_to_knowledge_base").default(false),
+  contributePhotosToKnowledgeBase: boolean("contribute_photos_to_knowledge_base").default(true),
   displayName: varchar("display_name", { length: 20 }),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
@@ -106,6 +108,7 @@ export const plantPhotos = pgTable("plant_photos", {
   mimeType: varchar("mime_type"),
   size: integer("size"),
   filePath: varchar("file_path"),
+  imageData: text("image_data"), // Base64 encoded image data
   uploadedAt: timestamp("uploaded_at").defaultNow(),
 });
 
@@ -290,6 +293,56 @@ export const adminUsers = pgTable("admin_users", {
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
+
+// Articles table for community content
+export const articles = pgTable("articles", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  title: varchar("title", { length: 200 }).notNull(),
+  slug: varchar("slug", { length: 220 }).notNull().unique(),
+  sections: jsonb("sections").notNull(),
+  status: varchar("status", { enum: ["draft", "published"] }).default("draft").notNull(),
+  tags: text("tags").array(),
+  category: varchar("category", { length: 100 }),
+  author: varchar("author", { length: 100 }),
+  metaTitle: varchar("meta_title", { length: 200 }),
+  metaDescription: varchar("meta_description", { length: 300 }),
+  inlineStyles: text("inline_styles"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  publishedAt: timestamp("published_at"),
+}, (table) => [
+  index("articles_status_published_at_idx").on(table.status, table.publishedAt),
+  index("articles_slug_idx").on(table.slug),
+]);
+
+// Article section schema
+export const articleSectionSchema = z.object({
+  id: z.string(),
+  content: z.string().min(1, "Section content is required"),
+});
+
+// Zod schemas for articles
+export const insertArticleSchema = createInsertSchema(articles).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  publishedAt: true,
+}).extend({
+  title: z.string().min(1, "Title is required").max(200, "Title must be less than 200 characters"),
+  sections: z.array(articleSectionSchema).min(1, "At least one section is required"),
+  slug: z.string().max(220, "Slug must be less than 220 characters").optional(),
+  tags: z.array(z.string()).optional(),
+  status: z.enum(["draft", "published"]).optional(),
+  category: z.string().max(100, "Category must be less than 100 characters").optional(),
+  author: z.string().max(100, "Author must be less than 100 characters").optional(),
+  metaTitle: z.string().max(200, "Meta title must be less than 200 characters").optional(),
+  metaDescription: z.string().max(300, "Meta description must be less than 300 characters").optional(),
+  inlineStyles: z.string().optional(),
+});
+
+export type Article = typeof articles.$inferSelect;
+export type InsertArticle = z.infer<typeof insertArticleSchema>;
+export type ArticleSection = z.infer<typeof articleSectionSchema>;
 
 export type SpeciesImage = typeof speciesImages.$inferSelect;
 export type InsertSpeciesImage = typeof speciesImages.$inferInsert;

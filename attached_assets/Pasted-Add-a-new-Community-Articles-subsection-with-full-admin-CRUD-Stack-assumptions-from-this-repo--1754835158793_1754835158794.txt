@@ -1,0 +1,134 @@
+Add a new Community → Articles subsection with full admin CRUD.
+
+Stack assumptions (from this repo): TypeScript monorepo with /client, /server, Drizzle ORM config present, Vite/Tailwind on the client. Use the project’s existing patterns and conventions. 
+GitHub
+ 
+GitHub
+
+Data model
+Create a new articles table via Drizzle migration:
+
+id (uuid, pk)
+
+title (varchar(200), required)
+
+slug (varchar(220), unique, generated from title; allow manual override)
+
+html (text, required) — stores sanitized HTML from a rich-text editor
+
+excerpt (varchar(300), nullable) — auto-generated from first 300 plain-text chars if not provided
+
+status (enum: draft | published, default draft)
+
+tags (string array or comma-separated string, optional)
+
+created_at (timestamptz, default now)
+
+updated_at (timestamptz, auto-update)
+
+published_at (timestamptz, nullable; set when status changes to published)
+
+Add indexes on (status, published_at DESC) and on slug.
+
+Security & validation
+Admin-only routes and UI; reuse existing auth/role guard.
+
+Server-side sanitize html on create/update (e.g., allow a safe subset of tags/attrs; strip scripts/styles/events).
+
+Enforce max lengths and required fields server-side.
+
+API (server)
+New routes under /api/articles:
+
+POST / — create article (admin only). Body: { title, html, excerpt?, status?, tags?, slug? }.
+
+GET / — list with query params: q, status, tag, page, limit (default 1, 10); returns { items, total, page, pageCount }.
+
+GET /:slug — fetch single published article by slug (public). Admins may specify ?includeDraft=1 to view drafts.
+
+PATCH /:id — update (admin only). Same fields as create; if status becomes published and published_at is null, set it.
+
+DELETE /:id — soft delete not required; hard delete is fine.
+
+Return proper HTTP codes and JSON error shapes used elsewhere in the project.
+
+Server implementation notes
+Generate slug from title on create/update if blank or title changed; ensure uniqueness with -2, -3, etc.
+
+Compute excerpt if absent by stripping HTML → first 300 chars, word-boundary safe.
+
+Pagination with deterministic ORDER BY (published_at DESC NULLS LAST, created_at DESC).
+
+Client – routing & UI
+Add “Articles” under Community in the site nav. Public pages:
+
+/community/articles — list of published articles with search (q) and tag filter; card list with title, published date, excerpt, “Read more”.
+
+/community/articles/:slug — article detail; render sanitized HTML. Show title, published date (or “Draft” if admin preview), tags.
+
+Admin pages (only visible to admins):
+
+/admin/articles — table with Title, Status, Published, Updated, Tags; search by title; filters by status/tags; pagination.
+
+/admin/articles/new and /admin/articles/:id/edit — form with:
+
+Title (text)
+
+Slug (text, optional, with “Re-generate” button)
+
+Status (select)
+
+Tags (chips or comma-separated input)
+
+Excerpt (textarea, char counter 0–300)
+
+Body (rich text editor producing HTML; enable headings, bold/italic, lists, links, images, quotes, code)
+
+Save, Publish/Unpublish, Preview buttons
+
+Use existing design system and Tailwind. Keep styles consistent with other admin forms/tables.
+
+Rich text
+Use a lightweight RTE that outputs HTML (e.g., TipTap/Quill/TinyMCE—pick what integrates fastest with Vite). Store its HTML in html.
+
+On the server, sanitize before persist. On the client, also sanitize before rendering detail pages.
+
+SEO
+Articles index page: set <title> “Articles – Cactilog”.
+
+Article detail: <title> = article title; meta description from excerpt.
+
+Add JSON-LD Article schema on detail pages with headline, datePublished, dateModified.
+
+Tests
+Migration up/down test.
+
+API unit/integration tests for create, list (filters/pagination), get by slug, update, delete, and XSS sanitation (drop <script> etc.).
+
+E2E happy path: create draft → publish → visible on public list/detail.
+
+Deliverables
+Drizzle migration + schema file.
+
+Server routes/controllers/services, with input validation and sanitization.
+
+Client routes/components for public and admin.
+
+Navigation updates.
+
+Minimal docs: docs/articles.md with env, migration, and usage notes.
+
+Test coverage for core paths.
+
+Acceptance criteria
+Admin can paste article HTML into the editor and save.
+
+On publish, published_at is recorded and article appears in public list/detail.
+
+List supports q (title/excerpt/html text search), tag filter, pagination.
+
+Detail page renders sanitized HTML (no executable scripts/styles).
+
+Slug uniqueness enforced; manual override respected.
+
+Non-admins cannot access admin routes or draft content.

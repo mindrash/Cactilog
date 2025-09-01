@@ -9,6 +9,7 @@ import {
   adminUsers,
   plantLikes,
   vendors,
+  articles,
   type User,
   type UpsertUser,
   type Plant,
@@ -27,6 +28,8 @@ import {
   type InsertPlantLike,
   type Vendor,
   type InsertVendor,
+  type Article,
+  type InsertArticle,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, ilike, or, count, sql } from "drizzle-orm";
@@ -133,6 +136,26 @@ export interface IStorage {
   getAllVendors(): Promise<Vendor[]>;
   getVendorsBySpecialty(specialty: string): Promise<Vendor[]>;
   seedVendors(): Promise<number>;
+  
+  // Article operations
+  getArticles(filters?: {
+    q?: string;
+    status?: string;
+    tag?: string;
+    page?: number;
+    limit?: number;
+    includeDrafts?: boolean;
+  }): Promise<{
+    items: Article[];
+    total: number;
+    page: number;
+    pageCount: number;
+  }>;
+  getArticleBySlug(slug: string, includeDrafts?: boolean): Promise<Article | undefined>;
+  getArticleById(id: string): Promise<Article | undefined>;
+  createArticle(article: InsertArticle): Promise<Article>;
+  updateArticle(id: string, updates: Partial<InsertArticle>): Promise<Article | undefined>;
+  deleteArticle(id: string): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -170,8 +193,7 @@ export class DatabaseStorage implements IStorage {
 
       if (existingUser.length > 0) {
         // Update existing user - only update non-ID fields to avoid foreign key issues
-        const updateData = { ...userData };
-        delete updateData.id; // Don't update the ID field
+        const { id, ...updateData } = userData;
         
         const [updatedUser] = await db
           .update(users)
@@ -707,20 +729,34 @@ export class DatabaseStorage implements IStorage {
       .orderBy(desc(plantPhotos.uploadedAt));
   }
 
-  async createPlantPhoto(photo: InsertPlantPhoto): Promise<PlantPhoto> {
-    // LOG ALL PHOTO UPLOADS for recovery purposes
-    console.log(`CREATING PHOTO RECORD: Plant ${photo.plantId}, File: ${photo.filename}, Path: ${photo.filePath}`);
+  async createPlantPhoto(photoData: any): Promise<any> {
+    console.log(`CREATING PHOTO RECORD: Plant ${photoData.plantId}, File: ${photoData.filename}, Base64 Data: ${photoData.imageData ? 'Present' : 'Missing'}`);
     
-    const [newPhoto] = await db.insert(plantPhotos).values(photo).returning();
+    const [newPhoto] = await db.insert(plantPhotos).values({
+      plantId: photoData.plantId,
+      filename: photoData.filename,
+      originalName: photoData.originalName,
+      mimeType: photoData.mimeType,
+      size: photoData.size,
+      imageData: photoData.imageData,
+    }).returning();
     
     // Update the plant's updatedAt field to reflect that it was modified
     await db
       .update(plants)
       .set({ updatedAt: new Date() })
-      .where(eq(plants.id, photo.plantId));
+      .where(eq(plants.id, photoData.plantId));
     
-    console.log(`PHOTO RECORD CREATED: ID ${newPhoto.id} for Plant ${photo.plantId}`);
+    console.log(`PHOTO RECORD CREATED: ID ${newPhoto.id} for Plant ${photoData.plantId} with database storage`);
     return newPhoto;
+  }
+
+  async getPhotoById(photoId: number): Promise<any> {
+    const [photo] = await db
+      .select()
+      .from(plantPhotos)
+      .where(eq(plantPhotos.id, photoId));
+    return photo;
   }
 
   // EMERGENCY PHOTO RECOVERY FUNCTION
@@ -775,7 +811,7 @@ export class DatabaseStorage implements IStorage {
       throw new Error("Invalid photo ID - only single photo deletions allowed");
     }
 
-    // Get the full photo record to access the file path
+    // Get the full photo record to verify ownership
     const [photo] = await db
       .select()
       .from(plantPhotos)
@@ -785,46 +821,11 @@ export class DatabaseStorage implements IStorage {
     
     const plant = await this.getPlant(photo.plantId, userId);
     if (!plant) return false;
-
-    // BACKUP PROTECTION: Create backup before deletion
-    const backupDir = '/home/runner/workspace/photo-backups';
     
-    try {
-      if (!fs.existsSync(backupDir)) {
-        fs.mkdirSync(backupDir, { recursive: true });
-      }
-      
-      // Create backup of photo file before deletion
-      if (photo.filePath && fs.existsSync(photo.filePath)) {
-        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-        const backupPath = path.join(backupDir, `${timestamp}-${path.basename(photo.filePath)}`);
-        fs.copyFileSync(photo.filePath, backupPath);
-        console.log(`Photo backed up to: ${backupPath}`);
-      }
-    } catch (error) {
-      console.error("Error creating photo backup:", error);
-      // SAFETY: Don't delete if backup fails
-      throw new Error("Cannot delete photo - backup creation failed");
-    }
-    
-    // Delete from database first
+    // Delete from database (base64 data is automatically deleted with the record)
     const result = await db.delete(plantPhotos).where(eq(plantPhotos.id, id));
     
-    // If database deletion successful, try to delete the physical file
-    if (result.rowCount! > 0) {
-      try {
-        // Only delete original file after successful backup and DB deletion
-        if (photo.filePath && fs.existsSync(photo.filePath)) {
-          fs.unlinkSync(photo.filePath);
-          console.log(`Photo file deleted: ${photo.filePath}`);
-        }
-      } catch (error) {
-        console.error("Error deleting photo file:", error);
-        // Don't fail the entire operation if file deletion fails
-        // The database record is already deleted and backup exists
-      }
-    }
-    
+    console.log(`Photo record ID ${id} deleted from database for plant ${photo.plantId}`);
     return result.rowCount! > 0;
   }
 
@@ -1159,6 +1160,28 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
+  async getPublicPlantPhotos(plantId: number): Promise<any[]> {
+    // Get photos for a specific plant, but only if the plant is public
+    try {
+      const photos = await db
+        .select()
+        .from(plantPhotos)
+        .innerJoin(plants, eq(plantPhotos.plantId, plants.id))
+        .where(
+          and(
+            eq(plants.id, plantId),
+            eq(plants.isPublic, 'public')
+          )
+        )
+        .orderBy(desc(plantPhotos.uploadedAt));
+      
+      return photos.map(row => row.plant_photos);
+    } catch (error) {
+      console.error('Error fetching public plant photos:', error);
+      return [];
+    }
+  }
+
   async getPublicPlantDetail(plantId: number): Promise<any> {
     try {
       // Get plant with owner info
@@ -1293,6 +1316,176 @@ export class DatabaseStorage implements IStorage {
       }))
     ).returning();
     return insertedVendors.length;
+  }
+
+  // Article operations
+  async getArticles(filters?: {
+    q?: string;
+    status?: string;
+    tag?: string;
+    page?: number;
+    limit?: number;
+    includeDrafts?: boolean;
+  }): Promise<{
+    items: Article[];
+    total: number;
+    page: number;
+    pageCount: number;
+  }> {
+    const page = filters?.page ?? 1;
+    const limit = filters?.limit ?? 10;
+    const offset = (page - 1) * limit;
+
+    let whereConditions = [];
+
+    // Status filter - if includeDrafts is false or not specified, only show published
+    if (!filters?.includeDrafts) {
+      whereConditions.push(eq(articles.status, 'published'));
+    } else if (filters?.status) {
+      whereConditions.push(eq(articles.status, filters.status as 'draft' | 'published'));
+    }
+
+    // Search filter - now searches within sections JSON content
+    if (filters?.q) {
+      const searchCondition = or(
+        ilike(articles.title, `%${filters.q}%`),
+        // Search within sections content using JSON operators
+        sql`EXISTS (
+          SELECT 1 FROM jsonb_array_elements(${articles.sections}) AS section
+          WHERE section->>'content' ILIKE ${`%${filters.q}%`}
+        )`
+      );
+      if (searchCondition) {
+        whereConditions.push(searchCondition);
+      }
+    }
+
+    // Tag filter
+    if (filters?.tag) {
+      whereConditions.push(sql`${filters.tag} = ANY(${articles.tags})`);
+    }
+
+    // Get total count
+    const totalQuery = db
+      .select({ count: count() })
+      .from(articles);
+    
+    if (whereConditions.length > 0) {
+      totalQuery.where(and(...whereConditions));
+    }
+
+    const [{ count: total }] = await totalQuery;
+
+    // Get articles
+    const baseQuery = db
+      .select()
+      .from(articles)
+      .limit(limit)
+      .offset(offset)
+      .orderBy(desc(articles.publishedAt), desc(articles.createdAt));
+
+    const items = whereConditions.length > 0
+      ? await db
+          .select()
+          .from(articles)
+          .where(and(...whereConditions))
+          .limit(limit)
+          .offset(offset)
+          .orderBy(desc(articles.publishedAt), desc(articles.createdAt))
+      : await baseQuery;
+
+    return {
+      items,
+      total,
+      page,
+      pageCount: Math.ceil(total / limit),
+    };
+  }
+
+  async getArticleBySlug(slug: string, includeDrafts?: boolean): Promise<Article | undefined> {
+    let whereConditions = [eq(articles.slug, slug)];
+    
+    if (!includeDrafts) {
+      whereConditions.push(eq(articles.status, 'published'));
+    }
+
+    const [article] = await db
+      .select()
+      .from(articles)
+      .where(and(...whereConditions));
+    
+    return article;
+  }
+
+  async getArticleById(id: string): Promise<Article | undefined> {
+    const [article] = await db
+      .select()
+      .from(articles)
+      .where(eq(articles.id, id));
+    
+    return article;
+  }
+
+  async createArticle(article: InsertArticle): Promise<Article> {
+    // Generate slug if not provided
+    const slug = article.slug || article.title
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .trim()
+      .substring(0, 200);
+
+    // Set published date if status is published
+    const insertData = {
+      ...article,
+      slug,
+      publishedAt: article.status === 'published' ? new Date() : null,
+    };
+
+    const [newArticle] = await db
+      .insert(articles)
+      .values(insertData)
+      .returning();
+    
+    return newArticle;
+  }
+
+  async updateArticle(id: string, updates: Partial<InsertArticle>): Promise<Article | undefined> {
+    // Handle status change to published
+    const updateData = {
+      ...updates,
+      updatedAt: new Date(),
+      // Set published date when changing to published status
+      ...(updates.status === 'published' ? { publishedAt: new Date() } : {}),
+    };
+
+    // Generate slug if title is being updated and no slug provided
+    if (updates.title && !updates.slug) {
+      updateData.slug = updates.title
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .trim()
+        .substring(0, 200);
+    }
+
+    const [updatedArticle] = await db
+      .update(articles)
+      .set(updateData)
+      .where(eq(articles.id, id))
+      .returning();
+    
+    return updatedArticle;
+  }
+
+  async deleteArticle(id: string): Promise<boolean> {
+    const result = await db
+      .delete(articles)
+      .where(eq(articles.id, id));
+    
+    return result.rowCount !== null && result.rowCount > 0;
   }
 }
 

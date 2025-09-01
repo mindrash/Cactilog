@@ -12,15 +12,21 @@ import { useAuth } from "@/hooks/useAuth";
 interface PlantCardProps {
   plant: Plant;
   showPhotos?: boolean;
+  isPublicContext?: boolean; // New prop to indicate this is a public community context
 }
 
-export default function PlantCard({ plant, showPhotos = true }: PlantCardProps) {
+export default function PlantCard({ plant, showPhotos = true, isPublicContext = false }: PlantCardProps) {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const { isAuthenticated } = useAuth();
 
-  // Fetch photos if showPhotos is true (public plants should show photos even if not authenticated)
+  // Choose the right endpoint based on context
+  const photosEndpoint = isPublicContext 
+    ? `/api/plants/${plant.id}/photos/public`
+    : `/api/plants/${plant.id}/photos`;
+
+  // Fetch photos if showPhotos is true
   const { data: photos = [] } = useQuery({
-    queryKey: ["/api/plants", plant.id, "photos"],
+    queryKey: [photosEndpoint],
     enabled: showPhotos,
   });
 
@@ -49,7 +55,7 @@ export default function PlantCard({ plant, showPhotos = true }: PlantCardProps) 
         <div className="w-full h-40 sm:h-48 bg-gray-100 flex items-center justify-center border-b border-gray-200 relative overflow-hidden">
           {primaryPhoto ? (
             <img
-              src={`/uploads/${primaryPhoto.filename}`}
+              src={`/api/photos/${primaryPhoto.id}/image`}
               alt={primaryPhoto.originalName || plant.commonName || `${plant.genus} ${plant.species || ""}`}
               className="w-full h-full object-cover"
             />
@@ -77,7 +83,7 @@ export default function PlantCard({ plant, showPhotos = true }: PlantCardProps) 
           {/* Badges row */}
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-1 sm:gap-2">
-              <PrivacyBadge isPublic={plant.isPublic || "public"} />
+              {!isPublicContext && <PrivacyBadge isPublic={plant.isPublic || "public"} />}
               <Badge 
                 variant={plant.family === 'Cactaceae' ? 'default' : 'secondary'}
                 className={`text-xs ${plant.family === 'Cactaceae' ? 'bg-cactus-green/10 text-cactus-green' : 'bg-desert-sage/10 text-desert-sage'}`}

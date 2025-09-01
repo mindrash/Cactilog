@@ -10,6 +10,8 @@ interface AmazonAffiliateBannerProps {
   compact?: boolean;
 }
 
+
+
 export default function AmazonAffiliateBanner({ 
   category, 
   limit = 3, 
@@ -75,24 +77,29 @@ export default function AmazonAffiliateBanner({
         
         <div className="grid gap-4">
           {selectedProducts.map((product) => (
-            <div key={product.id} className="flex items-center space-x-3 p-3 bg-white rounded-lg border border-orange-100">
-              <img
-                src={product.imageUrl}
-                alt={product.title}
-                className="w-12 h-12 object-cover rounded"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.src = '/api/placeholder/48/48';
-                }}
-              />
+            <div key={product.id} className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 bg-white rounded-lg border border-orange-100">
+              <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center shrink-0 overflow-hidden">
+                <img 
+                  src={product.imageUrl} 
+                  alt={product.title}
+                  className="w-full h-full object-cover rounded-lg"
+                  onError={(e) => {
+                    const target = e.currentTarget as HTMLImageElement;
+                    const fallback = target.nextElementSibling as HTMLSpanElement;
+                    target.style.display = 'none';
+                    if (fallback) fallback.style.display = 'flex';
+                  }}
+                />
+                <span className="text-2xl hidden items-center justify-center w-full h-full">🌵</span>
+              </div>
               <div className="flex-1 min-w-0">
-                <h4 className="text-sm font-medium text-gray-900 truncate">
-                  {product.title}
+                <h4 className="text-sm font-medium text-gray-900 break-words">
+                  {product.title.length > 60 ? `${product.title.substring(0, 60)}...` : product.title}
                 </h4>
-                <p className="text-sm text-gray-600 truncate">
-                  {product.description}
+                <p className="text-xs text-gray-600 break-words mt-1">
+                  {product.description.length > 80 ? `${product.description.substring(0, 80)}...` : product.description}
                 </p>
-                <div className="flex items-center space-x-2 mt-1">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mt-2">
                   <span className="text-sm font-medium text-orange-600">
                     {product.price}
                   </span>
@@ -105,8 +112,9 @@ export default function AmazonAffiliateBanner({
                 href={product.affiliateUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                className="shrink-0"
               >
-                <Button size="sm" className="bg-orange-500 hover:bg-orange-600">
+                <Button size="sm" className="bg-orange-500 hover:bg-orange-600 w-full sm:w-auto">
                   <ExternalLink className="w-4 h-4 mr-1" />
                   Shop
                 </Button>

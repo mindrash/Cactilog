@@ -211,16 +211,16 @@ export const amazonProducts: AmazonProduct[] = [
     reviewCount: 2891
   },
   {
-    id: 'succulent-organizer-kit',
-    title: 'Succulent Kit with Organizer Bag',
-    description: 'Complete terrarium supplies with organizer bag for succulent cuttings and fertilizer management',
-    price: '$24.99',
-    imageUrl: 'https://m.media-amazon.com/images/I/81N6RXzjrfL._AC_SX569_.jpg',
-    affiliateUrl: 'https://www.amazon.com/dp/B07QYCB42M?tag=mindrash-20&linkCode=ogi&th=1&psc=1',
+    id: 'permade-succulent-kit',
+    title: 'Permade 13Pcs Succulent Tools Kit with Organizer Bag',
+    description: '13-piece indoor gardening tools with heavy-duty Oxford canvas tote and waterproof planting mat',
+    price: '$19.99',
+    imageUrl: 'https://m.media-amazon.com/images/I/71PunrpJZKL._AC_SY355_.jpg',
+    affiliateUrl: 'https://www.amazon.com/dp/B0CZLHFR2J?tag=mindrash-20&linkCode=ogi&th=1&psc=1',
     category: 'tools',
-    tags: ['organizer-bag', 'terrarium', 'cuttings', 'fertilizer-management'],
-    rating: 4.5,
-    reviewCount: 1567
+    tags: ['organizer-bag', '13-pieces', 'oxford-canvas', 'planting-mat', 'indoor-gardening'],
+    rating: 4.7,
+    reviewCount: 79
   },
 
   // Advanced Fertilizers

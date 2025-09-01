@@ -159,9 +159,9 @@ export default function PlantDetail() {
                         <span className="text-sm">Public</span>
                       </div>
                     </div>
-                    <CardTitle className="text-2xl mb-2">
+                    <h1 className="page-title-lg mb-2">
                       {plant.commonName || `${plant.genus} ${plant.species || ""}`}
-                    </CardTitle>
+                    </h1>
                     <p className="text-lg text-gray-600 italic">
                       {plant.genus} {plant.species}
                       {plant.cultivar && <span className="not-italic"> '{plant.cultivar}'</span>}
@@ -171,7 +171,7 @@ export default function PlantDetail() {
               </CardHeader>
               <CardContent>
                 {/* Owner Info */}
-                <div className="flex items-center space-x-3 p-4 bg-gray-50 rounded-lg mb-4">
+                <div className="flex items-center space-x-3 p-4 bg-gray-50 rounded-lg mb-6">
                   <div className="w-10 h-10 bg-cactus-green/10 rounded-full flex items-center justify-center">
                     <User className="w-5 h-5 text-cactus-green" />
                   </div>
@@ -200,9 +200,11 @@ export default function PlantDetail() {
                 </div>
 
                 {plant.notes && (
-                  <div className="mt-4 p-4 bg-lime-wash/10 rounded-lg">
-                    <h4 className="font-medium text-gray-900 mb-2">Notes</h4>
-                    <p className="text-gray-700 whitespace-pre-wrap">{plant.notes}</p>
+                  <div className="mt-6">
+                    <h4 className="section-title mb-3">Notes</h4>
+                    <div className="p-4 bg-lime-wash/10 rounded-lg">
+                      <p className="text-gray-700 whitespace-pre-wrap">{plant.notes}</p>
+                    </div>
                   </div>
                 )}
               </CardContent>
@@ -211,7 +213,7 @@ export default function PlantDetail() {
             {/* Photos */}
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
+                <CardTitle className="section-title flex items-center space-x-2">
                   <Camera className="w-5 h-5" />
                   <span>Photos ({plant.photos?.length || 0})</span>
                 </CardTitle>
@@ -223,7 +225,7 @@ export default function PlantDetail() {
                       <div key={photo.id} className="space-y-2">
                         <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
                           <img
-                            src={`/uploads/${photo.filename}`}
+                            src={`/api/photos/${photo.id}/image`}
                             alt={photo.originalName}
                             className="w-full h-full object-cover"
                             onError={(e) => {

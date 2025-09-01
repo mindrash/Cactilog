@@ -11,16 +11,23 @@ import { Plus, Upload, Trash2 } from "lucide-react";
 interface PhotoUploadProps {
   plantId: number;
   className?: string;
+  readOnly?: boolean;
+  usePublicEndpoint?: boolean;
 }
 
-export default function PhotoUpload({ plantId, className = "" }: PhotoUploadProps) {
+export default function PhotoUpload({ plantId, className = "", readOnly = false, usePublicEndpoint = false }: PhotoUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  // Choose endpoint based on context
+  const photosEndpoint = usePublicEndpoint 
+    ? `/api/plants/${plantId}/photos/public`
+    : `/api/plants/${plantId}/photos`;
+
   // Fetch existing photos for this plant
   const { data: photos = [] } = useQuery({
-    queryKey: ["/api/plants", plantId, "photos"],
+    queryKey: [photosEndpoint],
   });
 
   const photosArray = Array.isArray(photos) ? photos : [];
@@ -45,7 +52,7 @@ export default function PhotoUpload({ plantId, className = "" }: PhotoUploadProp
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/plants", plantId, "photos"] });
+      queryClient.invalidateQueries({ queryKey: [photosEndpoint] });
       toast({
         title: "Photo Uploaded",
         description: "Your plant photo has been added successfully.",
@@ -64,9 +71,14 @@ export default function PhotoUpload({ plantId, className = "" }: PhotoUploadProp
         }, 500);
         return;
       }
+      // Extract error message from server response
+      const errorMessage = error.message?.includes(':') 
+        ? error.message.split(':').slice(1).join(':').trim()
+        : error.message || "Failed to upload photo. Please try again.";
+        
       toast({
         title: "Upload Failed",
-        description: "Failed to upload photo. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
       setIsUploading(false);
@@ -87,7 +99,7 @@ export default function PhotoUpload({ plantId, className = "" }: PhotoUploadProp
       return response;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/plants", plantId, "photos"] });
+      queryClient.invalidateQueries({ queryKey: [photosEndpoint] });
       toast({
         title: "Photo Deleted",
         description: "Photo has been removed successfully.",
@@ -127,6 +139,21 @@ export default function PhotoUpload({ plantId, className = "" }: PhotoUploadProp
       return;
     }
 
+    // Show helpful info about image requirements
+    toast({
+      title: "Processing Image",
+      description: "Images are automatically optimized. Must be 500-1000px wide for best quality.",
+    });
+    
+    // Show info for HEIC files
+    if (file.type === 'image/heic' || file.type === 'image/heif' || 
+        file.name.toLowerCase().endsWith('.heic') || file.name.toLowerCase().endsWith('.heif')) {
+      toast({
+        title: "HEIC File Detected",
+        description: "Your HEIC photo will be automatically converted to JPEG for better browser compatibility.",
+      });
+    }
+
     // Check file size (5MB limit)
     if (file.size > 5 * 1024 * 1024) {
       toast({
@@ -149,57 +176,71 @@ export default function PhotoUpload({ plantId, className = "" }: PhotoUploadProp
           {photosArray.map((photo: any) => (
             <div key={photo.id} className="relative group">
               <img
-                src={`/uploads/${photo.filename}`}
+                src={`/api/photos/${photo.id}/image`}
                 alt={photo.originalName}
                 className="w-full h-32 object-cover rounded-lg border border-gray-200"
               />
               <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
                 {new Date(photo.uploadedAt).toLocaleDateString()}
               </div>
-              <Button
-                variant="destructive"
-                size="sm"
-                className="absolute top-2 right-2 h-8 w-8 p-0 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity bg-red-600 hover:bg-red-700 shadow-lg"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  deleteMutation.mutate(photo.id);
-                }}
-                disabled={deleteMutation.isPending}
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
+              {!readOnly && (
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  className="absolute top-2 right-2 h-8 w-8 p-0 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity bg-red-600 hover:bg-red-700 shadow-lg"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    deleteMutation.mutate(photo.id);
+                  }}
+                  disabled={deleteMutation.isPending}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              )}
             </div>
           ))}
         </div>
       )}
 
-      {/* Upload New Photo */}
-      <div className="relative h-32">
-        <Input
-          type="file"
-          accept="image/*"
-          onChange={handleFileSelect}
-          disabled={isUploading}
-          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-        />
-        <div className="w-full h-full bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-forest transition-colors">
-          <div className="text-center text-gray-500">
-            {isUploading ? (
-              <>
-                <Upload className="w-8 h-8 mx-auto mb-2 animate-pulse" />
-                <p className="text-sm">Uploading...</p>
-              </>
-            ) : (
-              <>
-                <Plus className="w-8 h-8 mx-auto mb-2" />
-                <p className="text-sm">Add Photo</p>
-                <p className="text-xs">Click to upload</p>
-              </>
-            )}
+      {/* Upload New Photo - Only show for owners */}
+      {!readOnly && (
+        <div className="relative h-32">
+          <Input
+            type="file"
+            accept="image/*"
+            onChange={handleFileSelect}
+            disabled={isUploading}
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+          />
+          <div className="w-full h-full bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-forest transition-colors">
+            <div className="text-center text-gray-500">
+              {isUploading ? (
+                <>
+                  <Upload className="w-8 h-8 mx-auto mb-2 animate-pulse" />
+                  <p className="text-sm">Uploading...</p>
+                </>
+              ) : (
+                <>
+                  <Plus className="w-8 h-8 mx-auto mb-2" />
+                  <p className="text-sm">Add Photo</p>
+                  <p className="text-xs">Click to upload</p>
+                  <p className="text-xs text-gray-400 mt-1">Min 500px wide, max 5MB</p>
+                </>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      )}
+
+      {/* Show message for empty read-only state */}
+      {readOnly && photosArray.length === 0 && (
+        <div className="w-full h-32 bg-gray-50 rounded-lg border border-gray-200 flex items-center justify-center">
+          <div className="text-center text-gray-500">
+            <p className="text-sm">No photos yet</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

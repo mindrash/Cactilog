@@ -166,6 +166,67 @@
   font-weight: 600;
 }
 
+/* Article content headings - automatically match site typography */
+.article-content h1 {
+  font-family: 'Freckle Face', cursive !important;
+  color: hsl(130, 30%, 40%) !important;
+  font-size: 1.875rem !important; /* text-3xl */
+  font-weight: bold !important;
+  line-height: 1.25 !important;
+  margin-bottom: 1rem !important;
+  margin-top: 2rem !important;
+}
+
+.article-content h2 {
+  font-family: 'Freckle Face', cursive !important;
+  color: hsl(130, 30%, 40%) !important;
+  font-size: 1.5rem !important; /* text-2xl */
+  font-weight: bold !important;
+  line-height: 1.3 !important;
+  margin-bottom: 0.75rem !important;
+  margin-top: 1.5rem !important;
+}
+
+.article-content h3 {
+  font-family: 'Freckle Face', cursive !important;
+  color: hsl(130, 30%, 40%) !important;
+  font-size: 1.25rem !important; /* text-xl */
+  font-weight: 600 !important;
+  line-height: 1.4 !important;
+  margin-bottom: 0.5rem !important;
+  margin-top: 1.25rem !important;
+}
+
+.article-content h4 {
+  font-family: 'Freckle Face', cursive !important;
+  color: hsl(130, 30%, 40%) !important;
+  font-size: 1.125rem !important; /* text-lg */
+  font-weight: 600 !important;
+  line-height: 1.4 !important;
+  margin-bottom: 0.5rem !important;
+  margin-top: 1rem !important;
+}
+
+.article-content h5 {
+  font-family: 'Freckle Face', cursive !important;
+  color: hsl(130, 30%, 40%) !important;
+  font-size: 1rem !important; /* text-base */
+  font-weight: 600 !important;
+  line-height: 1.5 !important;
+  margin-bottom: 0.5rem !important;
+  margin-top: 1rem !important;
+}
+
+.article-content h6 {
+  font-family: 'Freckle Face', cursive !important;
+  color: hsl(130, 30%, 40%) !important;
+  font-size: 0.875rem !important; /* text-sm */
+  font-weight: 600 !important;
+  line-height: 1.5 !important;
+  margin-bottom: 0.25rem !important;
+  margin-top: 0.75rem !important;
+}
+
 :root {
   --background: hsl(55, 35%, 97%); /* Soft cream with subtle yellow-green */
   --foreground: hsl(125, 15%, 25%); /* Deep muted green */

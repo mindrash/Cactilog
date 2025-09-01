@@ -6,11 +6,14 @@ import { vendorData } from "@shared/vendor-data";
 import { SpeciesImageService } from "./wikimedia";
 import { createInsertSchema } from "drizzle-zod";
 import { speciesImages, photoReports } from "@shared/schema";
-import { insertPlantSchema, insertGrowthRecordSchema, insertSeedSchema } from "@shared/schema";
+import { insertPlantSchema, insertGrowthRecordSchema, insertSeedSchema, insertArticleSchema } from "@shared/schema";
 import { z } from "zod";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import sharp from "sharp";
+// @ts-ignore - heic-convert doesn't have TypeScript declarations
+import convert from "heic-convert";
 import express from "express";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -101,17 +104,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Serve uploaded photos statically
-  app.use('/uploads', (req, res, next) => {
-    // Add basic security headers for images
-    res.setHeader('Cache-Control', 'public, max-age=31536000'); // 1 year cache
-    next();
+  // Serve photos from database as base64 images (PUBLIC ACCESS - No authentication required)
+  app.get('/api/photos/:photoId/image', async (req, res) => {
+    try {
+      const photoId = parseInt(req.params.photoId);
+      if (isNaN(photoId)) {
+        return res.status(400).json({ message: "Invalid photo ID" });
+      }
+      
+      console.log(`PHOTO ACCESS: Photo ID ${photoId} requested`);
+      
+      const photo = await storage.getPhotoById(photoId);
+      if (!photo || !photo.imageData) {
+        console.log(`PHOTO ACCESS: Photo ${photoId} not found in database`);
+        return res.status(404).json({ message: "Photo not found" });
+      }
+      
+      console.log(`PHOTO ACCESS: Photo ${photoId} found, serving image (size: ${photo.imageData.length} chars)`);
+      
+      // Convert base64 back to buffer
+      const imageBuffer = Buffer.from(photo.imageData, 'base64');
+      
+      // Set no-cache headers to ensure fresh content
+      res.setHeader('Content-Type', photo.mimeType || 'image/jpeg');
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+      res.setHeader('Content-Length', imageBuffer.length);
+      
+      res.send(imageBuffer);
+    } catch (error) {
+      console.error("Error serving photo:", error);
+      res.status(500).json({ message: "Failed to serve photo" });
+    }
   });
-  app.use('/uploads', express.static(uploadsDir));
 
   // Public feed route (no authentication required)
   app.get('/api/public/plants', async (req, res) => {
     try {
+      // Set no-cache headers for dynamic public content
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+      
       const page = parseInt(req.query.page as string) || 1;
       const limit = parseInt(req.query.limit as string) || 20;
       const offset = (page - 1) * limit;
@@ -183,6 +218,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Plant routes
   app.get('/api/plants', isAuthenticated, async (req: any, res) => {
     try {
+      // Set no-cache headers for dynamic plant lists
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+      
       const userId = req.user.id;
       const { search, type, genus, sortBy } = req.query;
       const plants = await storage.getPlants(userId, {
@@ -465,7 +505,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Public photos gallery route
   app.get('/api/photos/public', async (req: any, res) => {
     try {
+      // Set no-cache headers for dynamic photo galleries
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+      
+      console.log("PUBLIC PHOTOS: Fetching all public photos");
       const photos = await storage.getPublicPhotos();
+      console.log(`PUBLIC PHOTOS: Found ${photos.length} photos from public plants`);
+      
+      // Log unique user IDs to verify we're getting photos from multiple users
+      const uniqueUsers = Array.from(new Set(photos.map(p => p.user.id)));
+      console.log(`PUBLIC PHOTOS: Photos from ${uniqueUsers.length} unique users: ${uniqueUsers.join(', ')}`);
+      
+      // DEBUG: Log specific photo IDs to see if 96 and 97 are included
+      const photoIds = photos.map(p => p.photo.id).sort((a, b) => b - a);
+      console.log(`PUBLIC PHOTOS: Photo IDs returned: ${photoIds.slice(0, 10).join(', ')}${photoIds.length > 10 ? '...' : ''}`);
+      
+      // DEBUG: Check if SC-1a and SC-2a are in the results
+      const scPhotos = photos.filter(p => p.plant.customId.startsWith('SC-'));
+      console.log(`PUBLIC PHOTOS: SC plants found: ${scPhotos.map(p => `${p.plant.customId} (photo ${p.photo.id})`).join(', ')}`);
+      
       res.json(photos);
     } catch (error) {
       console.error("Error fetching public photos:", error);
@@ -502,6 +562,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Photo routes
   app.get('/api/plants/:plantId/photos', isAuthenticated, async (req: any, res) => {
     try {
+      // Set no-cache headers for dynamic photo lists
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
 
       const userId = req.user.id;
       const plantId = parseInt(req.params.plantId);
@@ -513,9 +577,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Public photo endpoint for community feed - no authentication required for public plants
+  app.get('/api/plants/:plantId/photos/public', async (req: any, res) => {
+    try {
+      // Set no-cache headers for dynamic photo lists
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+
+      const plantId = parseInt(req.params.plantId);
+      
+      if (isNaN(plantId)) {
+        return res.status(400).json({ message: "Invalid plant ID" });
+      }
+
+      console.log(`PUBLIC PLANT PHOTOS: Fetching photos for plant ${plantId}`);
+      const photos = await storage.getPublicPlantPhotos(plantId);
+      console.log(`PUBLIC PLANT PHOTOS: Found ${photos.length} photos for plant ${plantId}`);
+      res.json(photos);
+    } catch (error) {
+      console.error("Error fetching public plant photos:", error);
+      res.status(500).json({ message: "Failed to fetch public plant photos" });
+    }
+  });
+
   app.post('/api/plants/:plantId/photos', isAuthenticated, upload.single('photo'), async (req: any, res) => {
     try {
-
       const userId = req.user.id;
       const plantId = parseInt(req.params.plantId);
       
@@ -530,19 +617,153 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       if (!req.file) {
+        console.log(`PHOTO UPLOAD ERROR: No file provided for plant ${plantId} by user ${userId}`);
         return res.status(400).json({ message: "No photo file provided" });
       }
+
+      console.log(`PHOTO UPLOAD START: Plant ${plantId}, User ${userId}, File: ${req.file.originalname}`);
+      console.log(`FILE DETAILS: Size: ${req.file.size}, MIME: ${req.file.mimetype}, Path: ${req.file.path}`);
+      
+      // Handle HEIC conversion and image processing
+      let imageBuffer = fs.readFileSync(req.file.path);
+      let finalMimeType = req.file.mimetype;
+      let finalFilename = req.file.filename;
+      
+      console.log(`Processing file: ${req.file.originalname}, MIME: ${req.file.mimetype}, Size: ${req.file.size}`);
+      
+      // Convert HEIC/HEIF to JPEG for better browser compatibility
+      // Note: Browsers often don't provide correct MIME types for HEIC files
+      const isHeicFile = req.file.mimetype === 'image/heic' || 
+                        req.file.mimetype === 'image/heif' ||
+                        req.file.mimetype === 'application/octet-stream' && 
+                        (req.file.originalname.toLowerCase().endsWith('.heic') || 
+                         req.file.originalname.toLowerCase().endsWith('.heif')) ||
+                        req.file.originalname.toLowerCase().endsWith('.heic') || 
+                        req.file.originalname.toLowerCase().endsWith('.heif');
+      
+      if (isHeicFile) {
+        console.log(`HEIC file detected: ${req.file.originalname}, MIME: ${req.file.mimetype}, converting to JPEG`);
+        
+        try {
+          // Use heic-convert library for reliable HEIC to JPEG conversion
+          const outputBuffer = await convert({
+            buffer: imageBuffer, // Input HEIC buffer
+            format: 'JPEG',     // Output format
+            quality: 0.85       // Quality (0-1, where 1 is highest)
+          });
+          
+          imageBuffer = Buffer.from(outputBuffer);
+          finalMimeType = 'image/jpeg';
+          finalFilename = req.file.filename.replace(/\.(heic|heif)$/i, '.jpg');
+          console.log(`HEIC conversion successful: ${req.file.originalname} -> ${finalFilename}, original: ${req.file.size} bytes, converted: ${imageBuffer.length} bytes`);
+        } catch (conversionError: any) {
+          console.error('Failed to convert HEIC to JPEG with heic-convert:', conversionError);
+          console.error('Error details:', conversionError?.message || 'Unknown error');
+          
+          // Fallback: try Sharp anyway (might work for some formats)
+          try {
+            console.log('Trying fallback conversion with Sharp...');
+            imageBuffer = await sharp(imageBuffer).jpeg({ quality: 85 }).toBuffer();
+            finalMimeType = 'image/jpeg';
+            finalFilename = req.file.filename.replace(/\.(heic|heif)$/i, '.jpg');
+            console.log('Sharp fallback conversion successful');
+          } catch (sharpError: any) {
+            console.error('Sharp fallback also failed:', sharpError?.message || 'Unknown error');
+            console.log('Keeping original format - image may not display in all browsers');
+          }
+        }
+      } else {
+        console.log(`Standard image file: ${req.file.originalname}, MIME: ${req.file.mimetype}`);
+      }
+      
+      // Process image with Sharp for resizing and validation
+      try {
+        const image = sharp(imageBuffer);
+        const metadata = await image.metadata();
+        
+        console.log(`Image metadata - Width: ${metadata.width}px, Height: ${metadata.height}px, Format: ${metadata.format}`);
+        
+        // Validate minimum width requirement
+        if (!metadata.width || metadata.width < 500) {
+          // Clean up temporary file
+          if (fs.existsSync(req.file.path)) {
+            fs.unlinkSync(req.file.path);
+          }
+          return res.status(400).json({ 
+            message: "Image too small. Images must be at least 500 pixels wide for quality standards." 
+          });
+        }
+        
+        // Resize if image is wider than 1000px
+        if (metadata.width > 1000) {
+          console.log(`Resizing image from ${metadata.width}px to 1000px width`);
+          imageBuffer = await image
+            .rotate() // Auto-rotate based on EXIF orientation
+            .resize(1000, null, { 
+              withoutEnlargement: true,
+              fit: 'inside'
+            })
+            .jpeg({ quality: 85 })
+            .toBuffer();
+          
+          finalMimeType = 'image/jpeg';
+          if (!finalFilename.toLowerCase().endsWith('.jpg') && !finalFilename.toLowerCase().endsWith('.jpeg')) {
+            finalFilename = finalFilename.replace(/\.[^.]*$/, '.jpg');
+          }
+          
+          console.log(`Image resized successfully. Original: ${req.file.size} bytes, Resized: ${imageBuffer.length} bytes`);
+        } else if (!isHeicFile && metadata.format !== 'jpeg') {
+          // Convert non-JPEG images to JPEG for consistency and smaller file sizes
+          console.log(`Converting ${metadata.format} to JPEG for optimization`);
+          imageBuffer = await image
+            .rotate() // Auto-rotate based on EXIF orientation
+            .jpeg({ quality: 85 })
+            .toBuffer();
+          
+          finalMimeType = 'image/jpeg';
+          finalFilename = finalFilename.replace(/\.[^.]*$/, '.jpg');
+          console.log(`Image converted to JPEG. Original: ${req.file.size} bytes, Converted: ${imageBuffer.length} bytes`);
+        } else {
+          // Even if no resize/conversion needed, auto-rotate based on EXIF to prevent orientation issues
+          console.log('Applying EXIF orientation correction');
+          imageBuffer = await image
+            .rotate() // Auto-rotate based on EXIF orientation
+            .jpeg({ quality: 85 })
+            .toBuffer();
+        }
+        
+      } catch (sharpError: any) {
+        console.error('Error processing image with Sharp:', sharpError?.message || 'Unknown error');
+        // Clean up temporary file
+        if (fs.existsSync(req.file.path)) {
+          fs.unlinkSync(req.file.path);
+        }
+        return res.status(400).json({ 
+          message: "Invalid image file. Please upload a valid image format." 
+        });
+      }
+      
+      const base64Data = imageBuffer.toString('base64');
       
       const photoData = {
         plantId,
-        filename: req.file.filename,
+        filename: finalFilename,
         originalName: req.file.originalname,
-        mimeType: req.file.mimetype,
-        size: req.file.size,
-        filePath: req.file.path,
+        mimeType: finalMimeType,
+        size: imageBuffer.length, // Use processed image size
+        imageData: base64Data,
       };
       
+      console.log(`PHOTO DATABASE: Creating photo record for plant ${plantId}`);
       const photo = await storage.createPlantPhoto(photoData);
+      console.log(`PHOTO SUCCESS: Photo created with ID ${photo.id} for plant ${plantId}`);
+      
+      // Clean up temporary file
+      if (fs.existsSync(req.file.path)) {
+        fs.unlinkSync(req.file.path);
+        console.log(`CLEANUP: Removed temporary file ${req.file.path}`);
+      }
+      
       res.status(201).json(photo);
     } catch (error) {
       console.error("Error uploading plant photo:", error);
@@ -565,26 +786,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete('/api/plants/:plantId/photos/:photoId', isAuthenticated, async (req: any, res) => {
     try {
-
       const userId = req.user.id;
       const plantId = parseInt(req.params.plantId);
       const photoId = parseInt(req.params.photoId);
       
+      console.log(`DELETE photo request - User: ${userId}, Plant: ${plantId}, Photo: ${photoId}`);
+      
       if (isNaN(plantId) || isNaN(photoId)) {
+        console.log("Invalid plant or photo ID provided");
         return res.status(400).json({ message: "Invalid plant or photo ID" });
       }
 
       // Verify plant belongs to user
       const plant = await storage.getPlant(plantId, userId);
       if (!plant) {
+        console.log(`Plant ${plantId} not found for user ${userId}`);
         return res.status(404).json({ message: "Plant not found" });
       }
 
       const deleted = await storage.deletePlantPhoto(photoId, userId);
       if (!deleted) {
+        console.log(`Photo ${photoId} not found or not owned by user ${userId}`);
         return res.status(404).json({ message: "Photo not found" });
       }
       
+      console.log(`Photo ${photoId} successfully deleted for plant ${plantId}`);
       res.status(204).send();
     } catch (error) {
       console.error("Error deleting plant photo:", error);
@@ -1029,6 +1255,160 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching vendors by specialty:", error);
       res.status(500).json({ message: "Failed to fetch vendors" });
+    }
+  });
+
+  // Article routes for Community Articles
+  // Public routes (no auth required)
+  app.get('/api/articles', async (req, res) => {
+    try {
+      const {
+        q,
+        status,
+        tag,
+        page = '1',
+        limit = '10',
+        includeDrafts = 'false'
+      } = req.query;
+
+      const filters = {
+        q: q as string,
+        status: status as string,
+        tag: tag as string,
+        page: parseInt(page as string),
+        limit: parseInt(limit as string),
+        includeDrafts: includeDrafts === 'true'
+      };
+
+      const result = await storage.getArticles(filters);
+      res.json(result);
+    } catch (error) {
+      console.error("Error fetching articles:", error);
+      res.status(500).json({ message: "Failed to fetch articles" });
+    }
+  });
+
+  app.get('/api/articles/slug/:slug', async (req, res) => {
+    try {
+      const { slug } = req.params;
+      const { includeDrafts = 'false' } = req.query;
+      
+      const article = await storage.getArticleBySlug(slug, includeDrafts === 'true');
+      
+      if (!article) {
+        return res.status(404).json({ message: "Article not found" });
+      }
+      
+      res.json(article);
+    } catch (error) {
+      console.error("Error fetching article by slug:", error);
+      res.status(500).json({ message: "Failed to fetch article" });
+    }
+  });
+
+  // Admin-only routes (auth required)
+  app.get('/api/admin/articles/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      const isAdmin = await storage.isUserAdmin(userId);
+      
+      if (!isAdmin) {
+        return res.status(403).json({ message: "Forbidden: Admin access required" });
+      }
+
+      const { id } = req.params;
+      const article = await storage.getArticleById(id);
+      
+      if (!article) {
+        return res.status(404).json({ message: "Article not found" });
+      }
+      
+      res.json(article);
+    } catch (error) {
+      console.error("Error fetching article:", error);
+      res.status(500).json({ message: "Failed to fetch article" });
+    }
+  });
+
+  app.post('/api/admin/articles', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      const isAdmin = await storage.isUserAdmin(userId);
+      
+      if (!isAdmin) {
+        return res.status(403).json({ message: "Forbidden: Admin access required" });
+      }
+
+      console.log("Article creation request body:", JSON.stringify(req.body, null, 2));
+      
+      const validatedData = insertArticleSchema.parse(req.body);
+      console.log("Validated article data:", JSON.stringify(validatedData, null, 2));
+      
+      const article = await storage.createArticle(validatedData);
+      console.log("Article created successfully:", JSON.stringify(article, null, 2));
+      
+      res.status(201).json(article);
+    } catch (error) {
+      console.error("Error creating article:", error);
+      if (error instanceof z.ZodError) {
+        console.error("Zod validation errors:", error.errors);
+        return res.status(400).json({ message: "Invalid article data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to create article" });
+    }
+  });
+
+  app.put('/api/admin/articles/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      const isAdmin = await storage.isUserAdmin(userId);
+      
+      if (!isAdmin) {
+        return res.status(403).json({ message: "Forbidden: Admin access required" });
+      }
+
+      const { id } = req.params;
+      
+      // Create a partial schema for updates (make all fields optional)
+      const updateSchema = insertArticleSchema.partial();
+      const validatedData = updateSchema.parse(req.body);
+      
+      const article = await storage.updateArticle(id, validatedData);
+      
+      if (!article) {
+        return res.status(404).json({ message: "Article not found" });
+      }
+      
+      res.json(article);
+    } catch (error) {
+      console.error("Error updating article:", error);
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid article data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to update article" });
+    }
+  });
+
+  app.delete('/api/admin/articles/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      const isAdmin = await storage.isUserAdmin(userId);
+      
+      if (!isAdmin) {
+        return res.status(403).json({ message: "Forbidden: Admin access required" });
+      }
+
+      const { id } = req.params;
+      const deleted = await storage.deleteArticle(id);
+      
+      if (!deleted) {
+        return res.status(404).json({ message: "Article not found" });
+      }
+      
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting article:", error);
+      res.status(500).json({ message: "Failed to delete article" });
     }
   });
 

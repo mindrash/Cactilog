@@ -10,6 +10,7 @@ import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { SEO, seoConfigs } from "@/components/seo";
 import AmazonAffiliateProducts from "@/components/amazon-affiliate-products";
+import AddPlantModal from "@/components/add-plant-modal";
 import type { Plant } from "@shared/schema";
 import { getFeaturedProducts } from "@shared/amazon-products";
 
@@ -26,6 +27,7 @@ interface PublicFeedResponse {
 export default function Home() {
   const { user } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
+  const [showAddPlant, setShowAddPlant] = useState(false);
 
   const { data: publicFeed, isLoading } = useQuery<PublicFeedResponse>({
     queryKey: ["/api/public/plants", currentPage],
@@ -94,7 +96,11 @@ export default function Home() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                <Button size="sm" className="bg-cactus-green hover:bg-cactus-green/90">
+                <Button 
+                  size="sm" 
+                  className="bg-cactus-green hover:bg-cactus-green/90"
+                  onClick={() => setShowAddPlant(true)}
+                >
                   <Plus className="w-4 h-4 mr-2" />
                   Add Plant
                 </Button>
@@ -136,7 +142,7 @@ export default function Home() {
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
                 {plants.map((plant) => (
-                  <PlantCard key={plant.id} plant={plant} />
+                  <PlantCard key={plant.id} plant={plant} isPublicContext={true} />
                 ))}
               </div>
 
@@ -179,7 +185,10 @@ export default function Home() {
                 <p className="text-gray-600 mb-4">
                   Be the first to share your plants with the community!
                 </p>
-                <Button className="bg-cactus-green hover:bg-cactus-green/90">
+                <Button 
+                  className="bg-cactus-green hover:bg-cactus-green/90"
+                  onClick={() => setShowAddPlant(true)}
+                >
                   <Plus className="w-4 h-4 mr-2" />
                   Add Your First Plant
                 </Button>
@@ -198,6 +207,12 @@ export default function Home() {
         </div>
       </div>
       <Footer />
+      
+      {/* Add Plant Modal */}
+      <AddPlantModal 
+        open={showAddPlant} 
+        onOpenChange={setShowAddPlant} 
+      />
     </div>
   );
 }

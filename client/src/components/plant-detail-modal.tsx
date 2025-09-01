@@ -18,6 +18,7 @@ import { Edit, X, Plus, Trash2 } from "lucide-react";
 import PrivacyBadge from "./privacy-badge";
 import { PlantLikeButton } from "./plant-like-button";
 import EditPlantModal from "./edit-plant-modal";
+import { useAuth } from "@/hooks/useAuth";
 
 interface PlantDetailModalProps {
   plant: Plant;
@@ -30,15 +31,20 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
   const queryClient = useQueryClient();
   const [showAddGrowthModal, setShowAddGrowthModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const { user } = useAuth();
+  
+  // Check if current user owns this plant
+  const isOwner = user && plant.userId === user.id;
 
+  // Fetch growth records - only for owned plants since growth endpoint requires ownership
   const { data: growthRecords = [] } = useQuery<GrowthRecord[]>({
     queryKey: ["/api/plants", plant.id, "growth"],
-    enabled: open,
+    enabled: open && isOwner,
   });
 
   const deletePlantMutation = useMutation({
     mutationFn: async () => {
-      await apiRequest("DELETE", `/api/plants/${plant.id}`);
+      await apiRequest(`/api/plants/${plant.id}`, "DELETE");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/plants"] });
@@ -89,25 +95,27 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                 <em>{plant.genus}</em> {plant.species && <span>{plant.species}</span>}
               </p>
             </div>
-            <div className="flex items-center space-x-3 mr-2">
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => setShowEditModal(true)}
-              >
-                <Edit className="w-4 h-4 mr-1" />
-                Edit
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => deletePlantMutation.mutate()}
-                disabled={deletePlantMutation.isPending}
-                className="text-red-600 hover:text-red-700 hover:border-red-300"
-              >
-                <Trash2 className="w-4 h-4" />
-              </Button>
-            </div>
+            {isOwner && (
+              <div className="flex items-center space-x-3 mr-2">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setShowEditModal(true)}
+                >
+                  <Edit className="w-4 h-4 mr-1" />
+                  Edit
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => deletePlantMutation.mutate()}
+                  disabled={deletePlantMutation.isPending}
+                  className="text-red-600 hover:text-red-700 hover:border-red-300"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              </div>
+            )}
           </div>
         </DialogHeader>
 
@@ -116,7 +124,12 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Photos</h3>
             <div className="space-y-4">
-              <PhotoUpload plantId={plant.id} className="w-full h-64" />
+              <PhotoUpload 
+                plantId={plant.id} 
+                className="w-full h-64" 
+                readOnly={!isOwner}
+                usePublicEndpoint={!isOwner}
+              />
             </div>
           </div>
 
@@ -177,18 +190,19 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
           </div>
         </div>
 
-        {/* Growth Tracking */}
-        <div className="mt-8">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-gray-900">Growth Tracking</h3>
-            <Button 
-              className="bg-cactus-green hover:bg-succulent"
-              onClick={() => setShowAddGrowthModal(true)}
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add Measurement
-            </Button>
-          </div>
+        {/* Growth Tracking - Only show for owners */}
+        {isOwner && (
+          <div className="mt-8">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-semibold text-gray-900">Growth Tracking</h3>
+              <Button 
+                className="bg-cactus-green hover:bg-succulent"
+                onClick={() => setShowAddGrowthModal(true)}
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add Measurement
+              </Button>
+            </div>
 
           {/* Growth Records Table */}
           {growthRecords.length > 0 ? (
@@ -236,7 +250,8 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
               <p>No growth records yet. Add your first measurement to start tracking!</p>
             </div>
           )}
-        </div>
+          </div>
+        )}
 
         {showAddGrowthModal && (
           <AddGrowthModal plant={plant}>

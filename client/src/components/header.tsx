@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { useState } from "react";
-import { Plus, Menu, User, LogOut, LogIn, ChevronDown, Home, BarChart3, FolderOpen, TrendingUp, Camera, Users, Settings, Sprout, BookOpen, Search, Shield, Leaf, Store, Share2 } from "lucide-react";
+import { Plus, Menu, User, LogOut, LogIn, ChevronDown, Home, BarChart3, FolderOpen, TrendingUp, Camera, Users, Settings, Sprout, BookOpen, Search, Shield, Leaf, Store, Share2, FileText } from "lucide-react";
 import { useAuthOptional } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -29,12 +29,13 @@ const navigationGroups = {
   ],
   community: [
     { href: "/users", label: "Community Collections", icon: Users },
-    { href: "/photos", label: "Photo Gallery", icon: Camera },
+    { href: "/community/photos", label: "Photo Gallery", icon: Camera },
     { href: "/recommended-socials", label: "Recommended Socials", icon: Share2 },
   ],
   knowledge: [
     { href: "/knowledge", label: "Browse Genera", icon: BookOpen },
     { href: "/knowledge/search", label: "Species Search", icon: Search },
+    { href: "/articles", label: "Articles", icon: FileText },
     { href: "/knowledge/care-guides", icon: Leaf, label: "Care Guides" },
     { href: "/knowledge/diseases-pests", icon: Shield, label: "Diseases & Pests" },
     { href: "/vendors", label: "Trusted Vendors", icon: Store },
@@ -42,6 +43,7 @@ const navigationGroups = {
   account: [
     { href: "/settings", label: "Settings", icon: Settings },
     { href: "/admin", label: "Admin Dashboard", icon: Shield, adminOnly: true },
+    { href: "/admin/articles", label: "Manage Articles", icon: FileText, adminOnly: true },
   ],
 };
 
@@ -95,16 +97,31 @@ function Header() {
               {/* Public Navigation - shown when not authenticated */}
               {!isAuthenticated && (
                 <>
-                  {/* Community Link */}
-                  <Link href="/users">
-                    <Button
-                      variant={isActive("/users") ? "default" : "ghost"}
-                      className={isActive("/users") ? "bg-cactus-green hover:bg-cactus-green/90" : ""}
-                    >
-                      <Users className="w-4 h-4 mr-2" />
-                      Community
-                    </Button>
-                  </Link>
+                  {/* Community Dropdown */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant={isGroupActive(navigationGroups.community) ? "default" : "ghost"}
+                        className={isGroupActive(navigationGroups.community) ? "bg-cactus-green hover:bg-cactus-green/90" : ""}
+                      >
+                        <Users className="w-4 h-4 mr-2" />
+                        Community
+                        <ChevronDown className="w-4 h-4 ml-2" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" className="w-56">
+                      <DropdownMenuLabel>Community</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      {navigationGroups.community.map((item) => (
+                        <Link key={item.href} href={item.href}>
+                          <DropdownMenuItem className="cursor-pointer">
+                            <item.icon className="w-4 h-4 mr-2" />
+                            {item.label}
+                          </DropdownMenuItem>
+                        </Link>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
 
                   {/* Knowledge Base Dropdown */}
                   <DropdownMenu>
@@ -247,10 +264,10 @@ function Header() {
               {/* Public Sign In Button */}
               {!isAuthenticated && (
                 <Button asChild className="bg-cactus-green hover:bg-cactus-green/90">
-                  <a href="/api/login">
+                  <Link href="/auth">
                     <LogIn className="w-4 h-4 mr-2" />
                     Sign In
-                  </a>
+                  </Link>
                 </Button>
               )}
 
@@ -355,9 +372,9 @@ function Header() {
               {/* Public Mobile Sign In */}
               {!isAuthenticated && (
                 <Button size="sm" asChild className="bg-cactus-green hover:bg-cactus-green/90">
-                  <a href="/api/login">
+                  <Link href="/auth">
                     <LogIn className="w-4 h-4" />
-                  </a>
+                  </Link>
                 </Button>
               )}
 
@@ -378,7 +395,7 @@ function Header() {
                     <Menu className="w-4 h-4" />
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="right" className="w-64">
+                <SheetContent side="right" className="w-64 overflow-y-auto max-h-screen">
                   <SheetHeader>
                     <SheetTitle className="flex items-center space-x-1">
                       <div className="w-6 h-6 flex items-center justify-center">
@@ -395,62 +412,109 @@ function Header() {
                   </SheetHeader>
                   
                   <div className="mt-6 space-y-1">
-                    {/* Home */}
-                    {navigationGroups.main.map((item) => (
-                      <Link key={item.href} href={item.href}>
-                        <Button
-                          variant={isActive(item.href) ? "default" : "ghost"}
-                          className={`w-full justify-start ${
-                            isActive(item.href) ? "bg-cactus-green hover:bg-cactus-green/90" : ""
-                          }`}
-                          onClick={() => setShowMobileMenu(false)}
-                        >
-                          <item.icon className="w-4 h-4 mr-2" />
-                          {item.label}
-                        </Button>
-                      </Link>
-                    ))}
+                    {/* Authenticated Navigation */}
+                    {isAuthenticated && (
+                      <>
+                        {/* Home */}
+                        {navigationGroups.main.map((item) => (
+                          <Link key={item.href} href={item.href}>
+                            <Button
+                              variant={isActive(item.href) ? "default" : "ghost"}
+                              className={`w-full justify-start ${
+                                isActive(item.href) ? "bg-cactus-green hover:bg-cactus-green/90" : ""
+                              }`}
+                              onClick={() => setShowMobileMenu(false)}
+                            >
+                              <item.icon className="w-4 h-4 mr-2" />
+                              {item.label}
+                            </Button>
+                          </Link>
+                        ))}
 
-                    {/* My Collection Section */}
-                    <div className="pt-4">
-                      <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                        My Cacti
-                      </div>
-                      {navigationGroups.myCollection.map((item) => (
-                        <Link key={item.href} href={item.href}>
-                          <Button
-                            variant={isActive(item.href) ? "default" : "ghost"}
-                            className={`w-full justify-start ${
-                              isActive(item.href) ? "bg-cactus-green hover:bg-cactus-green/90" : ""
-                            }`}
-                            onClick={() => setShowMobileMenu(false)}
-                          >
-                            <item.icon className="w-4 h-4 mr-2" />
-                            {item.label}
-                          </Button>
-                        </Link>
-                      ))}
-                    </div>
+                        {/* My Collection Section */}
+                        <div className="pt-4">
+                          <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            My Cacti
+                          </div>
+                          {navigationGroups.myCollection.map((item) => (
+                            <Link key={item.href} href={item.href}>
+                              <Button
+                                variant={isActive(item.href) ? "default" : "ghost"}
+                                className={`w-full justify-start ${
+                                  isActive(item.href) ? "bg-cactus-green hover:bg-cactus-green/90" : ""
+                                }`}
+                                onClick={() => setShowMobileMenu(false)}
+                              >
+                                <item.icon className="w-4 h-4 mr-2" />
+                                {item.label}
+                              </Button>
+                            </Link>
+                          ))}
+                        </div>
+                      </>
+                    )}
 
-                    {/* Community Section */}
+                    {/* Community Section - Available to Everyone */}
                     <div className="pt-4">
                       <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
                         Community
                       </div>
-                      {navigationGroups.community.map((item) => (
-                        <Link key={item.href} href={item.href}>
-                          <Button
-                            variant={isActive(item.href) ? "default" : "ghost"}
-                            className={`w-full justify-start ${
-                              isActive(item.href) ? "bg-cactus-green hover:bg-cactus-green/90" : ""
-                            }`}
-                            onClick={() => setShowMobileMenu(false)}
-                          >
-                            <item.icon className="w-4 h-4 mr-2" />
-                            {item.label}
-                          </Button>
-                        </Link>
-                      ))}
+                      
+                      {/* Community Collections */}
+                      <Link href="/users">
+                        <Button
+                          variant={isActive("/users") ? "default" : "ghost"}
+                          className={`w-full justify-start mb-1 ${
+                            isActive("/users") ? "bg-cactus-green hover:bg-cactus-green/90" : ""
+                          }`}
+                          onClick={() => setShowMobileMenu(false)}
+                        >
+                          <Users className="w-4 h-4 mr-2" />
+                          Collections Directory
+                        </Button>
+                      </Link>
+                      
+                      {/* Photo Gallery */}
+                      <Link href="/community/photos">
+                        <Button
+                          variant={isActive("/community/photos") ? "default" : "ghost"}
+                          className={`w-full justify-start mb-1 ${
+                            isActive("/community/photos") ? "bg-cactus-green hover:bg-cactus-green/90" : ""
+                          }`}
+                          onClick={() => setShowMobileMenu(false)}
+                        >
+                          <Camera className="w-4 h-4 mr-2" />
+                          Photo Gallery
+                        </Button>
+                      </Link>
+                      
+                      {/* Articles */}
+                      <Link href="/articles">
+                        <Button
+                          variant={isActive("/articles") ? "default" : "ghost"}
+                          className={`w-full justify-start mb-1 ${
+                            isActive("/articles") ? "bg-cactus-green hover:bg-cactus-green/90" : ""
+                          }`}
+                          onClick={() => setShowMobileMenu(false)}
+                        >
+                          <FileText className="w-4 h-4 mr-2" />
+                          Articles
+                        </Button>
+                      </Link>
+                      
+                      {/* Recommended Socials */}
+                      <Link href="/recommended-socials">
+                        <Button
+                          variant={isActive("/recommended-socials") ? "default" : "ghost"}
+                          className={`w-full justify-start mb-1 ${
+                            isActive("/recommended-socials") ? "bg-cactus-green hover:bg-cactus-green/90" : ""
+                          }`}
+                          onClick={() => setShowMobileMenu(false)}
+                        >
+                          <Share2 className="w-4 h-4 mr-2" />
+                          Recommended Socials
+                        </Button>
+                      </Link>
                     </div>
 
                     {/* Knowledge Base Section */}
@@ -477,7 +541,7 @@ function Header() {
                     {/* Vendors Section */}
                     <div className="pt-4">
                       <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                        Shop
+                        Other
                       </div>
                       <Link href="/vendors">
                         <Button
@@ -493,95 +557,110 @@ function Header() {
                       </Link>
                     </div>
 
-
-
-                    {/* Account Section */}
-                    <div className="pt-4">
-                      <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                        Account
+                    {/* Account Section - Only for authenticated users */}
+                    {isAuthenticated && (
+                      <div className="pt-4">
+                        <div className="px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                          Account
+                        </div>
+                        {navigationGroups.account.filter((item) => 
+                          !item.adminOnly || (adminStatus && typeof adminStatus === 'object' && 'isAdmin' in adminStatus && adminStatus.isAdmin)
+                        ).map((item) => (
+                          <Link key={item.href} href={item.href}>
+                            <Button
+                              variant={isActive(item.href) ? "default" : "ghost"}
+                              className={`w-full justify-start ${
+                                isActive(item.href) ? "bg-cactus-green hover:bg-cactus-green/90" : ""
+                              }`}
+                              onClick={() => setShowMobileMenu(false)}
+                            >
+                              <item.icon className="w-4 h-4 mr-2" />
+                              {item.label}
+                            </Button>
+                          </Link>
+                        ))}
                       </div>
-                      {navigationGroups.account.map((item) => (
-                        <Link key={item.href} href={item.href}>
-                          <Button
-                            variant={isActive(item.href) ? "default" : "ghost"}
-                            className={`w-full justify-start ${
-                              isActive(item.href) ? "bg-cactus-green hover:bg-cactus-green/90" : ""
-                            }`}
-                            onClick={() => setShowMobileMenu(false)}
-                          >
-                            <item.icon className="w-4 h-4 mr-2" />
-                            {item.label}
-                          </Button>
-                        </Link>
-                      ))}
-                    </div>
+                    )}
                   </div>
 
+                  {/* Footer section - different for authenticated vs unauthenticated */}
                   <div className="mt-6 pt-6 border-t space-y-2">
-                    <div className="flex items-center space-x-2 px-3 py-2">
-                      {user?.profileImageUrl ? (
-                        <img
-                          src={user.profileImageUrl}
-                          alt="Profile"
-                          className="w-6 h-6 rounded-full object-cover"
-                        />
-                      ) : (
-                        <User className="w-4 h-4" />
-                      )}
-                      <span className="text-sm">
-                        {user?.firstName || user?.email?.split("@")[0] || "User"}
-                      </span>
-                    </div>
-                    
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start text-red-600"
-                      onClick={async () => {
-                        try {
-                          // Make a POST request to logout endpoint
-                          const response = await fetch('/api/logout', {
-                            method: 'POST',
-                            credentials: 'include'
-                          });
-                          
-                          // Force logout regardless of server response
-                          console.log('Mobile logout response:', response.status);
-                          
-                          // Clear all possible browser storage
-                          try {
-                            // Clear localStorage
-                            localStorage.clear();
-                            
-                            // Clear sessionStorage  
-                            sessionStorage.clear();
-                            
-                            // Clear service worker caches
-                            if (window.caches) {
-                              const cacheNames = await window.caches.keys();
-                              await Promise.all(cacheNames.map(name => window.caches.delete(name)));
+                    {isAuthenticated ? (
+                      <>
+                        <div className="flex items-center space-x-2 px-3 py-2">
+                          {user?.profileImageUrl ? (
+                            <img
+                              src={user.profileImageUrl}
+                              alt="Profile"
+                              className="w-6 h-6 rounded-full object-cover"
+                            />
+                          ) : (
+                            <User className="w-4 h-4" />
+                          )}
+                          <span className="text-sm">
+                            {user?.firstName || user?.email?.split("@")[0] || "User"}
+                          </span>
+                        </div>
+                        
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start text-red-600"
+                          onClick={async () => {
+                            try {
+                              // Make a POST request to logout endpoint
+                              const response = await fetch('/api/logout', {
+                                method: 'POST',
+                                credentials: 'include'
+                              });
+                              
+                              // Force logout regardless of server response
+                              console.log('Mobile logout response:', response.status);
+                              
+                              // Clear all possible browser storage
+                              try {
+                                // Clear localStorage
+                                localStorage.clear();
+                                
+                                // Clear sessionStorage  
+                                sessionStorage.clear();
+                                
+                                // Clear service worker caches
+                                if (window.caches) {
+                                  const cacheNames = await window.caches.keys();
+                                  await Promise.all(cacheNames.map(name => window.caches.delete(name)));
+                                }
+                                
+                                // Clear cookies via document.cookie
+                                document.cookie.split(";").forEach(function(c) { 
+                                  document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+                                });
+                                
+                              } catch (e) {
+                                console.error('Error clearing storage:', e);
+                              }
+                              
+                              // Force complete reload with cache busting
+                              window.location.href = "/?t=" + Date.now();
+                            } catch (error) {
+                              console.error('Logout error:', error);
+                              // Fallback: force reload to landing page
+                              window.location.href = "/";
                             }
-                            
-                            // Clear cookies via document.cookie
-                            document.cookie.split(";").forEach(function(c) { 
-                              document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
-                            });
-                            
-                          } catch (e) {
-                            console.error('Error clearing storage:', e);
-                          }
-                          
-                          // Force complete reload with cache busting
-                          window.location.href = "/?t=" + Date.now();
-                        } catch (error) {
-                          console.error('Logout error:', error);
-                          // Fallback: force reload to landing page
-                          window.location.href = "/";
-                        }
-                      }}
-                    >
-                      <LogOut className="w-4 h-4 mr-2" />
-                      Sign Out
-                    </Button>
+                          }}
+                        >
+                          <LogOut className="w-4 h-4 mr-2" />
+                          Sign Out
+                        </Button>
+                      </>
+                    ) : (
+                      // Unauthenticated user footer
+                      <Button asChild className="w-full bg-cactus-green hover:bg-cactus-green/90">
+                        <a href="/api/login">
+                          <LogIn className="w-4 h-4 mr-2" />
+                          Sign In
+                        </a>
+                      </Button>
+                    )}
                   </div>
                 </SheetContent>
               </Sheet>
