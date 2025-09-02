@@ -24,7 +24,14 @@ interface UserWithStats extends User {
 export default function UserProfile() {
   const { userId } = useParams<{ userId: string }>();
   const { toast } = useToast();
-  const { isAuthenticated, isLoading } = useAuthOptional();
+  const { isAuthenticated, isLoading, user: currentUser } = useAuthOptional();
+
+  // Get current user data if authenticated
+  const { data: authUser } = useQuery({
+    queryKey: ["/api/auth/user"],
+    enabled: isAuthenticated,
+    retry: false,
+  });
 
   const { data: user, isLoading: userLoading } = useQuery<UserWithStats>({
     queryKey: ["/api/users", userId],
@@ -125,6 +132,11 @@ export default function UserProfile() {
     }
     return "Anonymous";
   };
+
+  // Determine if viewing own profile - if so, show all photos (public + private)
+  // If viewing someone else's profile, only show public photos
+  const isViewingOwnProfile = authUser && authUser.id === userId;
+  const isPublicContext = !isViewingOwnProfile;
 
   const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString('en-US', {
@@ -240,7 +252,7 @@ export default function UserProfile() {
             ) : plants.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {plants.map((plant) => (
-                  <PlantCard key={plant.id} plant={plant} isPublicContext={true} />
+                  <PlantCard key={plant.id} plant={plant} isPublicContext={isPublicContext} />
                 ))}
               </div>
             ) : (
