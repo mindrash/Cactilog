@@ -249,14 +249,6 @@ export default function PhotoUpload({ plantId, className = "", readOnly = false,
       <Dialog open={!!selectedPhoto} onOpenChange={() => setSelectedPhoto(null)}>
         <DialogContent className="max-w-4xl w-full h-fit max-h-[90vh] p-0">
           <div className="relative">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="absolute top-4 right-4 z-10 bg-black/20 hover:bg-black/40 text-white"
-              onClick={() => setSelectedPhoto(null)}
-            >
-              <X className="h-4 w-4" />
-            </Button>
             {selectedPhoto && (
               <img
                 src={`/api/photos/${selectedPhoto.id}/image`}
