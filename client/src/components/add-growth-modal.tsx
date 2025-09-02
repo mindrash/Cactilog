@@ -113,7 +113,7 @@ export default function AddGrowthModal({ plant, children }: AddGrowthModalProps)
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/plants/growth-overview"] });
       queryClient.invalidateQueries({ queryKey: ["/api/growth/analytics"] });
-      queryClient.invalidateQueries({ queryKey: [`/api/plants/${plant.id}/growth`] });
+      queryClient.invalidateQueries({ queryKey: ["/api/plants", plant.id, "growth"] });
       toast({
         title: "Growth record added",
         description: `Successfully added growth measurement for ${plant.customId}`,
