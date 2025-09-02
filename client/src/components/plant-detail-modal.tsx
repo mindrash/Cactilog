@@ -14,11 +14,17 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import PhotoUpload from "@/components/photo-upload";
 import AddGrowthModal from "@/components/add-growth-modal";
-import { Edit, X, Plus, Trash2 } from "lucide-react";
+import { Edit, X, Plus, Trash2, TrendingUp } from "lucide-react";
 import PrivacyBadge from "./privacy-badge";
 import { PlantLikeButton } from "./plant-like-button";
 import EditPlantModal from "./edit-plant-modal";
 import { useAuth } from "@/hooks/useAuth";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts";
 
 interface PlantDetailModalProps {
   plant: Plant;
@@ -29,7 +35,6 @@ interface PlantDetailModalProps {
 export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDetailModalProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [showAddGrowthModal, setShowAddGrowthModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const { user } = useAuth();
   
@@ -195,13 +200,12 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
           <div className="mt-8">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-semibold text-gray-900">Growth Tracking</h3>
-              <Button 
-                className="bg-cactus-green hover:bg-succulent"
-                onClick={() => setShowAddGrowthModal(true)}
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Add Measurement
-              </Button>
+              <AddGrowthModal plant={plant}>
+                <Button className="bg-cactus-green hover:bg-succulent">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Measurement
+                </Button>
+              </AddGrowthModal>
             </div>
 
           {/* Growth Records Table */}
@@ -218,7 +222,9 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {growthRecords.map((record) => (
+                  {growthRecords
+                    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                    .map((record) => (
                     <tr key={record.id}>
                       <td className="px-4 py-3 text-sm text-gray-900">
                         {formatDate(record.date)}
@@ -250,18 +256,77 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
               <p>No growth records yet. Add your first measurement to start tracking!</p>
             </div>
           )}
+
+          {/* Growth Chart - Show only if there are multiple records */}
+          {growthRecords.length > 1 && (
+            <div className="mt-8">
+              <h4 className="text-md font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                <TrendingUp className="h-4 w-4 text-cactus-green" />
+                Growth Trends
+              </h4>
+              <div className="h-64 w-full">
+                <ChartContainer
+                  config={{
+                    height: {
+                      label: "Height",
+                      color: "hsl(var(--chart-1))",
+                    },
+                    width: {
+                      label: "Width", 
+                      color: "hsl(var(--chart-2))",
+                    },
+                  }}
+                >
+                  <LineChart
+                    data={growthRecords
+                      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+                      .map(record => ({
+                        date: formatDate(record.date),
+                        height: record.heightInches ? parseFloat(record.heightInches) : null,
+                        width: record.widthInches ? parseFloat(record.widthInches) : null,
+                      }))
+                    }
+                  >
+                    <XAxis 
+                      dataKey="date" 
+                      tick={{ fontSize: 12 }}
+                      interval={'preserveStartEnd'}
+                    />
+                    <YAxis 
+                      tick={{ fontSize: 12 }}
+                      label={{ value: 'Inches', angle: -90, position: 'insideLeft' }}
+                    />
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    {growthRecords.some(r => r.heightInches) && (
+                      <Line 
+                        type="monotone" 
+                        dataKey="height" 
+                        stroke="hsl(var(--chart-1))" 
+                        strokeWidth={2}
+                        connectNulls={false}
+                        dot={{ r: 4 }}
+                        name="Height"
+                      />
+                    )}
+                    {growthRecords.some(r => r.widthInches) && (
+                      <Line 
+                        type="monotone" 
+                        dataKey="width" 
+                        stroke="hsl(var(--chart-2))" 
+                        strokeWidth={2}
+                        connectNulls={false}
+                        dot={{ r: 4 }}
+                        name="Width"
+                      />
+                    )}
+                  </LineChart>
+                </ChartContainer>
+              </div>
+            </div>
+          )}
           </div>
         )}
 
-        {showAddGrowthModal && (
-          <AddGrowthModal plant={plant}>
-            <Dialog open={showAddGrowthModal} onOpenChange={setShowAddGrowthModal}>
-              <DialogContent>
-                {/* This will be handled by AddGrowthModal internally */}
-              </DialogContent>
-            </Dialog>
-          </AddGrowthModal>
-        )}
 
         <EditPlantModal
           plant={plant}
