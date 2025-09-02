@@ -6,7 +6,8 @@ import { isUnauthorizedError } from "@/lib/authUtils";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Plus, Upload, Trash2 } from "lucide-react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Plus, Upload, Trash2, X } from "lucide-react";
 
 interface PhotoUploadProps {
   plantId: number;
@@ -17,6 +18,7 @@ interface PhotoUploadProps {
 
 export default function PhotoUpload({ plantId, className = "", readOnly = false, usePublicEndpoint = false }: PhotoUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
+  const [selectedPhoto, setSelectedPhoto] = useState<any>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -178,7 +180,8 @@ export default function PhotoUpload({ plantId, className = "", readOnly = false,
               <img
                 src={`/api/photos/${photo.id}/image`}
                 alt={photo.originalName}
-                className="w-full h-32 object-cover rounded-lg border border-gray-200"
+                className="w-full h-32 object-cover rounded-lg border border-gray-200 cursor-pointer hover:opacity-80 transition-opacity"
+                onClick={() => setSelectedPhoto(photo)}
               />
               <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
                 {new Date(photo.uploadedAt).toLocaleDateString()}
@@ -241,6 +244,37 @@ export default function PhotoUpload({ plantId, className = "", readOnly = false,
           </div>
         </div>
       )}
+
+      {/* Photo Viewer Modal */}
+      <Dialog open={!!selectedPhoto} onOpenChange={() => setSelectedPhoto(null)}>
+        <DialogContent className="max-w-4xl w-full h-fit max-h-[90vh] p-0">
+          <div className="relative">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="absolute top-4 right-4 z-10 bg-black/20 hover:bg-black/40 text-white"
+              onClick={() => setSelectedPhoto(null)}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+            {selectedPhoto && (
+              <img
+                src={`/api/photos/${selectedPhoto.id}/image`}
+                alt={selectedPhoto.originalName}
+                className="w-full h-auto max-h-[80vh] object-contain rounded-lg"
+              />
+            )}
+            {selectedPhoto && (
+              <div className="absolute bottom-4 left-4 bg-black/70 text-white text-sm px-3 py-2 rounded">
+                {new Date(selectedPhoto.uploadedAt).toLocaleDateString()}
+                {selectedPhoto.originalName && (
+                  <div className="text-xs opacity-80">{selectedPhoto.originalName}</div>
+                )}
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
