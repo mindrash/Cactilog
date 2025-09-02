@@ -240,7 +240,7 @@ export default function UserProfile() {
             ) : plants.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {plants.map((plant) => (
-                  <PlantCard key={plant.id} plant={plant} />
+                  <PlantCard key={plant.id} plant={plant} isPublicContext={true} />
                 ))}
               </div>
             ) : (
