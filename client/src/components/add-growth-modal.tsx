@@ -54,7 +54,13 @@ const growthRecordSchema = z.object({
   healthScore: z.number().min(1).max(10).optional(),
   floweringStatus: z.enum(["none", "budding", "blooming", "fruiting"]).optional(),
   observations: z.string().optional(),
-});
+}).refine(
+  (data) => data.heightInches || data.widthInches,
+  {
+    message: "At least one dimension (height or width) is required",
+    path: ["heightInches"], // This will show the error on the height field
+  }
+);
 
 type GrowthRecordForm = z.infer<typeof growthRecordSchema>;
 
