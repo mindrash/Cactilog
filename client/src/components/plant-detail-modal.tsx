@@ -10,6 +10,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import PhotoUpload from "@/components/photo-upload";
@@ -36,6 +46,7 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [showEditModal, setShowEditModal] = useState(false);
+  const [recordToDelete, setRecordToDelete] = useState<number | null>(null);
   const { user } = useAuth();
   
   // Check if current user owns this plant
@@ -45,6 +56,28 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
   const { data: growthRecords = [] } = useQuery<GrowthRecord[]>({
     queryKey: ["/api/plants", plant.id, "growth"],
     enabled: open && isOwner,
+  });
+
+  // Delete growth record mutation
+  const deleteGrowthRecord = useMutation({
+    mutationFn: async (recordId: number) => {
+      await apiRequest(`/api/growth/${recordId}`, "DELETE");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/plants", plant.id, "growth"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/plants/growth-overview"] });
+      toast({
+        title: "Growth record deleted",
+        description: "The measurement has been removed from your tracking.",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: "Failed to delete growth record. Please try again.",
+        variant: "destructive",
+      });
+    },
   });
 
   const deletePlantMutation = useMutation({
@@ -85,6 +118,19 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
   const formatDate = (dateString: string | null) => {
     if (!dateString) return "N/A";
     return new Date(dateString).toLocaleDateString();
+  };
+
+  const handleDeleteRecord = (recordId: number) => {
+    deleteGrowthRecord.mutate(recordId);
+    setRecordToDelete(null);
+  };
+
+  const handleEditRecord = (record: GrowthRecord) => {
+    // TODO: Implement edit functionality
+    toast({
+      title: "Edit functionality",
+      description: "Edit functionality will be implemented soon.",
+    });
   };
 
   return (
@@ -277,10 +323,22 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                       </td>
                       <td className="px-3 py-2">
                         <div className="flex gap-1">
-                          <Button variant="ghost" size="sm" className="text-cactus-green hover:text-succulent p-1">
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="text-cactus-green hover:text-succulent p-1"
+                            onClick={() => handleEditRecord(record)}
+                            title="Edit record"
+                          >
                             <Edit className="w-3 h-3" />
                           </Button>
-                          <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700 p-1">
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="text-red-500 hover:text-red-700 p-1"
+                            onClick={() => setRecordToDelete(record.id)}
+                            title="Delete record"
+                          >
                             <Trash2 className="w-3 h-3" />
                           </Button>
                         </div>
@@ -372,6 +430,27 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
           open={showEditModal}
           onOpenChange={setShowEditModal}
         />
+        
+        {/* Delete Confirmation Dialog */}
+        <AlertDialog open={!!recordToDelete} onOpenChange={() => setRecordToDelete(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Growth Record</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete this growth measurement? This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => recordToDelete && handleDeleteRecord(recordToDelete)}
+                className="bg-red-600 hover:bg-red-700"
+              >
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </DialogContent>
     </Dialog>
   );
