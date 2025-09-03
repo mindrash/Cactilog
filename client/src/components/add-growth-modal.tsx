@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { CalendarIcon, Ruler, Activity, Flower, Users, StickyNote } from "lucide-react";
+import { CalendarIcon, Ruler, Activity, Flower, Users, StickyNote, ToggleLeft, ToggleRight } from "lucide-react";
 import { format } from "date-fns";
 
 import {
@@ -71,8 +71,35 @@ interface AddGrowthModalProps {
 
 export default function AddGrowthModal({ plant, children }: AddGrowthModalProps) {
   const [open, setOpen] = useState(false);
+  const [unitSystem, setUnitSystem] = useState<"imperial" | "metric">("imperial");
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Unit conversion functions
+  const inchesToCm = (inches: number) => inches * 2.54;
+  const cmToInches = (cm: number) => cm / 2.54;
+  
+  // Get unit labels and conversion
+  const getUnitLabels = () => {
+    if (unitSystem === "metric") {
+      return {
+        height: "Height (cm)",
+        width: "Width (cm)", 
+        circumference: "Circumference (cm)",
+        heightPlaceholder: "e.g. 31.8",
+        widthPlaceholder: "e.g. 8.1",
+        circumferencePlaceholder: "e.g. 25.7"
+      };
+    }
+    return {
+      height: "Height (inches)",
+      width: "Width (inches)",
+      circumference: "Circumference (inches)", 
+      heightPlaceholder: "e.g. 12.5",
+      widthPlaceholder: "e.g. 3.2",
+      circumferencePlaceholder: "e.g. 10.1"
+    };
+  };
 
   // Guard against undefined plant
   if (!plant) {
@@ -131,7 +158,20 @@ export default function AddGrowthModal({ plant, children }: AddGrowthModalProps)
   });
 
   const onSubmit = (data: GrowthRecordForm) => {
-    createGrowthRecord.mutate(data);
+    // Convert metric values to inches before sending to API
+    const convertedData = { ...data };
+    if (unitSystem === "metric") {
+      if (data.heightInches) {
+        convertedData.heightInches = cmToInches(parseFloat(data.heightInches)).toFixed(2);
+      }
+      if (data.widthInches) {
+        convertedData.widthInches = cmToInches(parseFloat(data.widthInches)).toFixed(2);
+      }
+      if (data.circumferenceInches) {
+        convertedData.circumferenceInches = cmToInches(parseFloat(data.circumferenceInches)).toFixed(2);
+      }
+    }
+    createGrowthRecord.mutate(convertedData);
   };
 
   return (
@@ -152,6 +192,34 @@ export default function AddGrowthModal({ plant, children }: AddGrowthModalProps)
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            {/* Unit System Toggle */}
+            <div className="flex items-center justify-between p-3 bg-sage/10 rounded-lg border">
+              <div className="flex items-center gap-2">
+                <Ruler className="h-4 w-4 text-cactus-green" />
+                <span className="font-medium">Measurement Units</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className={`text-sm ${unitSystem === "imperial" ? "font-medium text-cactus-green" : "text-muted-foreground"}`}>
+                  Imperial
+                </span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setUnitSystem(unitSystem === "imperial" ? "metric" : "imperial")}
+                  className="p-0 h-6 w-6"
+                >
+                  {unitSystem === "imperial" ? (
+                    <ToggleLeft className="h-6 w-6 text-muted-foreground" />
+                  ) : (
+                    <ToggleRight className="h-6 w-6 text-cactus-green" />
+                  )}
+                </Button>
+                <span className={`text-sm ${unitSystem === "metric" ? "font-medium text-cactus-green" : "text-muted-foreground"}`}>
+                  Metric
+                </span>
+              </div>
+            </div>
             {/* Date */}
             <FormField
               control={form.control}
@@ -205,12 +273,12 @@ export default function AddGrowthModal({ plant, children }: AddGrowthModalProps)
                 name="heightInches"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Height (inches)</FormLabel>
+                    <FormLabel>{getUnitLabels().height}</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
-                        step="0.1"
-                        placeholder="e.g. 12.5"
+                        step={unitSystem === "metric" ? "0.1" : "0.1"}
+                        placeholder={getUnitLabels().heightPlaceholder}
                         {...field}
                       />
                     </FormControl>
@@ -224,12 +292,12 @@ export default function AddGrowthModal({ plant, children }: AddGrowthModalProps)
                 name="widthInches"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Width (inches)</FormLabel>
+                    <FormLabel>{getUnitLabels().width}</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
-                        step="0.1"
-                        placeholder="e.g. 3.2"
+                        step={unitSystem === "metric" ? "0.1" : "0.1"}
+                        placeholder={getUnitLabels().widthPlaceholder}
                         {...field}
                       />
                     </FormControl>
@@ -243,12 +311,12 @@ export default function AddGrowthModal({ plant, children }: AddGrowthModalProps)
                 name="circumferenceInches"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Circumference (inches)</FormLabel>
+                    <FormLabel>{getUnitLabels().circumference}</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
-                        step="0.1"
-                        placeholder="e.g. 10.1"
+                        step={unitSystem === "metric" ? "0.1" : "0.1"}
+                        placeholder={getUnitLabels().circumferencePlaceholder}
                         {...field}
                       />
                     </FormControl>

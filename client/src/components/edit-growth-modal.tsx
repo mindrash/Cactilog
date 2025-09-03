@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { CalendarIcon, Ruler, Activity, Flower, Users, StickyNote } from "lucide-react";
+import { CalendarIcon, Ruler, Activity, Flower, Users, StickyNote, ToggleLeft, ToggleRight } from "lucide-react";
 import { format } from "date-fns";
 
 import {
@@ -71,8 +71,35 @@ interface EditGrowthModalProps {
 }
 
 export default function EditGrowthModal({ plant, record, open, onOpenChange }: EditGrowthModalProps) {
+  const [unitSystem, setUnitSystem] = useState<"imperial" | "metric">("imperial");
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Unit conversion functions
+  const inchesToCm = (inches: number) => inches * 2.54;
+  const cmToInches = (cm: number) => cm / 2.54;
+  
+  // Get unit labels and conversion
+  const getUnitLabels = () => {
+    if (unitSystem === "metric") {
+      return {
+        height: "Height (cm)",
+        width: "Width (cm)", 
+        circumference: "Circumference (cm)",
+        heightPlaceholder: "e.g. 31.8",
+        widthPlaceholder: "e.g. 8.1",
+        circumferencePlaceholder: "e.g. 25.7"
+      };
+    }
+    return {
+      height: "Height (inches)",
+      width: "Width (inches)",
+      circumference: "Circumference (inches)", 
+      heightPlaceholder: "e.g. 12.5",
+      widthPlaceholder: "e.g. 3.2",
+      circumferencePlaceholder: "e.g. 10.1"
+    };
+  };
 
   const form = useForm<EditGrowthRecordForm>({
     resolver: zodResolver(editGrowthRecordSchema),
@@ -85,18 +112,29 @@ export default function EditGrowthModal({ plant, record, open, onOpenChange }: E
   // Reset form when record changes or modal opens
   useEffect(() => {
     if (record && open) {
+      // Convert inches to display units if metric is selected
+      const displayHeight = unitSystem === "metric" && record.heightInches
+        ? inchesToCm(parseFloat(record.heightInches)).toFixed(1)
+        : record.heightInches || "";
+      const displayWidth = unitSystem === "metric" && record.widthInches
+        ? inchesToCm(parseFloat(record.widthInches)).toFixed(1)
+        : record.widthInches || "";
+      const displayCircumference = unitSystem === "metric" && record.circumferenceInches
+        ? inchesToCm(parseFloat(record.circumferenceInches)).toFixed(1)
+        : record.circumferenceInches || "";
+        
       form.reset({
         date: new Date(record.date),
-        heightInches: record.heightInches || "",
-        widthInches: record.widthInches || "",
-        circumferenceInches: record.circumferenceInches || "",
+        heightInches: displayHeight,
+        widthInches: displayWidth,
+        circumferenceInches: displayCircumference,
         offsetCount: record.offsetCount || undefined,
         healthScore: record.healthScore || undefined,
         floweringStatus: (record.floweringStatus as "none" | "budding" | "blooming" | "fruiting") || "none",
         observations: record.observations || "",
       });
     }
-  }, [record, open, form]);
+  }, [record, open, form, unitSystem]);
 
   const updateGrowthRecord = useMutation({
     mutationFn: async (data: EditGrowthRecordForm) => {
@@ -142,7 +180,20 @@ export default function EditGrowthModal({ plant, record, open, onOpenChange }: E
   });
 
   const onSubmit = (data: EditGrowthRecordForm) => {
-    updateGrowthRecord.mutate(data);
+    // Convert metric values to inches before sending to API
+    const convertedData = { ...data };
+    if (unitSystem === "metric") {
+      if (data.heightInches) {
+        convertedData.heightInches = cmToInches(parseFloat(data.heightInches)).toFixed(2);
+      }
+      if (data.widthInches) {
+        convertedData.widthInches = cmToInches(parseFloat(data.widthInches)).toFixed(2);
+      }
+      if (data.circumferenceInches) {
+        convertedData.circumferenceInches = cmToInches(parseFloat(data.circumferenceInches)).toFixed(2);
+      }
+    }
+    updateGrowthRecord.mutate(convertedData);
   };
 
   if (!record) return null;
@@ -162,6 +213,34 @@ export default function EditGrowthModal({ plant, record, open, onOpenChange }: E
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            {/* Unit System Toggle */}
+            <div className="flex items-center justify-between p-3 bg-sage/10 rounded-lg border">
+              <div className="flex items-center gap-2">
+                <Ruler className="h-4 w-4 text-cactus-green" />
+                <span className="font-medium">Measurement Units</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className={`text-sm ${unitSystem === "imperial" ? "font-medium text-cactus-green" : "text-muted-foreground"}`}>
+                  Imperial
+                </span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setUnitSystem(unitSystem === "imperial" ? "metric" : "imperial")}
+                  className="p-0 h-6 w-6"
+                >
+                  {unitSystem === "imperial" ? (
+                    <ToggleLeft className="h-6 w-6 text-muted-foreground" />
+                  ) : (
+                    <ToggleRight className="h-6 w-6 text-cactus-green" />
+                  )}
+                </Button>
+                <span className={`text-sm ${unitSystem === "metric" ? "font-medium text-cactus-green" : "text-muted-foreground"}`}>
+                  Metric
+                </span>
+              </div>
+            </div>
             {/* Date */}
             <FormField
               control={form.control}
@@ -215,12 +294,12 @@ export default function EditGrowthModal({ plant, record, open, onOpenChange }: E
                 name="heightInches"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Height (inches)</FormLabel>
+                    <FormLabel>{getUnitLabels().height}</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
-                        step="0.1"
-                        placeholder="e.g. 12.5"
+                        step={unitSystem === "metric" ? "0.1" : "0.1"}
+                        placeholder={getUnitLabels().heightPlaceholder}
                         {...field}
                       />
                     </FormControl>
@@ -234,12 +313,12 @@ export default function EditGrowthModal({ plant, record, open, onOpenChange }: E
                 name="widthInches"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Width (inches)</FormLabel>
+                    <FormLabel>{getUnitLabels().width}</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
-                        step="0.1"
-                        placeholder="e.g. 3.2"
+                        step={unitSystem === "metric" ? "0.1" : "0.1"}
+                        placeholder={getUnitLabels().widthPlaceholder}
                         {...field}
                       />
                     </FormControl>
@@ -253,12 +332,12 @@ export default function EditGrowthModal({ plant, record, open, onOpenChange }: E
                 name="circumferenceInches"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Circumference (inches)</FormLabel>
+                    <FormLabel>{getUnitLabels().circumference}</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
-                        step="0.1"
-                        placeholder="e.g. 10.1"
+                        step={unitSystem === "metric" ? "0.1" : "0.1"}
+                        placeholder={getUnitLabels().circumferencePlaceholder}
                         {...field}
                       />
                     </FormControl>
