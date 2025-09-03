@@ -25,7 +25,7 @@ import { Badge } from "@/components/ui/badge";
 import PhotoUpload from "@/components/photo-upload";
 import AddGrowthModal from "@/components/add-growth-modal";
 import EditGrowthModal from "@/components/edit-growth-modal";
-import { Edit, X, Plus, Trash2, TrendingUp } from "lucide-react";
+import { Edit, X, Plus, Trash2, TrendingUp, ToggleLeft, ToggleRight, Ruler } from "lucide-react";
 import PrivacyBadge from "./privacy-badge";
 import { PlantLikeButton } from "./plant-like-button";
 import EditPlantModal from "./edit-plant-modal";
@@ -49,6 +49,7 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
   const [showEditModal, setShowEditModal] = useState(false);
   const [recordToDelete, setRecordToDelete] = useState<number | null>(null);
   const [recordToEdit, setRecordToEdit] = useState<GrowthRecord | null>(null);
+  const [displayUnits, setDisplayUnits] = useState<"imperial" | "metric">("imperial");
   const { user } = useAuth();
   
   // Check if current user owns this plant
@@ -120,6 +121,35 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
   const formatDate = (dateString: string | null) => {
     if (!dateString) return "N/A";
     return new Date(dateString).toLocaleDateString();
+  };
+
+  // Unit conversion functions
+  const inchesToCm = (inches: number) => inches * 2.54;
+  
+  // Format measurement for display
+  const formatMeasurement = (value: string | null) => {
+    if (!value) return "N/A";
+    const numValue = parseFloat(value);
+    if (displayUnits === "metric") {
+      return `${inchesToCm(numValue).toFixed(1)} cm`;
+    }
+    return `${numValue}\"`;  // inches with quote symbol
+  };
+  
+  // Get unit labels for table headers
+  const getTableHeaders = () => {
+    if (displayUnits === "metric") {
+      return {
+        height: "Height (cm)",
+        width: "Width (cm)",
+        circumference: "Circumference (cm)"
+      };
+    }
+    return {
+      height: "Height (in)",
+      width: "Width (in)",
+      circumference: "Circumference (in)"
+    };
   };
 
   const handleDeleteRecord = (recordId: number) => {
@@ -251,6 +281,37 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                 </Button>
               </AddGrowthModal>
             </div>
+            
+            {/* Unit System Toggle for Table */}
+            {growthRecords.length > 0 && (
+              <div className="flex items-center justify-between p-3 bg-sage/10 rounded-lg border mb-4">
+                <div className="flex items-center gap-2">
+                  <Ruler className="h-4 w-4 text-cactus-green" />
+                  <span className="font-medium">Display Units</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className={`text-sm ${displayUnits === "imperial" ? "font-medium text-cactus-green" : "text-muted-foreground"}`}>
+                    Imperial
+                  </span>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setDisplayUnits(displayUnits === "imperial" ? "metric" : "imperial")}
+                    className="p-0 h-6 w-6"
+                  >
+                    {displayUnits === "imperial" ? (
+                      <ToggleLeft className="h-6 w-6 text-muted-foreground" />
+                    ) : (
+                      <ToggleRight className="h-6 w-6 text-cactus-green" />
+                    )}
+                  </Button>
+                  <span className={`text-sm ${displayUnits === "metric" ? "font-medium text-cactus-green" : "text-muted-foreground"}`}>
+                    Metric
+                  </span>
+                </div>
+              </div>
+            )}
 
           {/* Growth Records Table */}
           {growthRecords.length > 0 ? (
@@ -259,9 +320,9 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-3 py-2 text-left font-medium text-gray-700">Date</th>
-                    <th className="px-3 py-2 text-left font-medium text-gray-700">Height</th>
-                    <th className="px-3 py-2 text-left font-medium text-gray-700">Width</th>
-                    <th className="px-3 py-2 text-left font-medium text-gray-700">Circumference</th>
+                    <th className="px-3 py-2 text-left font-medium text-gray-700">{getTableHeaders().height}</th>
+                    <th className="px-3 py-2 text-left font-medium text-gray-700">{getTableHeaders().width}</th>
+                    <th className="px-3 py-2 text-left font-medium text-gray-700">{getTableHeaders().circumference}</th>
                     <th className="px-3 py-2 text-left font-medium text-gray-700">Offsets</th>
                     <th className="px-3 py-2 text-left font-medium text-gray-700">Health</th>
                     <th className="px-3 py-2 text-left font-medium text-gray-700">Flowering</th>
@@ -278,13 +339,13 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                         {formatDate(record.date)}
                       </td>
                       <td className="px-3 py-2 text-gray-900">
-                        {record.heightInches ? `${record.heightInches}"` : "—"}
+                        {formatMeasurement(record.heightInches)}
                       </td>
                       <td className="px-3 py-2 text-gray-900">
-                        {record.widthInches ? `${record.widthInches}"` : "—"}
+                        {formatMeasurement(record.widthInches)}
                       </td>
                       <td className="px-3 py-2 text-gray-900">
-                        {record.circumferenceInches ? `${record.circumferenceInches}"` : "—"}
+                        {formatMeasurement(record.circumferenceInches)}
                       </td>
                       <td className="px-3 py-2 text-gray-900 text-center">
                         {record.offsetCount !== null && record.offsetCount !== undefined ? record.offsetCount : "—"}
