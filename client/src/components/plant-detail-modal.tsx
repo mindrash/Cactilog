@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import PhotoUpload from "@/components/photo-upload";
 import AddGrowthModal from "@/components/add-growth-modal";
+import EditGrowthModal from "@/components/edit-growth-modal";
 import { Edit, X, Plus, Trash2, TrendingUp } from "lucide-react";
 import PrivacyBadge from "./privacy-badge";
 import { PlantLikeButton } from "./plant-like-button";
@@ -47,6 +48,7 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
   const queryClient = useQueryClient();
   const [showEditModal, setShowEditModal] = useState(false);
   const [recordToDelete, setRecordToDelete] = useState<number | null>(null);
+  const [recordToEdit, setRecordToEdit] = useState<GrowthRecord | null>(null);
   const { user } = useAuth();
   
   // Check if current user owns this plant
@@ -126,11 +128,7 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
   };
 
   const handleEditRecord = (record: GrowthRecord) => {
-    // TODO: Implement edit functionality
-    toast({
-      title: "Edit functionality",
-      description: "Edit functionality will be implemented soon.",
-    });
+    setRecordToEdit(record);
   };
 
   return (
@@ -429,6 +427,16 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
           plant={plant}
           open={showEditModal}
           onOpenChange={setShowEditModal}
+        />
+        
+        {/* Edit Growth Record Modal */}
+        <EditGrowthModal
+          plant={plant}
+          record={recordToEdit}
+          open={!!recordToEdit}
+          onOpenChange={(open) => {
+            if (!open) setRecordToEdit(null);
+          }}
         />
         
         {/* Delete Confirmation Dialog */}
