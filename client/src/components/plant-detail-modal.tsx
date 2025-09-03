@@ -366,7 +366,7 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                     <Ruler className="h-4 w-4 text-cactus-green" />
                     <span className="font-medium">Display Units</span>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 ml-4">
                     <span className={`text-sm ${displayUnits === "imperial" ? "font-medium text-cactus-green" : "text-muted-foreground"}`}>
                       Imperial
                     </span>
