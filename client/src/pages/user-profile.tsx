@@ -3,7 +3,7 @@ import { useParams } from "wouter";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuthOptional } from "@/hooks/useAuth";
-import { ArrowLeft, Eye, EyeOff, Sprout, Calendar, MapPin } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff, Sprout, Calendar, MapPin, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -42,6 +42,7 @@ export default function UserProfile() {
     queryKey: ["/api/users", userId, "plants"],
     enabled: !!userId && user?.collectionPublic === "public",
   });
+
 
   // No need to block on authentication for public profile pages
 
@@ -138,6 +139,19 @@ export default function UserProfile() {
   const isViewingOwnProfile = authUser && authUser.id === userId;
   const isPublicContext = !isViewingOwnProfile;
 
+  // Fetch growth overview data for the profile owner
+  const { data: growthOverview = [] } = useQuery<any[]>({
+    queryKey: ["/api/plants/growth-overview"],
+    enabled: isViewingOwnProfile && !!authUser,
+  });
+
+  // Calculate growth statistics
+  const growthStats = {
+    totalGrowthRecords: Array.isArray(growthOverview) ? growthOverview.reduce((sum: number, plant: any) => sum + (plant.growthCount || 0), 0) : 0,
+    plantsWithGrowth: Array.isArray(growthOverview) ? growthOverview.filter((plant: any) => plant.growthCount > 0).length : 0,
+    activelyGrowingPlants: Array.isArray(growthOverview) ? growthOverview.filter((plant: any) => plant.daysSinceLastMeasurement && plant.daysSinceLastMeasurement < 30).length : 0,
+  };
+
   const formatDate = (date: string) => {
     return new Date(date).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -201,6 +215,12 @@ export default function UserProfile() {
                     <div className="text-2xl font-bold text-desert-sage">{user.uniqueGenera}</div>
                     <div className="text-sm text-gray-600">Unique Genera</div>
                   </div>
+                  {isViewingOwnProfile && (
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-amber-600">{growthStats?.totalGrowthRecords || 0}</div>
+                      <div className="text-sm text-gray-600">Growth Records</div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="text-sm text-gray-600 space-y-2">
@@ -251,9 +271,21 @@ export default function UserProfile() {
               </div>
             ) : plants.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {plants.map((plant) => (
-                  <PlantCard key={plant.id} plant={plant} isPublicContext={isPublicContext} />
-                ))}
+                {plants.map((plant) => {
+                  // Find growth data for this plant if viewing own profile
+                  const plantGrowthData = isViewingOwnProfile && Array.isArray(growthOverview)
+                    ? growthOverview.find((g: any) => g.id === plant.id)
+                    : null;
+                  
+                  return (
+                    <PlantCard 
+                      key={plant.id} 
+                      plant={plant} 
+                      isPublicContext={isPublicContext}
+                      growthData={plantGrowthData}
+                    />
+                  );
+                })}
               </div>
             ) : (
               <Card>
