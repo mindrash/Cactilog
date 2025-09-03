@@ -41,7 +41,23 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts";
+import { CalendarIcon, CalendarDays } from "lucide-react";
+import { format, subMonths, subYears, isAfter, isBefore, parseISO } from "date-fns";
+import { cn } from "@/lib/utils";
 
 interface PlantDetailModalProps {
   plant: Plant;
@@ -56,6 +72,9 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
   const [recordToDelete, setRecordToDelete] = useState<number | null>(null);
   const [recordToEdit, setRecordToEdit] = useState<GrowthRecord | null>(null);
   const [displayUnits, setDisplayUnits] = useState<"imperial" | "metric">("imperial");
+  const [timePeriod, setTimePeriod] = useState<string>("all");
+  const [customStartDate, setCustomStartDate] = useState<Date>();
+  const [customEndDate, setCustomEndDate] = useState<Date>();
   const { user } = useAuth();
   
   // Check if current user owns this plant
@@ -131,6 +150,43 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
 
   // Unit conversion functions
   const inchesToCm = (inches: number) => inches * 2.54;
+
+  // Filter growth records based on selected time period
+  const getFilteredGrowthRecords = () => {
+    if (!growthRecords || growthRecords.length === 0) return [];
+    
+    const today = new Date();
+    let startDate: Date | null = null;
+    let endDate: Date = today;
+    
+    switch (timePeriod) {
+      case "3months":
+        startDate = subMonths(today, 3);
+        break;
+      case "6months":
+        startDate = subMonths(today, 6);
+        break;
+      case "1year":
+        startDate = subYears(today, 1);
+        break;
+      case "custom":
+        startDate = customStartDate || null;
+        endDate = customEndDate || today;
+        break;
+      case "all":
+      default:
+        return growthRecords;
+    }
+    
+    if (!startDate) return growthRecords;
+    
+    return growthRecords.filter(record => {
+      const recordDate = parseISO(record.date);
+      return isAfter(recordDate, startDate!) && isBefore(recordDate, endDate);
+    });
+  };
+
+  const filteredGrowthRecords = getFilteredGrowthRecords();
   
   // Format measurement for display
   const formatMeasurement = (value: string | null) => {
@@ -296,7 +352,7 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                   <TabsTrigger value="table" className="flex items-center gap-2">
                     📊 Records
                   </TabsTrigger>
-                  {growthRecords.length > 1 && (
+                  {filteredGrowthRecords.length > 1 && (
                     <TabsTrigger value="chart" className="flex items-center gap-2">
                       <TrendingUp className="h-4 w-4" />
                       Chart
@@ -336,6 +392,7 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
               
               {/* Table Tab Content */}
               <TabsContent value="table" className="mt-0">
+                {filteredGrowthRecords.length > 0 ? (
                 <div className="overflow-x-auto">
               <table className="w-full border border-gray-200 rounded-lg text-sm">
                 <thead className="bg-gray-50">
@@ -352,7 +409,7 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {growthRecords
+                  {filteredGrowthRecords
                     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
                     .map((record) => (
                     <tr key={record.id} className="hover:bg-gray-50">
@@ -428,11 +485,108 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                 </tbody>
               </table>
                 </div>
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    <p>
+                      {timePeriod === "all" 
+                        ? "No growth records yet. Add your first measurement to start tracking!" 
+                        : `No growth records found for the selected time period.`
+                      }
+                    </p>
+                    {timePeriod !== "all" && (
+                      <Button 
+                        variant="link" 
+                        onClick={() => setTimePeriod("all")}
+                        className="mt-2 text-cactus-green"
+                        data-testid="button-show-all-records"
+                      >
+                        Show all records
+                      </Button>
+                    )}
+                  </div>
+                )}
               </TabsContent>
               
               {/* Chart Tab Content - Only show if there are multiple records */}
               {growthRecords.length > 1 && (
                 <TabsContent value="chart" className="mt-0">
+                  {/* Time Period Filter */}
+                  <div className="flex flex-col sm:flex-row gap-4 mb-6 p-4 bg-sage/5 rounded-lg border">
+                    <div className="flex items-center gap-2">
+                      <CalendarDays className="h-4 w-4 text-cactus-green" />
+                      <span className="font-medium text-sm">Time Period:</span>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Select value={timePeriod} onValueChange={setTimePeriod}>
+                        <SelectTrigger className="w-[140px]" data-testid="select-time-period">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all" data-testid="option-all-time">All Time</SelectItem>
+                          <SelectItem value="3months" data-testid="option-3-months">Last 3 Months</SelectItem>
+                          <SelectItem value="6months" data-testid="option-6-months">Last 6 Months</SelectItem>
+                          <SelectItem value="1year" data-testid="option-1-year">Last Year</SelectItem>
+                          <SelectItem value="custom" data-testid="option-custom-range">Custom Range</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      
+                      {/* Custom Date Range Pickers */}
+                      {timePeriod === "custom" && (
+                        <div className="flex items-center gap-2 text-sm">
+                          <span>From:</span>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className={cn(
+                                  "w-[120px] justify-start text-left font-normal",
+                                  !customStartDate && "text-muted-foreground"
+                                )}
+                                data-testid="button-start-date"
+                              >
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {customStartDate ? format(customStartDate, "MM/dd/yy") : "Start"}
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0">
+                              <Calendar
+                                mode="single"
+                                selected={customStartDate}
+                                onSelect={setCustomStartDate}
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
+                          <span>To:</span>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className={cn(
+                                  "w-[120px] justify-start text-left font-normal",
+                                  !customEndDate && "text-muted-foreground"
+                                )}
+                                data-testid="button-end-date"
+                              >
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {customEndDate ? format(customEndDate, "MM/dd/yy") : "End"}
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0">
+                              <Calendar
+                                mode="single"
+                                selected={customEndDate}
+                                onSelect={setCustomEndDate}
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {filteredGrowthRecords.length > 1 ? (
                   <div className="h-80 w-full">
                 <ChartContainer
                   config={{
@@ -451,7 +605,7 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                   }}
                 >
                   <LineChart
-                    data={growthRecords
+                    data={filteredGrowthRecords
                       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
                       .map(record => {
                         // Convert data to display units
@@ -484,7 +638,7 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                       }}
                     />
                     <ChartTooltip content={<ChartTooltipContent />} />
-                    {growthRecords.some(r => r.heightInches) && (
+                    {filteredGrowthRecords.some(r => r.heightInches) && (
                       <Line 
                         type="monotone" 
                         dataKey="height" 
@@ -495,7 +649,7 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                         name={displayUnits === "metric" ? "Height (cm)" : "Height (in)"}
                       />
                     )}
-                    {growthRecords.some(r => r.widthInches) && (
+                    {filteredGrowthRecords.some(r => r.widthInches) && (
                       <Line 
                         type="monotone" 
                         dataKey="width" 
@@ -506,7 +660,7 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                         name={displayUnits === "metric" ? "Width (cm)" : "Width (in)"}
                       />
                     )}
-                    {growthRecords.some(r => r.circumferenceInches) && (
+                    {filteredGrowthRecords.some(r => r.circumferenceInches) && (
                       <Line 
                         type="monotone" 
                         dataKey="circumference" 
@@ -520,6 +674,33 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                   </LineChart>
                 </ChartContainer>
                   </div>
+                  ) : (
+                    <div className="text-center py-12 text-gray-500">
+                      <TrendingUp className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                      <p className="text-lg mb-2">
+                        {timePeriod === "all" 
+                          ? "Not enough data to show trends" 
+                          : "No chart data for selected time period"
+                        }
+                      </p>
+                      <p className="text-sm">
+                        {timePeriod === "all"
+                          ? "Add more measurements to see growth trends over time."
+                          : "Try selecting a different time period or adding more records."
+                        }
+                      </p>
+                      {timePeriod !== "all" && (
+                        <Button 
+                          variant="link" 
+                          onClick={() => setTimePeriod("all")}
+                          className="mt-2 text-cactus-green"
+                          data-testid="button-show-all-chart"
+                        >
+                          Show all time periods
+                        </Button>
+                      )}
+                    </div>
+                  )}
                 </TabsContent>
               )}
             </Tabs>
