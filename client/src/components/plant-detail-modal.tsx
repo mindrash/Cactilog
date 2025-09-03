@@ -424,23 +424,37 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                 <ChartContainer
                   config={{
                     height: {
-                      label: "Height",
+                      label: displayUnits === "metric" ? "Height (cm)" : "Height (in)",
                       color: "hsl(var(--chart-1))",
                     },
                     width: {
-                      label: "Width", 
+                      label: displayUnits === "metric" ? "Width (cm)" : "Width (in)", 
                       color: "hsl(var(--chart-2))",
+                    },
+                    circumference: {
+                      label: displayUnits === "metric" ? "Circumference (cm)" : "Circumference (in)",
+                      color: "hsl(var(--chart-3))",
                     },
                   }}
                 >
                   <LineChart
                     data={growthRecords
                       .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-                      .map(record => ({
-                        date: formatDate(record.date),
-                        height: record.heightInches ? parseFloat(record.heightInches) : null,
-                        width: record.widthInches ? parseFloat(record.widthInches) : null,
-                      }))
+                      .map(record => {
+                        // Convert data to display units
+                        const convertValue = (inches: string | null) => {
+                          if (!inches) return null;
+                          const numValue = parseFloat(inches);
+                          return displayUnits === "metric" ? inchesToCm(numValue) : numValue;
+                        };
+                        
+                        return {
+                          date: formatDate(record.date),
+                          height: convertValue(record.heightInches),
+                          width: convertValue(record.widthInches),
+                          circumference: convertValue(record.circumferenceInches),
+                        };
+                      })
                     }
                   >
                     <XAxis 
@@ -450,7 +464,11 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                     />
                     <YAxis 
                       tick={{ fontSize: 12 }}
-                      label={{ value: 'Inches', angle: -90, position: 'insideLeft' }}
+                      label={{ 
+                        value: displayUnits === "metric" ? "Centimeters" : "Inches", 
+                        angle: -90, 
+                        position: 'insideLeft' 
+                      }}
                     />
                     <ChartTooltip content={<ChartTooltipContent />} />
                     {growthRecords.some(r => r.heightInches) && (
@@ -461,7 +479,7 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                         strokeWidth={2}
                         connectNulls={false}
                         dot={{ r: 4 }}
-                        name="Height"
+                        name={displayUnits === "metric" ? "Height (cm)" : "Height (in)"}
                       />
                     )}
                     {growthRecords.some(r => r.widthInches) && (
@@ -472,7 +490,18 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                         strokeWidth={2}
                         connectNulls={false}
                         dot={{ r: 4 }}
-                        name="Width"
+                        name={displayUnits === "metric" ? "Width (cm)" : "Width (in)"}
+                      />
+                    )}
+                    {growthRecords.some(r => r.circumferenceInches) && (
+                      <Line 
+                        type="monotone" 
+                        dataKey="circumference" 
+                        stroke="hsl(var(--chart-3))" 
+                        strokeWidth={2}
+                        connectNulls={false}
+                        dot={{ r: 4 }}
+                        name={displayUnits === "metric" ? "Circumference (cm)" : "Circumference (in)"}
                       />
                     )}
                   </LineChart>
