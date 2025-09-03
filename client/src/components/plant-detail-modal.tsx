@@ -211,40 +211,79 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
           {/* Growth Records Table */}
           {growthRecords.length > 0 ? (
             <div className="overflow-x-auto">
-              <table className="w-full border border-gray-200 rounded-lg">
+              <table className="w-full border border-gray-200 rounded-lg text-sm">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Date</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Height</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Width</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Notes</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Actions</th>
+                    <th className="px-3 py-2 text-left font-medium text-gray-700">Date</th>
+                    <th className="px-3 py-2 text-left font-medium text-gray-700">Height</th>
+                    <th className="px-3 py-2 text-left font-medium text-gray-700">Width</th>
+                    <th className="px-3 py-2 text-left font-medium text-gray-700">Circumference</th>
+                    <th className="px-3 py-2 text-left font-medium text-gray-700">Offsets</th>
+                    <th className="px-3 py-2 text-left font-medium text-gray-700">Health</th>
+                    <th className="px-3 py-2 text-left font-medium text-gray-700">Flowering</th>
+                    <th className="px-3 py-2 text-left font-medium text-gray-700">Notes</th>
+                    <th className="px-3 py-2 text-left font-medium text-gray-700">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {growthRecords
                     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
                     .map((record) => (
-                    <tr key={record.id}>
-                      <td className="px-4 py-3 text-sm text-gray-900">
+                    <tr key={record.id} className="hover:bg-gray-50">
+                      <td className="px-3 py-2 text-gray-900 whitespace-nowrap">
                         {formatDate(record.date)}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-900">
-                        {record.heightInches ? `${record.heightInches}"` : "N/A"}
+                      <td className="px-3 py-2 text-gray-900">
+                        {record.heightInches ? `${record.heightInches}"` : "—"}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-900">
-                        {record.widthInches ? `${record.widthInches}"` : "N/A"}
+                      <td className="px-3 py-2 text-gray-900">
+                        {record.widthInches ? `${record.widthInches}"` : "—"}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-600">
-                        {record.observations || "N/A"}
+                      <td className="px-3 py-2 text-gray-900">
+                        {record.circumferenceInches ? `${record.circumferenceInches}"` : "—"}
                       </td>
-                      <td className="px-4 py-3 text-sm">
-                        <Button variant="ghost" size="sm" className="text-cactus-green hover:text-succulent mr-2">
-                          <Edit className="w-4 h-4" />
-                        </Button>
-                        <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700">
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+                      <td className="px-3 py-2 text-gray-900 text-center">
+                        {record.offsetCount !== null && record.offsetCount !== undefined ? record.offsetCount : "—"}
+                      </td>
+                      <td className="px-3 py-2 text-gray-900 text-center">
+                        {record.healthScore ? (
+                          <div className="flex items-center gap-1">
+                            <span>{record.healthScore}</span>
+                            <span className="text-gray-400">/10</span>
+                          </div>
+                        ) : "—"}
+                      </td>
+                      <td className="px-3 py-2 text-gray-900">
+                        {record.floweringStatus && record.floweringStatus !== "none" ? (
+                          <Badge 
+                            variant="secondary" 
+                            className={`text-xs ${
+                              record.floweringStatus === "blooming" ? "bg-yellow-100 text-yellow-800" :
+                              record.floweringStatus === "budding" ? "bg-green-100 text-green-800" :
+                              record.floweringStatus === "fruiting" ? "bg-purple-100 text-purple-800" :
+                              "bg-gray-100 text-gray-800"
+                            }`}
+                          >
+                            {record.floweringStatus}
+                          </Badge>
+                        ) : "—"}
+                      </td>
+                      <td className="px-3 py-2 text-gray-600 max-w-xs">
+                        {record.observations ? (
+                          <div className="truncate" title={record.observations}>
+                            {record.observations}
+                          </div>
+                        ) : "—"}
+                      </td>
+                      <td className="px-3 py-2">
+                        <div className="flex gap-1">
+                          <Button variant="ghost" size="sm" className="text-cactus-green hover:text-succulent p-1">
+                            <Edit className="w-3 h-3" />
+                          </Button>
+                          <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700 p-1">
+                            <Trash2 className="w-3 h-3" />
+                          </Button>
+                        </div>
                       </td>
                     </tr>
                   ))}
