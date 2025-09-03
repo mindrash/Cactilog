@@ -35,6 +35,12 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts";
 
 interface PlantDetailModalProps {
@@ -281,41 +287,56 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                 </Button>
               </AddGrowthModal>
             </div>
-            
-            {/* Unit System Toggle for Table */}
-            {growthRecords.length > 0 && (
-              <div className="flex items-center justify-between p-3 bg-sage/10 rounded-lg border mb-4">
-                <div className="flex items-center gap-2">
-                  <Ruler className="h-4 w-4 text-cactus-green" />
-                  <span className="font-medium">Display Units</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className={`text-sm ${displayUnits === "imperial" ? "font-medium text-cactus-green" : "text-muted-foreground"}`}>
-                    Imperial
-                  </span>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setDisplayUnits(displayUnits === "imperial" ? "metric" : "imperial")}
-                    className="p-0 h-6 w-6"
-                  >
-                    {displayUnits === "imperial" ? (
-                      <ToggleLeft className="h-6 w-6 text-muted-foreground" />
-                    ) : (
-                      <ToggleRight className="h-6 w-6 text-cactus-green" />
-                    )}
-                  </Button>
-                  <span className={`text-sm ${displayUnits === "metric" ? "font-medium text-cactus-green" : "text-muted-foreground"}`}>
-                    Metric
-                  </span>
+
+          {/* Growth Records and Charts Tabs */}
+          {growthRecords.length > 0 ? (
+            <Tabs defaultValue="table" className="w-full">
+              <div className="flex items-center justify-between mb-4">
+                <TabsList className="grid w-auto grid-cols-2">
+                  <TabsTrigger value="table" className="flex items-center gap-2">
+                    📊 Records
+                  </TabsTrigger>
+                  {growthRecords.length > 1 && (
+                    <TabsTrigger value="chart" className="flex items-center gap-2">
+                      <TrendingUp className="h-4 w-4" />
+                      Chart
+                    </TabsTrigger>
+                  )}
+                </TabsList>
+                
+                {/* Unit System Toggle */}
+                <div className="flex items-center justify-between p-3 bg-sage/10 rounded-lg border">
+                  <div className="flex items-center gap-2">
+                    <Ruler className="h-4 w-4 text-cactus-green" />
+                    <span className="font-medium">Display Units</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className={`text-sm ${displayUnits === "imperial" ? "font-medium text-cactus-green" : "text-muted-foreground"}`}>
+                      Imperial
+                    </span>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setDisplayUnits(displayUnits === "imperial" ? "metric" : "imperial")}
+                      className="p-0 h-6 w-6"
+                    >
+                      {displayUnits === "imperial" ? (
+                        <ToggleLeft className="h-6 w-6 text-muted-foreground" />
+                      ) : (
+                        <ToggleRight className="h-6 w-6 text-cactus-green" />
+                      )}
+                    </Button>
+                    <span className={`text-sm ${displayUnits === "metric" ? "font-medium text-cactus-green" : "text-muted-foreground"}`}>
+                      Metric
+                    </span>
+                  </div>
                 </div>
               </div>
-            )}
-
-          {/* Growth Records Table */}
-          {growthRecords.length > 0 ? (
-            <div className="overflow-x-auto">
+              
+              {/* Table Tab Content */}
+              <TabsContent value="table" className="mt-0">
+                <div className="overflow-x-auto">
               <table className="w-full border border-gray-200 rounded-lg text-sm">
                 <thead className="bg-gray-50">
                   <tr>
@@ -406,21 +427,13 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                   ))}
                 </tbody>
               </table>
-            </div>
-          ) : (
-            <div className="text-center py-8 text-gray-500">
-              <p>No growth records yet. Add your first measurement to start tracking!</p>
-            </div>
-          )}
-
-          {/* Growth Chart - Show only if there are multiple records */}
-          {growthRecords.length > 1 && (
-            <div className="mt-8">
-              <h4 className="text-md font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <TrendingUp className="h-4 w-4 text-cactus-green" />
-                Growth Trends
-              </h4>
-              <div className="h-64 w-full">
+                </div>
+              </TabsContent>
+              
+              {/* Chart Tab Content - Only show if there are multiple records */}
+              {growthRecords.length > 1 && (
+                <TabsContent value="chart" className="mt-0">
+                  <div className="h-80 w-full">
                 <ChartContainer
                   config={{
                     height: {
@@ -506,7 +519,13 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                     )}
                   </LineChart>
                 </ChartContainer>
-              </div>
+                  </div>
+                </TabsContent>
+              )}
+            </Tabs>
+          ) : (
+            <div className="text-center py-8 text-gray-500">
+              <p>No growth records yet. Add your first measurement to start tracking!</p>
             </div>
           )}
           </div>
