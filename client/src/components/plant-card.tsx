@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Camera } from "lucide-react";
+import { Camera, TrendingUp, Clock } from "lucide-react";
 import PlantDetailModal from "./plant-detail-modal";
 import PrivacyBadge from "./privacy-badge";
 import { PlantLikeButton } from "./plant-like-button";
@@ -13,9 +13,10 @@ interface PlantCardProps {
   plant: Plant;
   showPhotos?: boolean;
   isPublicContext?: boolean; // New prop to indicate this is a public community context
+  growthData?: any; // Growth data from growth overview API
 }
 
-export default function PlantCard({ plant, showPhotos = true, isPublicContext = false }: PlantCardProps) {
+export default function PlantCard({ plant, showPhotos = true, isPublicContext = false, growthData }: PlantCardProps) {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const { isAuthenticated } = useAuth();
 
@@ -82,7 +83,7 @@ export default function PlantCard({ plant, showPhotos = true, isPublicContext = 
           
           {/* Badges row */}
           <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-1 sm:gap-2">
+            <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
               {!isPublicContext && <PrivacyBadge isPublic={plant.isPublic || "public"} />}
               <Badge 
                 variant={plant.family === 'Cactaceae' ? 'default' : 'secondary'}
@@ -90,6 +91,28 @@ export default function PlantCard({ plant, showPhotos = true, isPublicContext = 
               >
                 {plant.family}
               </Badge>
+              {/* Growth indicator */}
+              {growthData && growthData.growthCount > 0 && (
+                <Badge 
+                  variant="outline" 
+                  className="text-xs bg-amber-50 text-amber-700 border-amber-200 flex items-center gap-1"
+                  title={`${growthData.growthCount} growth records`}
+                >
+                  <TrendingUp className="w-3 h-3" />
+                  {growthData.growthCount}
+                </Badge>
+              )}
+              {/* Recent measurement indicator */}
+              {growthData && growthData.daysSinceLastMeasurement !== undefined && growthData.daysSinceLastMeasurement < 7 && (
+                <Badge 
+                  variant="outline" 
+                  className="text-xs bg-green-50 text-green-700 border-green-200 flex items-center gap-1"
+                  title="Recently measured"
+                >
+                  <Clock className="w-3 h-3" />
+                  {growthData.daysSinceLastMeasurement}d
+                </Badge>
+              )}
             </div>
           </div>
           
