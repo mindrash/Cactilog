@@ -438,15 +438,15 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                   config={{
                     height: {
                       label: displayUnits === "metric" ? "Height (cm)" : "Height (in)",
-                      color: "hsl(var(--chart-1))",
+                      color: "#22c55e",
                     },
                     width: {
                       label: displayUnits === "metric" ? "Width (cm)" : "Width (in)", 
-                      color: "hsl(var(--chart-2))",
+                      color: "#3b82f6",
                     },
                     circumference: {
                       label: displayUnits === "metric" ? "Circumference (cm)" : "Circumference (in)",
-                      color: "hsl(var(--chart-3))",
+                      color: "#f59e0b",
                     },
                   }}
                 >
@@ -488,10 +488,10 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                       <Line 
                         type="monotone" 
                         dataKey="height" 
-                        stroke="hsl(var(--chart-1))" 
-                        strokeWidth={2}
-                        connectNulls={false}
-                        dot={{ r: 4 }}
+                        stroke="#22c55e" 
+                        strokeWidth={3}
+                        connectNulls={true}
+                        dot={{ r: 5, fill: "#22c55e" }}
                         name={displayUnits === "metric" ? "Height (cm)" : "Height (in)"}
                       />
                     )}
@@ -499,10 +499,10 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                       <Line 
                         type="monotone" 
                         dataKey="width" 
-                        stroke="hsl(var(--chart-2))" 
-                        strokeWidth={2}
-                        connectNulls={false}
-                        dot={{ r: 4 }}
+                        stroke="#3b82f6" 
+                        strokeWidth={3}
+                        connectNulls={true}
+                        dot={{ r: 5, fill: "#3b82f6" }}
                         name={displayUnits === "metric" ? "Width (cm)" : "Width (in)"}
                       />
                     )}
@@ -510,10 +510,10 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                       <Line 
                         type="monotone" 
                         dataKey="circumference" 
-                        stroke="hsl(var(--chart-3))" 
-                        strokeWidth={2}
-                        connectNulls={false}
-                        dot={{ r: 4 }}
+                        stroke="#f59e0b" 
+                        strokeWidth={3}
+                        connectNulls={true}
+                        dot={{ r: 5, fill: "#f59e0b" }}
                         name={displayUnits === "metric" ? "Circumference (cm)" : "Circumference (in)"}
                       />
                     )}
