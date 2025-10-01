@@ -225,7 +225,7 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
+      <DialogContent className="max-w-6xl max-h-[90vh] overflow-auto">
         <DialogHeader>
           <div className="flex items-center justify-between pr-8">
             <div>
@@ -397,15 +397,15 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
               <table className="w-full border border-gray-200 rounded-lg text-sm">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-3 py-2 text-left font-medium text-gray-700">Date</th>
-                    <th className="px-3 py-2 text-left font-medium text-gray-700">{getTableHeaders().height}</th>
-                    <th className="px-3 py-2 text-left font-medium text-gray-700">{getTableHeaders().width}</th>
-                    <th className="px-3 py-2 text-left font-medium text-gray-700">{getTableHeaders().circumference}</th>
-                    <th className="px-3 py-2 text-left font-medium text-gray-700">Offsets</th>
-                    <th className="px-3 py-2 text-left font-medium text-gray-700">Health</th>
-                    <th className="px-3 py-2 text-left font-medium text-gray-700">Flowering</th>
-                    <th className="px-3 py-2 text-left font-medium text-gray-700">Notes</th>
-                    <th className="px-3 py-2 text-left font-medium text-gray-700">Actions</th>
+                    <th className="px-2 py-2 text-left font-medium text-gray-700 whitespace-nowrap">Date</th>
+                    <th className="px-2 py-2 text-left font-medium text-gray-700 whitespace-nowrap">{getTableHeaders().height}</th>
+                    <th className="px-2 py-2 text-left font-medium text-gray-700 whitespace-nowrap">{getTableHeaders().width}</th>
+                    <th className="px-2 py-2 text-left font-medium text-gray-700 whitespace-nowrap">{getTableHeaders().circumference}</th>
+                    <th className="px-2 py-2 text-center font-medium text-gray-700 whitespace-nowrap">Offsets</th>
+                    <th className="px-2 py-2 text-center font-medium text-gray-700 whitespace-nowrap">Health</th>
+                    <th className="px-2 py-2 text-left font-medium text-gray-700 whitespace-nowrap">Flowering</th>
+                    <th className="px-2 py-2 text-left font-medium text-gray-700">Notes</th>
+                    <th className="px-2 py-2 text-center font-medium text-gray-700 whitespace-nowrap">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
@@ -413,30 +413,30 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
                     .map((record) => (
                     <tr key={record.id} className="hover:bg-gray-50">
-                      <td className="px-3 py-2 text-gray-900 whitespace-nowrap">
+                      <td className="px-2 py-2 text-gray-900 whitespace-nowrap">
                         {formatDate(record.date)}
                       </td>
-                      <td className="px-3 py-2 text-gray-900">
+                      <td className="px-2 py-2 text-gray-900 whitespace-nowrap">
                         {formatMeasurement(record.heightInches)}
                       </td>
-                      <td className="px-3 py-2 text-gray-900">
+                      <td className="px-2 py-2 text-gray-900 whitespace-nowrap">
                         {formatMeasurement(record.widthInches)}
                       </td>
-                      <td className="px-3 py-2 text-gray-900">
+                      <td className="px-2 py-2 text-gray-900 whitespace-nowrap">
                         {formatMeasurement(record.circumferenceInches)}
                       </td>
-                      <td className="px-3 py-2 text-gray-900 text-center">
+                      <td className="px-2 py-2 text-gray-900 text-center whitespace-nowrap">
                         {record.offsetCount !== null && record.offsetCount !== undefined ? record.offsetCount : "—"}
                       </td>
-                      <td className="px-3 py-2 text-gray-900 text-center">
+                      <td className="px-2 py-2 text-gray-900 text-center whitespace-nowrap">
                         {record.healthScore ? (
-                          <div className="flex items-center gap-1">
+                          <div className="flex items-center justify-center gap-1">
                             <span>{record.healthScore}</span>
                             <span className="text-gray-400">/10</span>
                           </div>
                         ) : "—"}
                       </td>
-                      <td className="px-3 py-2 text-gray-900">
+                      <td className="px-2 py-2 text-gray-900 whitespace-nowrap">
                         {record.floweringStatus && record.floweringStatus !== "none" ? (
                           <Badge 
                             variant="secondary" 
@@ -451,21 +451,22 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                           </Badge>
                         ) : "—"}
                       </td>
-                      <td className="px-3 py-2 text-gray-600 max-w-xs">
+                      <td className="px-2 py-2 text-gray-600 max-w-[200px]">
                         {record.observations ? (
                           <div className="truncate" title={record.observations}>
                             {record.observations}
                           </div>
                         ) : "—"}
                       </td>
-                      <td className="px-3 py-2">
-                        <div className="flex gap-1">
+                      <td className="px-2 py-2">
+                        <div className="flex gap-1 justify-center">
                           <Button 
                             variant="ghost" 
                             size="sm" 
                             className="text-cactus-green hover:text-succulent p-1"
                             onClick={() => handleEditRecord(record)}
                             title="Edit record"
+                            data-testid={`button-edit-growth-${record.id}`}
                           >
                             <Edit className="w-3 h-3" />
                           </Button>
@@ -475,6 +476,7 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
                             className="text-red-500 hover:text-red-700 p-1"
                             onClick={() => setRecordToDelete(record.id)}
                             title="Delete record"
+                            data-testid={`button-delete-growth-${record.id}`}
                           >
                             <Trash2 className="w-3 h-3" />
                           </Button>
