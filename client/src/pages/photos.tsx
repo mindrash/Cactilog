@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import Footer from "@/components/footer";
 import { getFeaturedProducts } from "@shared/amazon-products";
 
@@ -41,6 +42,7 @@ export default function Photos() {
   const { isAuthenticated } = useAuthOptional();
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("recent");
+  const [selectedPhoto, setSelectedPhoto] = useState<PublicPhoto | null>(null);
 
   const { data: photos, isLoading: photosLoading } = useQuery<PublicPhoto[]>({
     queryKey: ["/api/photos/public"],
@@ -171,7 +173,8 @@ export default function Photos() {
                   <img 
                     src={`/api/photos/${item.photo.id}/image`}
                     alt={`${item.plant.genus} ${item.plant.species || ''} - ${item.photo.originalName || 'Plant Photo'}`}
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-200 cursor-pointer hover:opacity-80"
+                    onClick={() => setSelectedPhoto(item)}
                     onError={(e) => {
                       console.error('Failed to load image:', `/api/photos/${item.photo.id}/image`, 'Original name:', item.photo.originalName);
                       // Fallback to placeholder if image fails to load
@@ -253,6 +256,37 @@ export default function Photos() {
           />
         </div>
       </div>
+
+      {/* Photo Viewer Modal */}
+      <Dialog open={!!selectedPhoto} onOpenChange={() => setSelectedPhoto(null)}>
+        <DialogContent className="max-w-4xl w-full h-fit max-h-[90vh] p-0">
+          <div className="relative">
+            {selectedPhoto && (
+              <img
+                src={`/api/photos/${selectedPhoto.photo.id}/image`}
+                alt={`${selectedPhoto.plant.genus} ${selectedPhoto.plant.species || ''} - ${selectedPhoto.photo.originalName || 'Plant Photo'}`}
+                className="w-full h-auto max-h-[80vh] object-contain rounded-lg"
+              />
+            )}
+            {selectedPhoto && (
+              <div className="absolute bottom-4 left-4 bg-black/70 text-white text-sm px-3 py-2 rounded">
+                <div className="font-medium">{selectedPhoto.plant.customId}</div>
+                <div className="text-xs opacity-80">
+                  {selectedPhoto.plant.genus} {selectedPhoto.plant.species}
+                </div>
+                <div className="text-xs opacity-80 mt-1">
+                  By {getUserDisplayName(selectedPhoto.user)}
+                </div>
+                {selectedPhoto.photo.originalName && (
+                  <div className="text-xs opacity-60 mt-1">
+                    {selectedPhoto.photo.originalName}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Footer />
     </div>

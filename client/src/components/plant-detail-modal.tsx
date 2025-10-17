@@ -10,15 +10,54 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import PhotoUpload from "@/components/photo-upload";
 import AddGrowthModal from "@/components/add-growth-modal";
-import { Edit, X, Plus, Trash2 } from "lucide-react";
+import EditGrowthModal from "@/components/edit-growth-modal";
+import { Edit, X, Plus, Trash2, TrendingUp, ToggleLeft, ToggleRight, Ruler } from "lucide-react";
 import PrivacyBadge from "./privacy-badge";
 import { PlantLikeButton } from "./plant-like-button";
 import EditPlantModal from "./edit-plant-modal";
 import { useAuth } from "@/hooks/useAuth";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts";
+import { CalendarIcon, CalendarDays } from "lucide-react";
+import { format, subMonths, subYears, isAfter, isBefore, parseISO } from "date-fns";
+import { cn } from "@/lib/utils";
 
 interface PlantDetailModalProps {
   plant: Plant;
@@ -29,8 +68,13 @@ interface PlantDetailModalProps {
 export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDetailModalProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [showAddGrowthModal, setShowAddGrowthModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [recordToDelete, setRecordToDelete] = useState<number | null>(null);
+  const [recordToEdit, setRecordToEdit] = useState<GrowthRecord | null>(null);
+  const [displayUnits, setDisplayUnits] = useState<"imperial" | "metric">("imperial");
+  const [timePeriod, setTimePeriod] = useState<string>("all");
+  const [customStartDate, setCustomStartDate] = useState<Date>();
+  const [customEndDate, setCustomEndDate] = useState<Date>();
   const { user } = useAuth();
   
   // Check if current user owns this plant
@@ -40,6 +84,28 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
   const { data: growthRecords = [] } = useQuery<GrowthRecord[]>({
     queryKey: ["/api/plants", plant.id, "growth"],
     enabled: open && isOwner,
+  });
+
+  // Delete growth record mutation
+  const deleteGrowthRecord = useMutation({
+    mutationFn: async (recordId: number) => {
+      await apiRequest(`/api/growth/${recordId}`, "DELETE");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/plants", plant.id, "growth"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/plants/growth-overview"] });
+      toast({
+        title: "Growth record deleted",
+        description: "The measurement has been removed from your tracking.",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: "Failed to delete growth record. Please try again.",
+        variant: "destructive",
+      });
+    },
   });
 
   const deletePlantMutation = useMutation({
@@ -82,9 +148,84 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
     return new Date(dateString).toLocaleDateString();
   };
 
+  // Unit conversion functions
+  const inchesToCm = (inches: number) => inches * 2.54;
+
+  // Filter growth records based on selected time period
+  const getFilteredGrowthRecords = () => {
+    if (!growthRecords || growthRecords.length === 0) return [];
+    
+    const today = new Date();
+    let startDate: Date | null = null;
+    let endDate: Date = today;
+    
+    switch (timePeriod) {
+      case "3months":
+        startDate = subMonths(today, 3);
+        break;
+      case "6months":
+        startDate = subMonths(today, 6);
+        break;
+      case "1year":
+        startDate = subYears(today, 1);
+        break;
+      case "custom":
+        startDate = customStartDate || null;
+        endDate = customEndDate || today;
+        break;
+      case "all":
+      default:
+        return growthRecords;
+    }
+    
+    if (!startDate) return growthRecords;
+    
+    return growthRecords.filter(record => {
+      const recordDate = parseISO(record.date);
+      return isAfter(recordDate, startDate!) && isBefore(recordDate, endDate);
+    });
+  };
+
+  const filteredGrowthRecords = getFilteredGrowthRecords();
+  
+  // Format measurement for display
+  const formatMeasurement = (value: string | null) => {
+    if (!value) return "N/A";
+    const numValue = parseFloat(value);
+    if (displayUnits === "metric") {
+      return `${inchesToCm(numValue).toFixed(1)} cm`;
+    }
+    return `${numValue}\"`;  // inches with quote symbol
+  };
+  
+  // Get unit labels for table headers
+  const getTableHeaders = () => {
+    if (displayUnits === "metric") {
+      return {
+        height: "Height (cm)",
+        width: "Width (cm)",
+        circumference: "Circumference (cm)"
+      };
+    }
+    return {
+      height: "Height (in)",
+      width: "Width (in)",
+      circumference: "Circumference (in)"
+    };
+  };
+
+  const handleDeleteRecord = (recordId: number) => {
+    deleteGrowthRecord.mutate(recordId);
+    setRecordToDelete(null);
+  };
+
+  const handleEditRecord = (record: GrowthRecord) => {
+    setRecordToEdit(record);
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
+      <DialogContent className="max-w-6xl max-h-[90vh] overflow-auto">
         <DialogHeader>
           <div className="flex items-center justify-between pr-8">
             <div>
@@ -195,56 +336,376 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
           <div className="mt-8">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-semibold text-gray-900">Growth Tracking</h3>
-              <Button 
-                className="bg-cactus-green hover:bg-succulent"
-                onClick={() => setShowAddGrowthModal(true)}
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Add Measurement
-              </Button>
+              <AddGrowthModal plant={plant}>
+                <Button className="bg-cactus-green hover:bg-succulent">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Measurement
+                </Button>
+              </AddGrowthModal>
             </div>
 
-          {/* Growth Records Table */}
+          {/* Growth Records and Charts Tabs */}
           {growthRecords.length > 0 ? (
-            <div className="overflow-x-auto">
-              <table className="w-full border border-gray-200 rounded-lg">
+            <Tabs defaultValue="table" className="w-full">
+              <div className="flex items-center justify-between mb-4">
+                <TabsList className="grid w-auto grid-cols-2">
+                  <TabsTrigger value="table" className="flex items-center gap-2">
+                    📊 Records
+                  </TabsTrigger>
+                  {filteredGrowthRecords.length > 1 && (
+                    <TabsTrigger value="chart" className="flex items-center gap-2">
+                      <TrendingUp className="h-4 w-4" />
+                      Chart
+                    </TabsTrigger>
+                  )}
+                </TabsList>
+                
+                {/* Unit System Toggle */}
+                <div className="flex items-center justify-between p-3 bg-sage/10 rounded-lg border">
+                  <div className="flex items-center gap-2">
+                    <Ruler className="h-4 w-4 text-cactus-green" />
+                    <span className="font-medium">Display Units</span>
+                  </div>
+                  <div className="flex items-center gap-2 ml-4">
+                    <span className={`text-sm ${displayUnits === "imperial" ? "font-medium text-cactus-green" : "text-muted-foreground"}`}>
+                      Imperial
+                    </span>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setDisplayUnits(displayUnits === "imperial" ? "metric" : "imperial")}
+                      className="p-0 h-6 w-6"
+                    >
+                      {displayUnits === "imperial" ? (
+                        <ToggleLeft className="h-6 w-6 text-muted-foreground" />
+                      ) : (
+                        <ToggleRight className="h-6 w-6 text-cactus-green" />
+                      )}
+                    </Button>
+                    <span className={`text-sm ${displayUnits === "metric" ? "font-medium text-cactus-green" : "text-muted-foreground"}`}>
+                      Metric
+                    </span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Table Tab Content */}
+              <TabsContent value="table" className="mt-0">
+                {filteredGrowthRecords.length > 0 ? (
+                <div className="overflow-x-auto">
+              <table className="w-full border border-gray-200 rounded-lg text-sm">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Date</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Height</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Width</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Notes</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Actions</th>
+                    <th className="px-2 py-2 text-left font-medium text-gray-700 whitespace-nowrap">Date</th>
+                    <th className="px-2 py-2 text-left font-medium text-gray-700 whitespace-nowrap">{getTableHeaders().height}</th>
+                    <th className="px-2 py-2 text-left font-medium text-gray-700 whitespace-nowrap">{getTableHeaders().width}</th>
+                    <th className="px-2 py-2 text-left font-medium text-gray-700 whitespace-nowrap">{getTableHeaders().circumference}</th>
+                    <th className="px-2 py-2 text-center font-medium text-gray-700 whitespace-nowrap">Offsets</th>
+                    <th className="px-2 py-2 text-center font-medium text-gray-700 whitespace-nowrap">Health</th>
+                    <th className="px-2 py-2 text-left font-medium text-gray-700 whitespace-nowrap">Flowering</th>
+                    <th className="px-2 py-2 text-left font-medium text-gray-700">Notes</th>
+                    <th className="px-2 py-2 text-center font-medium text-gray-700 whitespace-nowrap">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
-                  {growthRecords.map((record) => (
-                    <tr key={record.id}>
-                      <td className="px-4 py-3 text-sm text-gray-900">
+                  {filteredGrowthRecords
+                    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                    .map((record) => (
+                    <tr key={record.id} className="hover:bg-gray-50">
+                      <td className="px-2 py-2 text-gray-900 whitespace-nowrap">
                         {formatDate(record.date)}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-900">
-                        {record.heightInches ? `${record.heightInches}"` : "N/A"}
+                      <td className="px-2 py-2 text-gray-900 whitespace-nowrap">
+                        {formatMeasurement(record.heightInches)}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-900">
-                        {record.widthInches ? `${record.widthInches}"` : "N/A"}
+                      <td className="px-2 py-2 text-gray-900 whitespace-nowrap">
+                        {formatMeasurement(record.widthInches)}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-600">
-                        {record.observations || "N/A"}
+                      <td className="px-2 py-2 text-gray-900 whitespace-nowrap">
+                        {formatMeasurement(record.circumferenceInches)}
                       </td>
-                      <td className="px-4 py-3 text-sm">
-                        <Button variant="ghost" size="sm" className="text-cactus-green hover:text-succulent mr-2">
-                          <Edit className="w-4 h-4" />
-                        </Button>
-                        <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700">
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+                      <td className="px-2 py-2 text-gray-900 text-center whitespace-nowrap">
+                        {record.offsetCount !== null && record.offsetCount !== undefined ? record.offsetCount : "—"}
+                      </td>
+                      <td className="px-2 py-2 text-gray-900 text-center whitespace-nowrap">
+                        {record.healthScore ? (
+                          <div className="flex items-center justify-center gap-1">
+                            <span>{record.healthScore}</span>
+                            <span className="text-gray-400">/10</span>
+                          </div>
+                        ) : "—"}
+                      </td>
+                      <td className="px-2 py-2 text-gray-900 whitespace-nowrap">
+                        {record.floweringStatus && record.floweringStatus !== "none" ? (
+                          <Badge 
+                            variant="secondary" 
+                            className={`text-xs ${
+                              record.floweringStatus === "blooming" ? "bg-yellow-100 text-yellow-800" :
+                              record.floweringStatus === "budding" ? "bg-green-100 text-green-800" :
+                              record.floweringStatus === "fruiting" ? "bg-purple-100 text-purple-800" :
+                              "bg-gray-100 text-gray-800"
+                            }`}
+                          >
+                            {record.floweringStatus}
+                          </Badge>
+                        ) : "—"}
+                      </td>
+                      <td className="px-2 py-2 text-gray-600 max-w-[200px]">
+                        {record.observations ? (
+                          <div className="truncate" title={record.observations}>
+                            {record.observations}
+                          </div>
+                        ) : "—"}
+                      </td>
+                      <td className="px-2 py-2">
+                        <div className="flex gap-1 justify-center">
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="text-cactus-green hover:text-succulent p-1"
+                            onClick={() => handleEditRecord(record)}
+                            title="Edit record"
+                            data-testid={`button-edit-growth-${record.id}`}
+                          >
+                            <Edit className="w-3 h-3" />
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="text-red-500 hover:text-red-700 p-1"
+                            onClick={() => setRecordToDelete(record.id)}
+                            title="Delete record"
+                            data-testid={`button-delete-growth-${record.id}`}
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </Button>
+                        </div>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-            </div>
+                </div>
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    <p>
+                      {timePeriod === "all" 
+                        ? "No growth records yet. Add your first measurement to start tracking!" 
+                        : `No growth records found for the selected time period.`
+                      }
+                    </p>
+                    {timePeriod !== "all" && (
+                      <Button 
+                        variant="link" 
+                        onClick={() => setTimePeriod("all")}
+                        className="mt-2 text-cactus-green"
+                        data-testid="button-show-all-records"
+                      >
+                        Show all records
+                      </Button>
+                    )}
+                  </div>
+                )}
+              </TabsContent>
+              
+              {/* Chart Tab Content - Only show if there are multiple records */}
+              {growthRecords.length > 1 && (
+                <TabsContent value="chart" className="mt-0">
+                  {/* Time Period Filter */}
+                  <div className="flex flex-col sm:flex-row gap-4 mb-6 p-4 bg-sage/5 rounded-lg border">
+                    <div className="flex items-center gap-2">
+                      <CalendarDays className="h-4 w-4 text-cactus-green" />
+                      <span className="font-medium text-sm">Time Period:</span>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Select value={timePeriod} onValueChange={setTimePeriod}>
+                        <SelectTrigger className="w-[140px]" data-testid="select-time-period">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all" data-testid="option-all-time">All Time</SelectItem>
+                          <SelectItem value="3months" data-testid="option-3-months">Last 3 Months</SelectItem>
+                          <SelectItem value="6months" data-testid="option-6-months">Last 6 Months</SelectItem>
+                          <SelectItem value="1year" data-testid="option-1-year">Last Year</SelectItem>
+                          <SelectItem value="custom" data-testid="option-custom-range">Custom Range</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      
+                      {/* Custom Date Range Pickers */}
+                      {timePeriod === "custom" && (
+                        <div className="flex items-center gap-2 text-sm">
+                          <span>From:</span>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className={cn(
+                                  "w-[120px] justify-start text-left font-normal",
+                                  !customStartDate && "text-muted-foreground"
+                                )}
+                                data-testid="button-start-date"
+                              >
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {customStartDate ? format(customStartDate, "MM/dd/yy") : "Start"}
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0">
+                              <Calendar
+                                mode="single"
+                                selected={customStartDate}
+                                onSelect={setCustomStartDate}
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
+                          <span>To:</span>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className={cn(
+                                  "w-[120px] justify-start text-left font-normal",
+                                  !customEndDate && "text-muted-foreground"
+                                )}
+                                data-testid="button-end-date"
+                              >
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {customEndDate ? format(customEndDate, "MM/dd/yy") : "End"}
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0">
+                              <Calendar
+                                mode="single"
+                                selected={customEndDate}
+                                onSelect={setCustomEndDate}
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {filteredGrowthRecords.length > 1 ? (
+                  <div className="h-80 w-full">
+                <ChartContainer
+                  config={{
+                    height: {
+                      label: displayUnits === "metric" ? "Height (cm)" : "Height (in)",
+                      color: "#22c55e",
+                    },
+                    width: {
+                      label: displayUnits === "metric" ? "Width (cm)" : "Width (in)", 
+                      color: "#3b82f6",
+                    },
+                    circumference: {
+                      label: displayUnits === "metric" ? "Circumference (cm)" : "Circumference (in)",
+                      color: "#f59e0b",
+                    },
+                  }}
+                >
+                  <LineChart
+                    data={filteredGrowthRecords
+                      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+                      .map(record => {
+                        // Convert data to display units
+                        const convertValue = (inches: string | null) => {
+                          if (!inches) return null;
+                          const numValue = parseFloat(inches);
+                          return displayUnits === "metric" ? inchesToCm(numValue) : numValue;
+                        };
+                        
+                        return {
+                          date: formatDate(record.date),
+                          height: convertValue(record.heightInches),
+                          width: convertValue(record.widthInches),
+                          circumference: convertValue(record.circumferenceInches),
+                        };
+                      })
+                    }
+                  >
+                    <XAxis 
+                      dataKey="date" 
+                      tick={{ fontSize: 12 }}
+                      interval={'preserveStartEnd'}
+                    />
+                    <YAxis 
+                      tick={{ fontSize: 12 }}
+                      label={{ 
+                        value: displayUnits === "metric" ? "Centimeters" : "Inches", 
+                        angle: -90, 
+                        position: 'insideLeft' 
+                      }}
+                    />
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    {filteredGrowthRecords.some(r => r.heightInches) && (
+                      <Line 
+                        type="monotone" 
+                        dataKey="height" 
+                        stroke="#22c55e" 
+                        strokeWidth={3}
+                        connectNulls={true}
+                        dot={{ r: 5, fill: "#22c55e" }}
+                        name={displayUnits === "metric" ? "Height (cm)" : "Height (in)"}
+                      />
+                    )}
+                    {filteredGrowthRecords.some(r => r.widthInches) && (
+                      <Line 
+                        type="monotone" 
+                        dataKey="width" 
+                        stroke="#3b82f6" 
+                        strokeWidth={3}
+                        connectNulls={true}
+                        dot={{ r: 5, fill: "#3b82f6" }}
+                        name={displayUnits === "metric" ? "Width (cm)" : "Width (in)"}
+                      />
+                    )}
+                    {filteredGrowthRecords.some(r => r.circumferenceInches) && (
+                      <Line 
+                        type="monotone" 
+                        dataKey="circumference" 
+                        stroke="#f59e0b" 
+                        strokeWidth={3}
+                        connectNulls={true}
+                        dot={{ r: 5, fill: "#f59e0b" }}
+                        name={displayUnits === "metric" ? "Circumference (cm)" : "Circumference (in)"}
+                      />
+                    )}
+                  </LineChart>
+                </ChartContainer>
+                  </div>
+                  ) : (
+                    <div className="text-center py-12 text-gray-500">
+                      <TrendingUp className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                      <p className="text-lg mb-2">
+                        {timePeriod === "all" 
+                          ? "Not enough data to show trends" 
+                          : "No chart data for selected time period"
+                        }
+                      </p>
+                      <p className="text-sm">
+                        {timePeriod === "all"
+                          ? "Add more measurements to see growth trends over time."
+                          : "Try selecting a different time period or adding more records."
+                        }
+                      </p>
+                      {timePeriod !== "all" && (
+                        <Button 
+                          variant="link" 
+                          onClick={() => setTimePeriod("all")}
+                          className="mt-2 text-cactus-green"
+                          data-testid="button-show-all-chart"
+                        >
+                          Show all time periods
+                        </Button>
+                      )}
+                    </div>
+                  )}
+                </TabsContent>
+              )}
+            </Tabs>
           ) : (
             <div className="text-center py-8 text-gray-500">
               <p>No growth records yet. Add your first measurement to start tracking!</p>
@@ -253,21 +714,43 @@ export default function PlantDetailModal({ plant, open, onOpenChange }: PlantDet
           </div>
         )}
 
-        {showAddGrowthModal && (
-          <AddGrowthModal plant={plant}>
-            <Dialog open={showAddGrowthModal} onOpenChange={setShowAddGrowthModal}>
-              <DialogContent>
-                {/* This will be handled by AddGrowthModal internally */}
-              </DialogContent>
-            </Dialog>
-          </AddGrowthModal>
-        )}
 
         <EditPlantModal
           plant={plant}
           open={showEditModal}
           onOpenChange={setShowEditModal}
         />
+        
+        {/* Edit Growth Record Modal */}
+        <EditGrowthModal
+          plant={plant}
+          record={recordToEdit}
+          open={!!recordToEdit}
+          onOpenChange={(open) => {
+            if (!open) setRecordToEdit(null);
+          }}
+        />
+        
+        {/* Delete Confirmation Dialog */}
+        <AlertDialog open={!!recordToDelete} onOpenChange={() => setRecordToDelete(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Growth Record</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete this growth measurement? This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => recordToDelete && handleDeleteRecord(recordToDelete)}
+                className="bg-red-600 hover:bg-red-700"
+              >
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </DialogContent>
     </Dialog>
   );
